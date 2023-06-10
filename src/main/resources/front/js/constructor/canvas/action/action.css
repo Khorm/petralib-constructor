@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+.action-events{
+	display: flex;
+	align-items: center;
+}
+
+.action-in-event{
+	display: flex;
+	justify-content: space-between;
+}
+
+hr{
+	border: 1px solid #808080
+}
+
+
+.action-out-events{
+	border-left: 2px solid gray
+}

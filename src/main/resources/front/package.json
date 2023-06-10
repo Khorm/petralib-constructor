@@ -1,0 +1,77 @@
+{
+  "name": "VPCFront",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js --progress --colors --mode development",
+    "watch": "webpack --config webpack.config.js --watch --mode development"
+  },
+  "author": "Dmitry Ganov",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.4.2",
+    "mini-css-extract-plugin": "^0.9.0",
+    "style-loader": "^1.1.3",
+    "webpack": "^4.41.6",
+    "webpack-bundle-tracker": "^0.4.3",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@projectstorm/react-diagrams": "^6.0.1-beta.7",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.4.1",
+    "closest": "0.0.1",
+    "dagre": "^0.8.5",
+    "django-react-csrftoken": "^1.0.4",
+    "jquery": "^3.5.1",
+    "lodash": "^4.17.21",
+    "node-sass": "^4.14.1",
+    "pathfinding": "^0.4.18",
+    "paths-js": "^0.4.11",
+    "react": "^16.14.0",
+    "react-autosuggest": "^10.0.2",
+    "react-bootstrap": "^1.0.0-beta.17",
+    "react-datepicker": "^3.1.3",
+    "react-dom": "^16.13.0",
+    "react-redux": "^7.2.0",
+    "react-router": "^5.1.2",
+    "react-select": "^3.1.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "resize-observer-polyfill": "^1.5.1",
+    "sass": "^1.26.2",
+    "sass-loader": "^8.0.2",
+    "save": "^2.4.0",
+    "ts-loader": "^8.0.18",
+    "typescript": "^4.2.3"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "esmodules": true
+          }
+        }
+      ],
+      "@babel/react",
+      "@babel/preset-typescript"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  }
+}
