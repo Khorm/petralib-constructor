@@ -1,7 +1,16 @@
 import React from 'react'
 
 
+/**
+List of variables in action.
+Contains in props:
+variable{ - part of variables list
+    id - variable id
+    type - variable type
+    name - variable name
+}
 
+*/
 class VariablesList extends React.Component{	
 
     render (){	

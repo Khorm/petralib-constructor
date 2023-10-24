@@ -5,8 +5,6 @@ const initialState = {
 
 }
 
-
-
 export const typeReducer = function(state = initialState, action) {
     switch(action.type){
 

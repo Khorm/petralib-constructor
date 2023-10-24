@@ -1,13 +1,6 @@
 $size: 12px;
 
-.event-node{
-	border: solid 2px gray;
-	border-radius: 5px;
-	justify-content: space-between;
-	position: relative;
-	background-color: #98FB98;
-	padding: 5px
-}
+
 
 .title{
 	display: flex;

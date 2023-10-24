@@ -1,44 +1,36 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import React, { useState, useEffect  } from 'react';
+import { createRoot } from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import store from './redux-mod';
+import { Provider } from 'react-redux'
+import store from './store'
 
-import EntitiesCanvas from './canvas/canvas';
-import PrecedentManager from './precedent/precedent-manager';
-import TransactionManager from './precedent/transaction/transaction-manager';
-//import EntitiesList from './list/list';
-
-
-class App extends React.Component{
+import WorkflowList from './workflow/workflow-list';
+import BodyWidgetClass from './canvas/canvas';
+//import WorkflowTree from './workflow/workflow-tree'
+//import WorkflowList from './workflow/workflow-list';
 
 
-    render (){
 
-        return (
-        <>
-            <div>
+export default function App() {
 
-                <div>
-                    <PrecedentManager />
-                    <TransactionManager />
-                    <EntitiesCanvas />
-                </div>
+//    const [projects, setProjects] = useState([]);
+//
+//    function onProjectChoose(projectId){
+//        console.log(projectId);
+//    }
 
-            </div>
-        </>
-        );
-    }
-
+//            <WorkflowList/>
+    return (
+        <div>
+            <WorkflowList/>
+            <BodyWidgetClass/>
+        </div>
+    )
 }
 
-ReactDOM.render(
-
-  <Provider store={store}>
-    <div >
-   		<App/>
-    </div>
-  </Provider>,
-  document.getElementById('react')
-);
+const container = document.getElementById('react');
+const root = createRoot(container);
+root.render(<Provider store={store}>
+                <App />
+              </Provider>);

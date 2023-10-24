@@ -35,10 +35,10 @@ export class EventPort extends React.Component {
 		//side of parent
 		let placement = this.props.type === 'out' ? 'right' : 'left' ;
 		let flex_direction = placement === 'right' ? {flexDirection: 'row'} : {flexDirection: 'row-reverse'};
-		
+
 		return (
 		<>					
-			<PortWidget engine={this.props.engine} port={this.props.node.getPort('' + this.props.id)}>
+			<PortWidget engine={this.props.engine} port={this.props.node.getPort(this.props.id)}>
 				<div ref={this.target} className="port-container" onClick={this.showConnectors} style={flex_direction}>
 					<div className={placement + "-circle-port-button"}/>						
 					<div className="event-port">

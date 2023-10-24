@@ -1,0 +1,35 @@
+@charset "UTF-8"
+
+.event-node
+	border: solid 2px gray
+	border-radius: 5px
+	justify-content: space-between
+	position: relative
+	padding: 5px
+
+.action-node
+	@extend .event-node
+	background-color: #98FB98
+
+.workflow-node
+	@extend .event-node
+	background-color: yellow
+
+
+.action-events
+	display: flex
+	align-items: center
+
+
+.action-in-event
+	display: flex
+	justify-content: space-between
+
+
+hr
+	border: 1px solid #808080
+
+
+
+.action-out-events
+	border-left: 2px solid gray

@@ -3,37 +3,43 @@ import { DefaultPortModel } from '@projectstorm/react-diagrams';
 
 /**
  * Example of a custom model using pure javascript
+subscribedSignals - list of subscribed signals. Each signal contains:
+{
+id - signal id
+name - signal name
+}
  */
 export class ActionModel extends Model {
 
 	constructor(options = {}) {
 		super(options);	
 
-		this.subscribedEvents = options.subscribedEvents;
-		this.sendedEvents = options.sendedEvents;
+		this.subscribedSignals = options.subscribedSignals;
+		this.sendSignals = options.sendSignals;
 		this.widgetType = 'action';
+		this.blockType = options.blockType;
 		
 				
 		// setup an in and out port
-		if (this.subscribedEvents !== undefined){
-			this.subscribedEvents.forEach((event)=>{
-				this.addPort(
-					new DefaultPortModel({
-						in: true,
-						name: event.id
-					})
-				);
+		if (this.subscribedSignals !== undefined){
+			this.subscribedSignals.forEach((signal)=>{
+			    let port = new DefaultPortModel({
+                                in: true,
+                                name: signal.id
+                            })
+                port.setLocked(true);
+				this.addPort(port);
 			});
 		}
 		
-		if (this.sendedEvents !== undefined){
-			this.sendedEvents.forEach((sendedEvent)=>{
-				this.addPort(
-					new DefaultPortModel({
-						in: false,
-						name: sendedEvent.event.id
-					})
-				);
+		if (this.sendSignals !== undefined){
+			this.sendSignals.forEach((signal)=>{
+			 let port = new DefaultPortModel({
+                            in: false,
+                            name: signal.id
+                        })
+                port.setLocked(true);
+				this.addPort(port);
 			});	
 		}
 		
@@ -43,8 +49,8 @@ export class ActionModel extends Model {
 		return {
 			...super.serialize(),
 			
-			subscribedEvents: this.subscribedEvents,
-			sendedEvents: this.sendedEvents,
+			subscribedSignals: this.subscribedSignals,
+			sendSignals: this.sendSignals,
 			widgetType: this.widgetType
 		};
 	}
@@ -52,8 +58,22 @@ export class ActionModel extends Model {
 	deserialize(ob, engine) {
 		super.deserialize(ob, engine);
 	
-		this.subscribedEvents = ob.subscribedEvents;
-		this.sendedEvents = ob.sendedEvents;
+		this.subscribedSignals = ob.subscribedSignals;
+		this.sendSignals = ob.sendSignals;
 		this.widgetType = ob.widgetType;
 	}
+
+//	getPort = (portId) => {
+//	    console.log('PORTS');
+//        console.log(this.ports);
+//        console.log(portId);
+//        for (let i = 0; i< this.ports.length; i++){
+//            console.log('PORT');
+//            console.log(this.ports[i]);
+//
+//            if (this.ports[i] === portId){
+//                return this.ports[i]
+//            }
+//        }
+//	}
 }
