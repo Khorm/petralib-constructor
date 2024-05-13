@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "project_user_roles")
+@Table(name = "project_user_authorities")
 @Getter
 public class ProjectUserRolesEntity {
     @Id
@@ -25,7 +25,7 @@ public class ProjectUserRolesEntity {
     ProjectEntity project;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "PROJECT_ROLE", nullable = false)
+    @Column(name = "project_authority", nullable = false)
     Role role;
 
 

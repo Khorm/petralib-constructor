@@ -36,7 +36,7 @@ export default function WorkflowList() {
             axios.get('/api/v1/workflow', { params :{
                 pageNumber: pageNumber,
                 pageElementsCount: 10,
-                projectId: 1,
+                projectId: getProjectId(),
                 workflowName: searchTerm
             }})
             .then((response) => {
@@ -48,13 +48,17 @@ export default function WorkflowList() {
                 for (let i = 1; i <= response.data.pageCount; i++) {
                     if (pageNumber === i){ buttonType = 'contained'} else {buttonType = 'outlined'}
                     pageButtons.push(<Button onClick={() => {openPage(i)}} variant={buttonType} key = {i}>{i}</Button>);
-                  }
+                }
                 setPages(pageButtons)
             })
     //         .catch(function (error) {
     //                console.log('error');
     //              console.log(error);
     //            });
+    }
+
+    function createWorkflow () {
+        window.location.href = '/projects/' + getProjectId() + '/constructor/workflow';
     }
 
 
@@ -79,7 +83,7 @@ export default function WorkflowList() {
             <div>
                 {pages}
             </div>
-            <Button>Add new workflow</Button>
+            <Button onClick={createWorkflow}>Add new workflow</Button>
         </div>
     )
 }

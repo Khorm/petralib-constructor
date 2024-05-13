@@ -25,6 +25,17 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
+    public ProjectEntity getProject(Long projectId){
+        Optional<ProjectEntity> project = projectRepository.findById(projectId);
+        if (project.isPresent()){
+            return project.get();
+        }else {
+            throw new NullPointerException("Project not found");
+        }
+
+    }
+
+    @Transactional(readOnly = true)
     public boolean isUserAcceptTo(Long userId, Long projectId, UserAction userAction) {
         Optional<ProjectEntity> projectEntityOptional = projectRepository.findById(projectId);
         if (projectEntityOptional.isPresent()) {

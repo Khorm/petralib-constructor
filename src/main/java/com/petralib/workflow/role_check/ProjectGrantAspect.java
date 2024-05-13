@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+
 @Aspect
 @Component
 public class ProjectGrantAspect {
@@ -25,11 +26,19 @@ public class ProjectGrantAspect {
         this.projectService = projectService;
     }
 
+    /**
+     * Проверяет доступно ли такое дейтсвие для проекта с таким то айди
+     * @param joinPoint - параметры функции. первым параметром должен идти айди сигнала
+     * @param projectGrant - аннотация хранящая доступ
+     * @return
+     * @throws Throwable
+     */
     @Around(value = "@annotation(projectGrant)")
     public Object callAdvice(ProceedingJoinPoint joinPoint, ProjectGrant projectGrant) throws Throwable {
         Long projectId = (Long) joinPoint.getArgs()[0];
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+
         boolean isReadPermitted = projectService.isUserAcceptTo(securityUser.getId(), projectId, projectGrant.userAction());
         if (!isReadPermitted){
             return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).build();
@@ -37,4 +46,5 @@ public class ProjectGrantAspect {
             return joinPoint.proceed();
         }
     }
+
 }

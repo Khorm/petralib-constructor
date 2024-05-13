@@ -105,7 +105,7 @@ var loginConfig = Object.assign({}, config, {
 var projectsConfig = Object.assign({}, config, {
     name: "projects",
     entry: {
-	projects_react:'./js/projects/projects-react.js',
+		projects_react:'./js/projects/projects-react.js',
 	},
     output: {
       path: path.resolve('../static/'),
@@ -125,5 +125,27 @@ var projectsConfig = Object.assign({}, config, {
 });
 
 
+var worfklowConfig = Object.assign({}, config, {
+    name: "workflow",
+    entry: {
+		workflow_react:'./js/workflow/workflow-react.js',
+	},
+    output: {
+      path: path.resolve('../static/'),
+      filename:  path.join("workflow","workflow.js"),
+	  //clean: true,
+    },
 
-module.exports = [projectsConfig, loginConfig, constructorConfig];
+     plugins: [
+     new BundleTracker({filename: path.join('workflow','webpack-workflow.json')}),
+	new MiniCssExtractPlugin({
+	      filename: devMode ? path.join('workflow','[name].css') : '[name].[hash].css',
+	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+	    }),
+    ],
+
+});
+
+
+
+module.exports = [projectsConfig, loginConfig, constructorConfig, worfklowConfig];

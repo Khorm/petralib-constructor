@@ -33,13 +33,24 @@ public class ProjectController {
 
     @ProjectGrant(userAction = UserAction.READ)
     @GetMapping("{projectId}/constructor")
-    public String getConstructor(@PathVariable Long projectId)  {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-//        boolean isReadPermitted = projectService.isUserAcceptTo(securityUser.getId(), projectId, UserAction.READ);
-//        if (!isReadPermitted){
-//            throw new AccessDeniedException("Access denied");
-//        }
+    public String getConstructor(@PathVariable Long projectId, Model model)  {
+        model.addAttribute("projectId", projectId);
         return "constructor";
+    }
+
+    @ProjectGrant(userAction = UserAction.WRITE)
+    @GetMapping("{projectId}/constructor/workflow")
+    public String getWorkflowCreate(@PathVariable Long projectId, Model model)  {
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("workflowId", null);
+        return "workflow";
+    }
+
+    @ProjectGrant(userAction = UserAction.WRITE)
+    @GetMapping("{projectId}/constructor/workflow/{workflowId}")
+    public String getWorkflowEdit(@PathVariable Long projectId, @PathVariable Long workflowId, Model model)  {
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("workflowId", workflowId);
+        return "workflow";
     }
 }

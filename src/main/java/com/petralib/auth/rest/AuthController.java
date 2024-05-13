@@ -11,13 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -38,14 +41,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody AuthRequestDTO request, HttpServletResponse response) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-            ConstructorUserEntity user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User doesn't exists"));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             String token = jwtTokenProvider.createToken(request.getEmail());
             Map<Object, Object> responseMap = new HashMap<>();
             responseMap.put("email", request.getEmail());
             responseMap.put("token", token);
             return ResponseEntity.ok(responseMap);
         } catch (AuthenticationException e) {
+            e.printStackTrace();
             return new ResponseEntity<>("Invalid email/password combination", HttpStatus.FORBIDDEN);
         }
     }

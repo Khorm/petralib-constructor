@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface WorkflowRepository extends JpaRepository<WorkflowEntity, Long> {
+//@Repository
+public interface WorkflowRepository /*extends JpaRepository<WorkflowEntity, Long>*/ {
     @Query("FROM WorkflowEntity we WHERE we.project.projectId = :projectId AND we.parentWorkflows IS EMPTY")
     Page<WorkflowEntity> findHighLevelWorkflows(@Param("projectId") Long projectId, Pageable pageable);
 
