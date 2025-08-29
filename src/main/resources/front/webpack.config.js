@@ -95,7 +95,7 @@ var loginConfig = Object.assign({}, config, {
      plugins: [
      new BundleTracker({filename: path.join('login','webpack-login.json')}),
 	new MiniCssExtractPlugin({
-	      filename: devMode ? path.join('login','[name].css') : '[name].[hash].css',
+	      filename: path.join('login','login.css'),
 	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
 	    }),
     ],
@@ -125,21 +125,42 @@ var projectsConfig = Object.assign({}, config, {
 });
 
 
-var worfklowConfig = Object.assign({}, config, {
-    name: "workflow",
+var blockConfig = Object.assign({}, config, {
+    name: "block",
     entry: {
-		workflow_react:'./js/workflow/workflow-react.js',
+		block_react:'./js/block/block-react.js',
 	},
     output: {
       path: path.resolve('../static/'),
-      filename:  path.join("workflow","workflow.js"),
+      filename:  path.join("block","block.js"),
 	  //clean: true,
     },
 
      plugins: [
-     new BundleTracker({filename: path.join('workflow','webpack-workflow.json')}),
+     new BundleTracker({filename: path.join('block','webpack-block.json')}),
 	new MiniCssExtractPlugin({
-	      filename: devMode ? path.join('workflow','[name].css') : '[name].[hash].css',
+	      filename: devMode ? path.join('block','[name].css') : '[name].[hash].css',
+	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+	    }),
+    ],
+
+});
+
+var serviceConfig = Object.assign({}, config, {
+    name: "service",
+    entry: {
+		service_react:'./js/service/service-react.js',
+	},
+    output: {
+      path: path.resolve('../static/'),
+      filename:  path.join("service","service.js"),
+	  //clean: true,
+    },
+
+     plugins: [
+     new BundleTracker({filename: path.join('service','webpack-service.json')}),
+	new MiniCssExtractPlugin({
+	      filename: devMode ? path.join('service','[name].css') : '[name].[hash].css',
 	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
 	    }),
     ],
@@ -148,4 +169,4 @@ var worfklowConfig = Object.assign({}, config, {
 
 
 
-module.exports = [projectsConfig, loginConfig, constructorConfig, worfklowConfig];
+module.exports = [loginConfig, projectsConfig, constructorConfig ];

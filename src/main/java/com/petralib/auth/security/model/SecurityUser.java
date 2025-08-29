@@ -13,18 +13,20 @@ import java.util.List;
 @Data
 public class SecurityUser implements UserDetails {
 
-    private final Long id;
-    private final String username;
-    private final String password;
+//    private final Long id;
+//    private final String username;
+//    private final String password;
     private final List<SimpleGrantedAuthority> authorities;
     private final boolean isActive;
+    private final ConstructorUserEntity user;
 
     public SecurityUser(ConstructorUserEntity constructorUserEntity){
-        this.id = constructorUserEntity.getId();
-        this.username = constructorUserEntity.getEmail();
-        this.password = constructorUserEntity.getPassword();
+//        this.id = constructorUserEntity.getId();
+//        this.username = constructorUserEntity.getEmail();
+//        this.password = constructorUserEntity.getPassword();
         this.authorities = Collections.emptyList();
         this.isActive = true;
+        this.user = constructorUserEntity;
     }
 
     @Override
@@ -34,12 +36,12 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return user.getEmail();
     }
 
     @Override
@@ -60,5 +62,13 @@ public class SecurityUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isActive;
+    }
+
+    public Long getId(){
+        return user.getId();
+    }
+
+    public ConstructorUserEntity getUser(){
+        return user;
     }
 }

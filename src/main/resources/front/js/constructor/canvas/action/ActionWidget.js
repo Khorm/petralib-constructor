@@ -17,8 +17,8 @@ export class ActionWidget extends React.Component {
 					<h3> {this.props.node.name} </h3>
 									
 					
-				</div>					
-				<VariablesList variables = {this.props.node.variables}/>
+				</div>
+
 				<hr />
 				<div className="action-events">
 					<div>				

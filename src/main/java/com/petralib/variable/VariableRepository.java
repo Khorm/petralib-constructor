@@ -1,6 +1,6 @@
 package com.petralib.variable;
 
-import com.petralib.variable.entity.VariableEntity;
+import com.petralib.block.enitity.VariableEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,30 +1,19 @@
 package com.petralib.workflow.service;
 
-import com.petralib.block.BlockMapper;
-import com.petralib.block.BlockType;
-import com.petralib.block.enitity.BlockEntity;
+import com.petralib.block.mapper.BlockMapper;
 import com.petralib.block.service.BlockService;
-import com.petralib.variable.VariableService;
-import com.petralib.workflow.dto.WorkflowDto;
-import com.petralib.workflow.dto.WorkflowMapper;
-import com.petralib.workflow.repository.WorkflowRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Errors;
+//import com.petralib.variable.VariableService;
 
-@Service
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequiredArgsConstructor
+//@Service
+//@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+//@RequiredArgsConstructor
 public class WorkflowService {
 
-//    WorkflowRepository workflowRepository;
+    //    WorkflowRepository workflowRepository;
 //    WorkflowMapper workflowMapper;
     BlockService blockService;
     BlockMapper blockMapper;
-    VariableService variableService;
+//    VariableService variableService;
 
 //    @Transactional(readOnly = true)
 //    public WorkflowPage getHighLevelWorkflowsByProject(int pageSize, int lastPageNumber, Long projectId) {
@@ -47,7 +36,7 @@ public class WorkflowService {
 //        List<WorkflowCollectionObjectDto> workflowCollectionObjectDtos = workflowMapper.map(workflowEntityPage.toList());
 //        return new WorkflowPage(workflowEntityPage.getTotalPages(), workflowEntityPage.getTotalElements(), workflowCollectionObjectDtos);
 //    }
-//
+
 //    @Transactional(readOnly = true)
 //    public WorkflowPage getWorkflowsByProjectAndName(int pageSize, int lastPageNumber, Long projectId, String workflowName) {
 //        Page<WorkflowEntity> workflowEntityPage = workflowRepository.findWorkflowsByName(projectId, workflowName,
@@ -56,23 +45,15 @@ public class WorkflowService {
 //        return new WorkflowPage(workflowEntityPage.getTotalPages(), workflowEntityPage.getTotalElements(), workflowCollectionObjectDtos);
 //    }
 
-    @Transactional
-    public void editWorkflow(WorkflowDto workflowDto, Long projectId) {
-        BlockEntity blockEntity = blockMapper.fromWorkflowDtoToEntity(workflowDto);
-        System.out.println("EDIT: " + blockEntity);
-        blockEntity = blockService.saveBlock(blockEntity, BlockType.WORKFLOW, projectId);
-        System.out.println(blockEntity.toString());
-//        variableService.updateVariables(workflowDto.getVariableList(), blockEntity);
-    }
 
-    @Transactional(readOnly = true)
-    public WorkflowDto getWorkflowWithVariables(Long workflowId){
-        BlockEntity blockEntity = blockService.getBlockWithVariables(workflowId);
-        return blockMapper.fromEntityToWorkflowDto(blockEntity);
-    }
+//    @Transactional(readOnly = true)
+//    public BlockDto getWorkflowWithVariables(Long workflowId){
+//        BlockEntity blockEntity = blockService.getBlockWithVariables(workflowId);
+//        return blockMapper.fromEntityToDto(blockEntity);
+//    }
 
-    @Transactional
-    public void deleteWorkflow(Long workflowId){
-        blockService.deleteBlock(workflowId);
-    }
+//    @Transactional
+//    public void deleteWorkflow(Long workflowId){
+//        blockService.deleteBlock(workflowId);
+//    }
 }

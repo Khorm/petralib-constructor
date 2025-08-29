@@ -1,7 +1,7 @@
 jwt:
   header: Authorization
   secret: petra
-  expiration: 60000000
+  expiration: 2629800000
 
 
 spring:

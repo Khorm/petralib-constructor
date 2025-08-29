@@ -1,8 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
-import workflowsReducer from './workflowsSlice'
+import workflowReducer from './workflowSlice'
+import canvasFunctionsSlice from './canvas-functions-slice'
+import scenarioVariablesSlice from './canvas/modal/scenario-variable-slice'
 
 export default configureStore({
   reducer: {
-    workflows: workflowsReducer
+    workflow: workflowReducer,
+    canvasFunctions: canvasFunctionsSlice,
+    scenarioVariables: scenarioVariablesSlice,
   },
 })

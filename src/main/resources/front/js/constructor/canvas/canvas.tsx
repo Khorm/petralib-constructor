@@ -1,324 +1,331 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 
 import axios from 'axios';
-
-// import {setAddFunc, setRemoveFunc} from './redux_reducer/canvas-action-types';
-// import store from '../redux-mod';
-// import { connect } from 'react-redux';
 
 import './canvas.css';
 
 import createEngine, { DiagramModel, DefaultNodeModel, DefaultLinkModel } from '@projectstorm/react-diagrams';
-import { JSCustomNodeFactory } from './JSCustomNodeFactory';
-import { ActionModel } from './action/ActionModel';
-import { EventModel } from './event/EventModel';
 
-import { DiagramEngine } from '@projectstorm/react-diagrams';
 import { CanvasWidget } from '@projectstorm/react-canvas-core';
+import { useSelector, useDispatch } from 'react-redux';
+
+import ScenarioBlockModal from './modal/scenario-block-modal';
+import WorkflowExitModal from './modal/workflow/workflow-exit-modal';
 
 
 
 
-// create an instance of the engine
-const engine = createEngine();
+export default function Canvas() {
 
-// register the two engines
-engine.getNodeFactories().registerFactory(new JSCustomNodeFactory() as any);
+    const workflow = useSelector((state) => state.workflow.value);
+    const addingBlock = useSelector((state) => state.canvasFunctions.addBlock);
+    const engine = useMemo(() => {
+        const engine = createEngine();
+        engine.setModel(new DiagramModel()); // ������������� ������
+        engine.maxNumberPointsPerLink = 0;
+        return engine;
+    }, []);
+    const dispatch = useDispatch();
+    const prevWorkflowRef = useRef();
+    const chosenBlock = useRef();
 
-// create a diagram model
-const newModel = new DiagramModel();
+    const [openModal, setOpenModal] = useState(false);
 
-//####################################################
-// now create two nodes of each type, and connect them
 
-// const eventOne = {id: 1,  name: 'Test event 1', x:150, y:150,
-//  variables: [{id: 1, type: 'String', name: 'locationName'}] }
-//
-// const eventTwo = {id: 20,  name: 'Test event 2', x:250, y:250,
-//  variables: [{id: 2, type: 'Integer', name: 'locId'}] }
-//
-// const eventThree = {id: 21,  name: 'Test event 3', x:255, y:255,
-//  variables: [{id: 3, type: 'Integer', name: 'statusId'}] }
-//
-// const eventFour = {id: 40,  name: 'Test event 4', x:255, y:255,
-//  variables: [{id: 5, type: 'Integer', name: 'statusId'}] }
-//
-const actionOne = {id: 1, name: 'Action event 1', blockType: 'action', variables: [{id: 1, type: 'Integer', name: 'variableOne'}],
-    subscribedSignals : [{
-            id: 1,
-            name: "First subscribed signal"
-        },
-        {
-            id: 2,
-            name: "Scd subscribed signal"
-        }],
-	sendSignals: [
-	    {
-            id: 3,
-            name: "trd send signal"
+    useEffect(() => {
+        addBlock(addingBlock);
+    }, [addingBlock])
+
+
+    useEffect(() => {
+        if (workflow !== undefined) {
+            if (prevWorkflowRef.current !== undefined) {
+                save();
+            }
+            prevWorkflowRef.current = workflow;
+
+            axios.get('/api/v1/scenario', {
+                params: {
+                    workflowId: workflow,
+                }
+            })
+                .then((response) => {
+                    let blocks = response.data.scenarioBlocks;
+                    let beginEnd = response.data.beginEndDtoList;
+                    console.log('response.data', response.data)
+                    const model = new DiagramModel();
+
+                    model.registerListener({
+                        linksUpdated: editLinks
+                    });
+
+                    engine.setModel(model);
+                    let dict = {};
+                    blocks.forEach((block) => {
+                        let blockColor;
+                        if (block.type === 'ACTION') {
+                            blockColor = 'LightGreen';
+                        } else {
+                            blockColor = 'PowderBlue';
+                        }
+
+                        let node = new DefaultNodeModel({
+                            name: block.name,
+                            color: blockColor,
+                            block: block,
+                        });
+                        dict[block.id] = node;
+                        node.setPosition(block.x, block.y);
+                        const portOut = node.addOutPort('Out');
+                        const portIn = node.addInPort("In");
+
+                        engine.getModel().addNode(node);
+                        node.registerListener({
+                            selectionChanged: (e) => choose(e)
+                        });
+                    });
+
+                    blocks.forEach((block) => {
+                        if (block.nextBlock === null) {
+                            return;
+                        }
+                        let link = new DefaultLinkModel();
+
+                        link.setSourcePort(dict[block.id].getPort("Out"));
+                        link.setTargetPort(dict[block.nextBlock].getPort("In"));
+                        link.sourceNode = dict[block.id];
+                        link.targetNode = dict[block.nextBlock];
+                        link.registerListener({
+                            entityRemoved: removeLink,
+                        })
+
+                        engine.getModel().addLink(link);
+                    });
+
+                    beginEnd.forEach((beginEndBlock) => {
+                        let node = new DefaultNodeModel({
+                            name: beginEndBlock.pointType,
+                            color: 'gray',
+                            beginEndBlock: beginEndBlock,
+                        });
+                        node.setPosition(beginEndBlock.x, beginEndBlock.y);
+                        engine.getModel().addNode(node);
+
+                        let link = new DefaultLinkModel();
+                        link.registerListener({
+                            entityRemoved: removeLink,
+                        })
+
+                        if (beginEndBlock.pointType === 'START') {
+                            const portOut = node.addOutPort('Out');
+
+                            if (beginEndBlock.connectedBlockId === null) return;
+                            link.setSourcePort(portOut);
+                            link.setTargetPort(dict[beginEndBlock.connectedBlockId].getPort("In"));
+                            link.sourceNode = beginEndBlock.id;
+                            link.targetNode = dict[beginEndBlock.connectedBlockId];
+                            engine.getModel().addLink(link);
+
+                        } else {
+                            const portIn = node.addInPort("In");
+                            console.log('EXIT ', node);
+                            node.registerListener({
+                                selectionChanged: (e) => choose(e)
+                            });
+
+                            if (beginEndBlock.connectedBlockId === null) return;
+                            link.setTargetPort(portIn);
+                            link.setSourcePort(dict[beginEndBlock.connectedBlockId].getPort("Out"));
+                            link.sourceNode = beginEndBlock.id;
+                            link.targetNode = dict[beginEndBlock.connectedBlockId];
+                            engine.getModel().addLink(link);
+                        }
+                    })
+
+                    engine.repaintCanvas();
+
+                });
         }
-	] };
 
-const actionTwo = {id: 2, name: 'Action 2', blockType: 'workflow', variables: [{id: 2, type: 'String', name: 'variableTwo'}],
-    subscribedSignals : [],
-    sendSignals: [{
-           id: 1,
-           name: "First subscribed signal"
-       }] };
+    }, [workflow]);
 
-// const actionTwo = {id: 2, name: 'Action event 2', variables: [],
-// subscribedEvents : [eventFour],
-// 	sendedEvents: [
-// 	{
-// 		conditions:[{id:3, name: 'fstCondition'}, {id:4, name: 'scdCondition'}],
-// 		event: eventThree
-// 	}
-// 	] };
-//
-// const actions = new Map();
-// actions.set(actionOne.id, actionOne);
-// actions.set(actionTwo.id, actionTwo);
-//
-//
-// const events = new Map();// [eventOne, eventTwo];
-// events.set(eventOne.id, eventOne);
-// events.set(eventTwo.id, eventTwo);
-// events.set(eventThree.id, eventThree);
-//
-//
-//
-// const link1 = new DefaultLinkModel();
-// link1.setSourcePort(node1.getPort('out'));
-// link1.setTargetPort(node2.getPort('in'));
+    function removeLink(e) {
+
+        if (e.entity.sourceNode === undefined || e.entity.targetNode === undefined) return;
+        let sourceBlock = e.entity.sourceNode.options.block;
+        let targetBlock = e.entity.targetNode.options.block;
+        let beginEndSourceBlock = e.entity.sourceNode.options.beginEndBlock;
+        let beginEndTargetBlock = e.entity.targetNode.options.beginEndBlock;
+
+        if (sourceBlock) sourceBlock.nextBlock = null;
+        if (targetBlock) targetBlock.previousBlock = null;
+        if (beginEndSourceBlock) beginEndSourceBlock.connectedBlockId = null;
+        if (beginEndTargetBlock) beginEndTargetBlock.connectedBlockId = null;
 
 
-/////TEST///////////////
-// var node1 = new DefaultNodeModel({
-// 		name: 'Node 1',
-// 		color: 'rgb(0,192,255)'
-// 	});
-// node1.setPosition(100, 100);
-// let port1 = node1.addOutPort('Out');
-//
-// var node2 = new DefaultNodeModel('Node 2', 'rgb(192,255,0)');
-// node2.setPosition(400, 100);
-// let port2 = node2.addInPort('In');
-//
+    }
+
+    function editLinks(e) {
+
+        if (e.isCreated) {
+            e.link.registerListener({
+                entityRemoved: removeLink,
+                targetPortChanged: targetPortUpdate
+            })
+            e.link.sourceNode = e.link.sourcePort.parent;
+
+        }
+    }
+
+    function targetPortUpdate(e) {
+
+        if (e.entity.targetPort.options.name != 'In') {
+            engine.getModel().removeLink(e.entity);
+            engine.repaintCanvas();
+            return;
+        }
+
+        e.entity.targetNode = e.port.parent;
+
+        let sourceBeginEndBlock = e.entity.sourcePort.parent.options.beginEndBlock;
+        let targetBeginEndBlock = e.entity.targetPort.parent.options.beginEndBlock;
+        let sourceBlock = e.entity.sourcePort.parent.options.block;
+        let targetBlock = e.entity.targetPort.parent.options.block;
 
 
-let actionNode = new ActionModel(actionOne);
-actionNode.setPosition(200, 200);
-let actionNode2 = new ActionModel(actionTwo);
-// actionNode2.setLocked(true);
-let link1 = new DefaultLinkModel();
-	link1.getOptions().testName = 'Test';
-	link1.addLabel('Hello World!');
-	link1.setSourcePort(actionNode.getPort(1));
-    link1.setTargetPort(actionNode2.getPort(1));
-newModel.addAll(actionNode, actionNode2, link1);
+        if (sourceBeginEndBlock !== undefined && sourceBeginEndBlock.pointType === 'START') {
+            sourceBeginEndBlock.connectedBlockId = targetBlock.id;
+        } else if (targetBeginEndBlock !== undefined && targetBeginEndBlock.pointType === 'END') {
+            targetBeginEndBlock.connectedBlockId = sourceBlock.id;
+        } else {
+            targetBlock.previousBlock = sourceBlock.id;
+            sourceBlock.nextBlock = targetBlock.id;
+        }
 
-//####################################################
+    }
 
 
+    function save(callback = undefined) {
+
+        let scenarioBlocks = [];
+        let beginEndDtoList = [];
+        const nodes = engine.getModel().getNodes();
+        for (let i = 0; i < nodes.length; i++) {
+            let block = nodes[i].options.block;
+            let beginEndBlock = nodes[i].options.beginEndBlock;
+
+            if (block) {
+                scenarioBlocks.push({
+                    id: block.id,
+                    blockId: block.blockId,
+                    name: block.name,
+                    blockType: block.blockType,
+                    x: nodes[i].position.x,
+                    y: nodes[i].position.y,
+                    previousBlock: block.previousBlock,
+                    nextBlock: block.nextBlock,
+                })
+            } else if (beginEndBlock) {
+                beginEndDtoList.push({
+                    id: beginEndBlock.id,
+                    x: nodes[i].position.x,
+                    y: nodes[i].position.y,
+                    pointType: beginEndBlock.pointType,
+                    connectedBlockId: beginEndBlock.connectedBlockId
+                })
+            }
+        }
+
+        let scenario = {
+            scenarioBlocks: scenarioBlocks,
+            beginEndDtoList: beginEndDtoList
+        }
+        console.log("SAVED : ", scenario);
+
+        axios.post('/api/v1/scenario', scenario, {
+            params: {
+                workflowId: prevWorkflowRef.current
+            }
+        }
+        ).then((response) => {
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }).catch((error) => {
+            console.log(error);
+            alert(error)
+        })
+    }
 
 
-// install the model into the engine
-engine.setModel(newModel);
+    function addBlock(block) {
+        if (!block) return;
+        let allNodes = engine.getModel().getNodes();
+        for (let i = 0; i < allNodes.length; i++) {
+            if (allNodes[i].options.block && allNodes[i].options.block.id === block.id) {
+                return;
+            }
+        }
 
-export interface BodyWidgetProps {
-	engine: DiagramEngine;
+        let blockColor;
+        if (block.type === 'ACTION') {
+            blockColor = 'LightGreen';
+        } else {
+            blockColor = 'PowderBlue';
+        }
+
+        const node = new DefaultNodeModel({
+            name: block.name,
+            color: blockColor,
+            block: block
+        });
+        node.setPosition(100, 100);
+        const portOut = node.addOutPort('Out');
+        const portIn = node.addInPort("In");
+        engine.getModel().addNode(node);
+        node.registerListener({
+            selectionChanged: (e) => choose(e)
+        });
+        engine.repaintCanvas();
+    }
+
+    function choose(e) {
+        console.log("CHOOSING ,", chosenBlock.current);
+
+        if (!e.isSelected) return;
+        chosenBlock.current = e.entity.options;
+    }
+
+
+    function openMod() {
+        save(() => {
+            if (!openModal) {
+                setOpenModal(true);
+            } else {
+                setOpenModal(false);
+            }
+        })
+
+    }
+
+
+    return (
+        <>
+            <div>
+                <button style={{ width: '100%', height: '50%' }} onClick={openMod}>edit</button>
+                <button style={{ width: '100%', height: '50%' }} onClick={save} >save</button>
+            </div>
+            <CanvasWidget className="diagram-container" engine={engine} />
+            {openModal && chosenBlock.current.block &&
+                <ScenarioBlockModal scenarioBlock={chosenBlock.current} workflow={prevWorkflowRef.current}
+                    open={openModal} handleClose={openMod} />
+            }
+
+            {openModal && chosenBlock.current.beginEndBlock &&
+                <WorkflowExitModal workflow={prevWorkflowRef.current}
+                    open={openModal} handleClose={openMod} />
+            }
+        </>
+    );
+
 }
-
-class BodyWidgetClass extends React.Component<BodyWidgetProps> {
-
-	componentDidMount() {
-
-	}
-
-
-	generateCanvasData = () => {
-
-// 		let model = new DiagramModel();
-// 		engine.setModel(model);
-		//model.registerListener({
-		//	nodesUpdated: (event) => { console.log(event) }
-		//});
-
-// 		let eventsWithPorts = new Map();
-// 		let nodes = [];
-
-// 		this.props.basePrecedents.forEach((basePrecedent, key) => {
-// 			let event = this.props.events.get(basePrecedent.baseId+'');
-//
-// 			let eventNode = new EventModel(event);
-// 			eventNode.registerListener({
-// 				selectionChanged: (canvasEvent) => {
-// 					this.updatePrecedentBase(event, canvasEvent.entity.position.x, canvasEvent.entity.position.y);
-// 				}
-// 			});
-//
-// 			model.addNode(eventNode);
-// 			eventNode.setPosition(basePrecedent.x, basePrecedent.y);
-// 			nodes.push(eventNode);
-//
-// 			if (eventsWithPorts.has(event.id)){
-// 				eventsWithPorts.get(event.id).sendedPorts.push(eventNode.getPort('' + event.id));
-// 			}else{
-// 				let newPortKeeper = {
-// 					eventId: event.id,
-// 					sendedPorts: [eventNode.getPort('' + event.id)],
-// 					listenPorts: []
-// 				}
-// 				eventsWithPorts.set( event.id, newPortKeeper);
-// 			}
-// 		});
-
-// 		engine.zoomToFit();
-
-		//eventId
-		//sendedPorts []
-		//listenPorts []
-
-		/*
-		this.props.events.forEach((event, key) => {
-			let eventNode = new EventModel(event);
-			model.addNode(eventNode);
-			eventNode.setPosition(event.x, event.y);
-			nodes.push(eventNode);
-
-			//console.log(eventNode.getPort('' + event.id));
-
-			if (eventsWithPorts.has(event.id)){
-				eventsWithPorts.get(event.id).sendedPorts.push(eventNode.getPort('' + event.id));
-			}else{
-				let newPortKeeper = {
-					eventId: event.id,
-					sendedPorts: [eventNode.getPort('' + event.id)],
-					listenPorts: []
-				}
-				eventsWithPorts.set( event.id, newPortKeeper);
-			}
-		});
-
-
-
-		actions.forEach((action, key) => {
-		let actionNode = new ActionModel(action);
-		model.addNode(actionNode);
-		nodes.push(actionNode);
-
-		action.subscribedEvents.forEach((subEvent) => {
-		if (eventsWithPorts.has(subEvent.id)){
-		eventsWithPorts.get(subEvent.id).listenPorts.push(actionNode.getPort('' + subEvent.id));
-		}else{
-		let newPortKeeper = {
-		eventId: subEvent.id,
-		sendedPorts: [],
-		listenPorts: [actionNode.getPort('' + subEvent.id)]
-		}
-		eventsWithPorts.set( subEvent.id, newPortKeeper);
-		}
-		})
-
-		action.sendedEvents.forEach((sendEvent) => {
-		if (eventsWithPorts.has(sendEvent.event.id)){
-		eventsWithPorts.get(sendEvent.event.id).sendedPorts.push(actionNode.getPort('' + sendEvent.event.id));
-		}else{
-		let newPortKeeper = {
-		eventId: sendEvent.event.id,
-		sendedPorts: [actionNode.getPort('' + sendEvent.event.id)],
-		listenPorts: []
-		}
-		eventsWithPorts.set(sendEvent.event.id, newPortKeeper);
-		}
-		})
-		});
-
-
-
-		eventsWithPorts.forEach((portKeeper, id) =>{
-			portKeeper.sendedPorts.forEach(sendedPort => {
-				portKeeper.listenPorts.forEach(listenPort => {
-					let link = new DefaultLinkModel();
-					link.setSourcePort(sendedPort);
-					link.setTargetPort(listenPort);
-					model.addLink(link);
-				})
-			})
-		});
-		*/
-	}
-
-
-
-
-// 	addBase = (base) => {
-// 		let newPrecedentBase = {
-// 			baseId: base.id,
-// 			precedentId: this.props.currentGroup,
-// 			x: 0,
-// 			y: 0,
-// 		}
-//
-// 		axios.post('/api/precedent/base', newPrecedentBase)
-// 			.then(response => {
-// 				this.props.setCurrentPrecedent(this.props.currentGroup);
-// 			}).catch(error => {
-//
-// 			});
-// 	}
-//
-//
-// 	updatePrecedentBase = (base,x,y) => {
-// 		let newPrecedentBase = {
-// 			baseId: base.id,
-// 			precedentId: this.props.currentGroup,
-// 			x: x,
-// 			y: y,
-// 		}
-//
-// 	axios.post('/api/precedent/base', newPrecedentBase)
-// 		.then(response => {
-// 			console.log(response.data);
-// 		}).catch(error => {
-//
-// 		});
-// 	}
-//
-// 	removeBase = (base) => {
-// 		axios.delete('/api/precedent/base/'+ base.id + '/' + this.props.currentGroup)
-// 			.then(response => {
-// 				this.props.setCurrentPrecedent(this.props.currentGroup);
-// 			}).catch(error => {
-//
-// 			});
-// 	}
-
-
-
-
-	render() {
-		return (<>
-			<h1>canvas</h1>
-			 <CanvasWidget className="diagram-container" engine={engine} />
-		</>)
-	}
-}
-
-export default BodyWidgetClass;
-
-// const mapStateToProps = function(state){
-// 	return {
-// 		//events: state.eventState.events,
-// 		//basePrecedents: state.groupState.basePrecedents,
-// 		//currentGroup: state.groupState.currentGroup,
-// 		//setCurrentPrecedent: state.groupState.setCurrentPrecedent,
-// 		//precedentBasesFunc: state.groupState.precedentBasesFunc,
-// 		//types: state.typeState.types,
-// 		//multiplicities: state.multiplicityState.multiplicities,
-// 	}
-// }
-//
-// const EntitiesCanvas = connect(mapStateToProps) (BodyWidgetClass);
-// export default EntitiesCanvas;

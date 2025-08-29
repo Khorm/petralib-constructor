@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Worfklow</title>
+    <link rel="stylesheet" th:href="@{/block/block_react.css}" />
+</head>
+<body>
+    <div id="react"></div>
+    <script type="text/javascript" th:src="@{/block/block.js}"></script>
+    <script th:inline="javascript">
+        function getProjectId(){
+            return [[${projectId}]] ;
+        }
+
+        function getBlockId(){
+            return [[${blockId}]] ;
+        }
+
+        function getBlockType(){
+            return [[${blockType}]] ;
+        }
+    </script>
+</body>
+</html>

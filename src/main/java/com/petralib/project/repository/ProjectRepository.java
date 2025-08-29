@@ -15,4 +15,6 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 //            " auth_user_id = :userId) as pua on p.project_id = pua.auth_project_id", nativeQuery = true)
     @Query("select pua.project from ProjectUserRolesEntity pua where pua.user.id = :userId")
     List<ProjectEntity> getProjectsByUser(@Param("userId") Long userId);
+
+
 }

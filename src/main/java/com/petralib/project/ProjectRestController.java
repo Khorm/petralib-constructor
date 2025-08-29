@@ -3,16 +3,22 @@ package com.petralib.project;
 import com.petralib.auth.security.model.SecurityUser;
 import com.petralib.project.dto.ProjectDto;
 import com.petralib.project.dto.ProjectMapper;
+import com.petralib.project.dto.UserDto;
+import com.petralib.project.dto.UserMapper;
 import com.petralib.project.entity.ProjectEntity;
 import com.petralib.project.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -23,13 +29,40 @@ public class ProjectRestController {
 
     ProjectService projectService;
     ProjectMapper projectMapper;
+    UserMapper userMapper;
 
     @GetMapping
-    public List<ProjectDto> getProjects(Authentication authentication){
+    public List<ProjectDto> getProjects(Authentication authentication) {
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
         System.out.println(securityUser.getUsername());
         List<ProjectEntity> projectEntities = projectService.getProjectsForUser(securityUser.getId());
         return projectMapper.map(projectEntities);
+    }
+
+    @GetMapping("/current-user")
+    public UserDto getCurrentUser(Authentication authentication) {
+        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        return userMapper.securityUserToDto(securityUser);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> save(Authentication authentication, @Valid @RequestBody ProjectDto projectDto, Errors errors) {
+        if (errors.hasErrors()) {
+            Collection<String> validationErrors = errors.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
+        }
+        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+
+        ProjectEntity entity = projectService.save(projectDto, securityUser.getUser());
+        ProjectDto answer = projectMapper.entityToDto(entity);
+        return ResponseEntity.ok(answer);
+    }
+
+    @DeleteMapping("{projectId}")
+    public ResponseEntity<?> delete(@PathVariable Long projectId) {
+        projectService.delete(projectId);
+        return ResponseEntity.ok(projectId);
     }
 
 }

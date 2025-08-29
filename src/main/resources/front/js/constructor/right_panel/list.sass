@@ -1,0 +1,21 @@
+.panel
+    width: 100vh
+    height: auto
+    background: Gainsboro
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+
+.entity
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: row
+    &:hover
+        background-color: darkgray
+
+.entity-chosen
+    @extend .entity
+    border-color: black
+    border: 2px solid
+

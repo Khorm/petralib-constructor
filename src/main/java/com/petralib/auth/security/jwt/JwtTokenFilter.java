@@ -12,6 +12,10 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
+/**
+ * Сам фильтр, который добавляется перед стандартным
+ * Контролирует выовы проверки токенов и выставляет аутентификацию
+ */
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
 

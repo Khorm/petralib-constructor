@@ -1,9 +1,6 @@
 package com.petralib.auth.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +15,9 @@ import org.springframework.stereotype.Component;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * —ервис, обслуживающий расчет токенов
+ */
 @Component
 public class JwtTokenProvider {
 
@@ -53,8 +53,13 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-        return !claimsJws.getBody().getExpiration().before(new Date());
+        try {
+            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return !claimsJws.getBody().getExpiration().before(new Date());
+        }catch (ExpiredJwtException e){
+            return false;
+        }
+
     }
 
     public Authentication getAuthentication(String token) {

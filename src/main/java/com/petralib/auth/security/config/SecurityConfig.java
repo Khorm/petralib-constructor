@@ -14,11 +14,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     private final JwtConfigure jwtConfigure;
 
@@ -41,10 +42,14 @@ public class SecurityConfig {
 
                     authorizeHttpRequests.anyRequest()
                             .authenticated();
-                }
 
+                }
         );
         http.apply(jwtConfigure);
+        http.formLogin( form -> form
+                .loginPage("/login")
+                .permitAll()
+        );
 
         return http.build();
     }
@@ -59,4 +64,11 @@ public class SecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .build();
     }
+
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(new SecurityRedirectInterceptor());
+//    }
+
+
 }

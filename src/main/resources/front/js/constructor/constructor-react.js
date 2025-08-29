@@ -5,26 +5,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Provider } from 'react-redux'
 import store from './store'
 
-import WorkflowList from './workflow/workflow-list';
-import BodyWidgetClass from './canvas/canvas';
-//import WorkflowTree from './workflow/workflow-tree'
-//import WorkflowList from './workflow/workflow-list';
+import List from './right_panel/list';
+import Canvas from './canvas/canvas';
+
+import './constructor.sass'
 
 
 
 export default function App() {
 
-//    const [projects, setProjects] = useState([]);
-//
-//    function onProjectChoose(projectId){
-//        console.log(projectId);
-//    }
-
-//            <WorkflowList/>
     return (
-        <div>
-            <WorkflowList/>
-            <BodyWidgetClass/>
+        <div className='constructor-form'>
+            <Canvas/>
+            <List/>
         </div>
     )
 }

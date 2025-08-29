@@ -1,13 +1,12 @@
 package com.petralib.variable.dto;
 
-import com.petralib.variable.Multiplicity;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+@Deprecated
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 public class VariableDto {

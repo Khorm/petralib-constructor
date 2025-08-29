@@ -14,33 +14,27 @@ export class ActionModel extends Model {
 	constructor(options = {}) {
 		super(options);	
 
-		this.subscribedSignals = options.subscribedSignals;
-		this.sendSignals = options.sendSignals;
+		this.subscribedSignal = options.subscribedSignal;
+		this.sendSignal = options.sendSignal;
 		this.widgetType = 'action';
 		this.blockType = options.blockType;
 		
 				
 		// setup an in and out port
-		if (this.subscribedSignals !== undefined){
-			this.subscribedSignals.forEach((signal)=>{
-			    let port = new DefaultPortModel({
-                                in: true,
-                                name: signal.id
-                            })
-                port.setLocked(true);
-				this.addPort(port);
-			});
+		if (this.subscribedSignal !== undefined){
+			let port = new DefaultPortModel({
+                            in: true,
+                        })
+            port.setLocked(true);
+            this.addPort(port);
 		}
 		
 		if (this.sendSignals !== undefined){
-			this.sendSignals.forEach((signal)=>{
-			 let port = new DefaultPortModel({
-                            in: false,
-                            name: signal.id
-                        })
-                port.setLocked(true);
-				this.addPort(port);
-			});	
+            let port = new DefaultPortModel({
+                        in: false,
+                    })
+            port.setLocked(true);
+            this.addPort(port);
 		}
 		
 	}
@@ -49,8 +43,8 @@ export class ActionModel extends Model {
 		return {
 			...super.serialize(),
 			
-			subscribedSignals: this.subscribedSignals,
-			sendSignals: this.sendSignals,
+			subscribedSignal: this.subscribedSignal,
+			sendSignal: this.sendSignal,
 			widgetType: this.widgetType
 		};
 	}
@@ -58,8 +52,8 @@ export class ActionModel extends Model {
 	deserialize(ob, engine) {
 		super.deserialize(ob, engine);
 	
-		this.subscribedSignals = ob.subscribedSignals;
-		this.sendSignals = ob.sendSignals;
+		this.subscribedSignal = ob.subscribedSignal;
+		this.sendSignal = ob.sendSignal;
 		this.widgetType = ob.widgetType;
 	}
 

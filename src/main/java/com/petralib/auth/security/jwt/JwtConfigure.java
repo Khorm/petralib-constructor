@@ -7,6 +7,9 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
+/**
+ * Класс добавлявляет фильтер до стандартного фильтра аутентификации
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtConfigure extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
@@ -16,4 +19,6 @@ public class JwtConfigure extends SecurityConfigurerAdapter<DefaultSecurityFilte
     public void configure(HttpSecurity httpSecurity) {
         httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
+
 }

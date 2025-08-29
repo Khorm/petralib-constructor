@@ -1,54 +1,27 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
+import React, { useState, useEffect  } from 'react';
 import axios from 'axios';
-import { CookiesProvider } from 'react-cookie';
-import { withCookies, Cookies } from 'react-cookie';
-import { instanceOf } from 'prop-types';
+import { withCookies, Cookies, useCookies } from 'react-cookie';
 
-//import 'bootstrap/dist/css/bootstrap.min.css';
+import './login.sass';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-//import store from './redux-mod';
-
-
-class App extends React.Component{
-
-     static propTypes = {
-        cookies: instanceOf(Cookies).isRequired
-      };
-
-    constructor(props) {
-        super(props);
-        const { cookies } = props;
-        this.state = {
-            login: "",
-            password: ""
-        }
-    }
+import { Button } from '@mui/material';
 
 
+export default function Login(){
+    const [cookies, setCookie] = useCookies(['Authorization']);
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
 
-    changeLogin = (event) => {
-         this.setState({
-            login: event.target.value
-         });
-    }
 
-    changePass = (event) => {
-         this.setState({
-            password: event.target.value
-         });
-    }
-
-    sendLogin = () => {
-
-        const { cookies } = this.props;
+    function sendLogin(){
         axios.post('/api/v1/auth/login', {
-          email: this.state.login,
-          password: this.state.password
+          email: login,
+          password: password
         })
         .then(function (response) {
-          cookies.set('Authorization', response.data.token, { path: '/' });
-          window.location.href = '/projects';
+            setCookie('Authorization', response.data.token, { path: '/' });
+            window.location.href = '/projects';
         })
         .catch(function (error) {
           console.log(error);
@@ -56,30 +29,15 @@ class App extends React.Component{
     }
 
 
-    render (){
+    return (
+    <>
+        <div className = 'login-form'>
+            <h2>Petra</h2>
+            <input type="text" onChange={(e) => setLogin(e.target.value)} value={login}/>
+            <input type="password" onChange={(e) => setPassword(e.target.value)} value={password}/>
+            <Button variant="outlined" onClick={sendLogin}>Enter</Button>
 
-        return (
-        <>
-            <div>
-                <h2>Login</h2>
-                <input type="text" onChange={this.changeLogin} value={this.state.login}/>
-                <input type="password" onChange={this.changePass} value={this.state.password}/>
-                <button type="button" className="btn btn-primary btn-sm" onClick={this.sendLogin}>send</button>
-            </div>
-        </>
-        );
-    }
-
+        </div>
+    </>
+    );
 }
-
-export default withCookies(App);
-
-//const container = document.getElementById('react');
-//const root = createRoot(container);
-//root.render(<CookiesProvider>
-//                  <App />
-//                </CookiesProvider>);
-//ReactDOM.render(
-//   		<App/>,
-//  document.getElementById('react')
-//);

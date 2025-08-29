@@ -14,7 +14,6 @@ export class Model extends NodeModel {
 		});
 		
 		this.name = options.name;
-		this.variables = options.variables;
 		this.id = options.id;
 
 		// setup an in and out port
@@ -31,7 +30,6 @@ export class Model extends NodeModel {
 			...super.serialize(),
 			
 			name: this.name,
-			variables: this.variables,
 			id: this.id
 		};
 	}
@@ -40,7 +38,6 @@ export class Model extends NodeModel {
 		super.deserialize(ob, engine);
 	
 		this.name = ob.name;
-		this.variables = ob.variables;
 		this.id = ob.id;
 	}
 }

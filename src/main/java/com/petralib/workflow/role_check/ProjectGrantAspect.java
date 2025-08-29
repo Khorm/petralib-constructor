@@ -12,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class ProjectGrantAspect {
 
 //    @Pointcut("annotation(ProjectGrant)")
@@ -33,18 +33,18 @@ public class ProjectGrantAspect {
      * @return
      * @throws Throwable
      */
-    @Around(value = "@annotation(projectGrant)")
-    public Object callAdvice(ProceedingJoinPoint joinPoint, ProjectGrant projectGrant) throws Throwable {
-        Long projectId = (Long) joinPoint.getArgs()[0];
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-
-        boolean isReadPermitted = projectService.isUserAcceptTo(securityUser.getId(), projectId, projectGrant.userAction());
-        if (!isReadPermitted){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).build();
-        }else {
-            return joinPoint.proceed();
-        }
-    }
+//    @Around(value = "@annotation(projectGrant)")
+//    public Object callAdvice(ProceedingJoinPoint joinPoint, ProjectGrant projectGrant) throws Throwable {
+//        Long projectId = (Long) joinPoint.getArgs()[0];
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+//
+//        boolean isReadPermitted = projectService.isUserAcceptTo(securityUser.getId(), projectId, projectGrant.userAction());
+//        if (!isReadPermitted){
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).build();
+//        }else {
+//            return joinPoint.proceed();
+//        }
+//    }
 
 }
