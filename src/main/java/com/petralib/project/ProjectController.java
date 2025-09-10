@@ -3,7 +3,7 @@ package com.petralib.project;
 import com.petralib.auth.UserAction;
 import com.petralib.block.enums.BlockType;
 import com.petralib.project.service.ProjectService;
-import com.petralib.workflow.role_check.ProjectGrant;
+import com.petralib.service.role_check.ProjectGrant;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

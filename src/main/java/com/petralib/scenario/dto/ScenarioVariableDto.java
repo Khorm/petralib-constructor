@@ -15,8 +15,10 @@ public class ScenarioVariableDto {
     Long scenarioVariableId;
     String type;
     Long consumerVariableId;
-    Long producerVariableId;
-    Long sourceId;
+    Long producerId;
     List<TypeInheritanceDto> typeInheritance = new ArrayList<>();
     String script;
+    Long localId;
+    Long parentId;
+    Long blockVariableId;
 }

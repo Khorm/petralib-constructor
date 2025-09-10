@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { set, clear } from './scenario-variable-slice';
+import { add } from './selector/id/local-id-slice';
 
 import ScenarioVariable from './scenario-variable';
 
@@ -28,21 +29,35 @@ const style = {
 
 export default function ScenarioBlockModal({scenarioBlock, workflow, open, handleClose}){
 
-    const [inputVariables, setInputVariables] = React.useState([]);
+    const [allVariables, setAllVariables] = React.useState([]);
     const [currentVariables, setCurrentVariables] = React.useState([]);
     const dispatch = useDispatch();
     const scenarioVariables = useSelector((state) =>state.scenarioVariables.list);
+    
 
 
     useEffect(() => {
+        console.log('scenarioBlock', scenarioBlock)
         axios.get('/api/v1/scenario/' + scenarioBlock.id + '/variables',{ params: {
             projectId: getProjectId()
         }})
         .then((response) => {
-            setInputVariables(response.data.inputVariables);
-            setCurrentVariables(response.data.currentVariables);
-            console.log("LOADED : ", response.data.scenarioVariables)
-            dispatch(set(response.data.scenarioVariables));
+            
+            let variables = [];
+            let localVariables = [];
+            let scenarioValues = [];
+            variables.push(...response.data.inputVariables);           
+            console.log("LOADED : ", response.data)  
+            response.data.currentVariables.forEach(element => {
+                variables.push(element.variable);
+                localVariables.push(element.variable);                
+                scenarioValues.push(...element.scenarioVariables);
+                dispatch(add({id:element.variable.id, localId: element.maxLocalId}));
+            });
+            setAllVariables(variables);
+            setCurrentVariables(localVariables)  
+                               
+            dispatch(set(scenarioValues));
         }).catch((error) => {
             console.error(error);
             alert(error.message)
@@ -52,6 +67,7 @@ export default function ScenarioBlockModal({scenarioBlock, workflow, open, handl
 
 
     function save() {
+        
         axios.post('/api/v1/scenario/' + scenarioBlock.id + '/variables',scenarioVariables,{ params: {
                 projectId: getProjectId()
             }}
@@ -75,8 +91,7 @@ export default function ScenarioBlockModal({scenarioBlock, workflow, open, handl
                 <h2>{scenarioBlock.name}</h2>
                 {currentVariables.map((currentVariable, index) => {
                     return(
-                        <ScenarioVariable key={index} currentVariable = {currentVariable}  inputVariables={inputVariables}
-                        currentVariables={currentVariables}/>
+                        <ScenarioVariable key={index} currentVariable = {currentVariable} inputVariables={allVariables}/>
                     )
                 })}
                 <Button variant="outlined" onClick={save}>Save</Button>

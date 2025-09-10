@@ -20,7 +20,7 @@ export default function ScriptVariable({currentVariable, removeVar}){
             scenarioVariables => scenarioVariables.filter(variable => variable.consumerVariableId === currentVariable.id).map(data => new ScenarioVariable(data))
         )
 
-    //сценарные переменные только для этого скрипта
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     const scenarioVariables = useSelector(selectCurrentVariable);
 
     useReduxInitEffect(scenarioVariables, (initialData) => {
@@ -65,9 +65,9 @@ export default function ScriptVariable({currentVariable, removeVar}){
     function createVarName(variable){
         let type;
         if (variable.multiplicity === 'COLLECTION'){
-            type = 'Collection<' + variable.varType.name + '>';
+            type = 'Collection<' + variable.fieldType.name + '>';
         }else{
-            type = variable.varType.name;
+            type = variable.fieldType.name;
         }
         return (<h4> {type + " : " + variable.name} </h4> );
     }

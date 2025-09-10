@@ -1,16 +1,17 @@
 package com.petralib.block.dto;
 
-import com.petralib.type.dto.TypeShortDto;
-import com.petralib.type.enums.Multiplicity;
+import com.petralib.ctype.dto.CTypeShortDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
+@Getter
+@Setter
 public class VariableDto {
     Long id;
 
@@ -25,6 +26,7 @@ public class VariableDto {
     @NotEmpty(message = "Pin type is empty")
     String pinType;
 
+
     @NotNull(message = "Variable type is empty")
-    TypeShortDto varType;
+    CTypeShortDto variableType;
 }

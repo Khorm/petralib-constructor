@@ -1,21 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios';
 
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Popper from '@mui/material/Popper';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './type-selector.sass';
 
 import TypeDropdown from './dropdown';
 
 
-//baseTypeId - айди типа от котрого идет отсчет его значений
-//typeArray - список выбранных переменных
-//setNewTypesArray - функция выставления новой коллекции
+//baseTypeId - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//typeArray - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//setNewTypesArray - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
 
     const [nextVarAccept, setNextVarAccept] = React.useState(false);
@@ -33,8 +27,8 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
         })
     }
 
-    function handleChange(typeVar, remove = false) {
-        if (typeVar === undefined){
+    function selectField(selectedField, remove = false) {
+        if (selectedField === undefined){
             setDropdownObj(undefined);
             return;
         }
@@ -43,9 +37,9 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
         if (typeArray !== undefined){
             let find = false;
             for (let i = 0; i < typeArray.length; i++){
-                if (typeVar.ownerId === typeArray[i].ownerId || typeVar.ownerId === baseTypeId){
+                if (selectedField.ownerId === typeArray[i].ownerId || selectedField.ownerId === baseTypeId){
                     if (!remove){
-                        newTypeArr.push(typeVar);
+                        newTypeArr.push(selectedField);
                     }
                     find = true;
                     break;
@@ -55,12 +49,11 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
             }
 
             if (!find && !remove){
-                newTypeArr.push(typeVar);
+                newTypeArr.push(selectedField);
             }
         }else{
-            newTypeArr.push(typeVar)
+            newTypeArr.push(selectedField)
         }
-        console.log("setNewTypesArray",  newTypeArr);
         setNewTypesArray(newTypeArr);
         setDropdownObj(undefined);
     }
@@ -69,7 +62,7 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
         if (typeArray === undefined || typeArray.length == 0){
             return;
         }
-        axios.get('/api/v1/type/values/' + typeArray[typeArray.length - 1].varType.id,{ params: {
+        axios.get('/api/v1/type/fields/' + typeArray[typeArray.length - 1].fieldTypeId,{ params: {
             projectId: getProjectId()
         }})
         .then((response) => {
@@ -93,29 +86,37 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
                             {index < typeArray.length-1 &&
                                 <h4>|</h4>
                             }
-                            <TypeDropdown owner={dropdownObj} chooseVariableFunc={handleChange}/>
+                            <TypeDropdown owner={dropdownObj} chooseVariableFunc={selectField}/>
                         </div>
                     )
                 })}
                 {nextVarAccept &&
                     <div className='variable-container'>
                     <h4>|</h4>
-                    <button className='btn-type add-type-btn' type="button" onClick={(e)=>handleOpen(typeArray[typeArray.length - 1].varType.id,e)}>
+                    <button className='btn-type add-type-btn' type="button" onClick={(e)=>handleOpen(typeArray[typeArray.length - 1].fieldType.id,e)}>
                         Select a variable...
                     </button>
-                    <TypeDropdown owner={dropdownObj} chooseVariableFunc={handleChange}/>
+                    <TypeDropdown owner={dropdownObj} chooseVariableFunc={selectField}/>
                     </div>
                 }
 
             </div>
         )
     }else{
-        return(<div className='variable-container'>
-            <button type="button" className='btn-type add-type-btn' onClick={(e)=>handleOpen(baseTypeId,e)}>
-                Select a variable...
-            </button>
-            <TypeDropdown owner={dropdownObj} chooseVariableFunc={handleChange}/>
-        </div>)
+        
+        return(
+            <div>
+            {nextVarAccept && 
+                <div className='variable-container'>
+                    <button type="button" className='btn-type add-type-btn' onClick={(e)=>handleOpen(baseTypeId,e)}>
+                        Select a variable...
+                    </button>
+                    <TypeDropdown owner={dropdownObj} chooseVariableFunc={selectField}/>
+                </div>
+            }
+            </div>
+        )
+        
 
     }
 }

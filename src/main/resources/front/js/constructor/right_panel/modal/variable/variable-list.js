@@ -3,7 +3,6 @@ import axios from 'axios';
 
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,7 +12,7 @@ import Variable from './variable';
 
 
 
-const VariableList = forwardRef(({incomeVariables, setVariables}, ref) => {
+const VariableList = forwardRef(({incomeVariables, setVariables, pinAccepted = true}, ref) => {
 
     const [types, setTypes] = React.useState([]);
 
@@ -64,7 +63,8 @@ const VariableList = forwardRef(({incomeVariables, setVariables}, ref) => {
 
                 {incomeVariables.map((variable, index) => {
                     return(
-                        <Variable key={index} index={index} variable = {variable} types = {types} removeVar={removeVariable} ref={ref.current[index]} />
+                        <Variable key={index} index={index} variable = {variable} 
+                        types = {types} removeVar={removeVariable} ref={ref.current[index]} pinAccepted={pinAccepted}/>
                     )
                 })}
         </div>

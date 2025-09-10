@@ -72,7 +72,7 @@ export default function TypeModal({type, open, handleClose}){
           >
             <Box sx={style}>
               <div><TextField value={name} onChange = {(e) => setName(e.target.value)} id="outlined-basic" label="Name" variant="outlined" /></div>
-              <VariableList incomeVariables={variables} setVariables={setVariables} ref={childrenRefs} />
+              <VariableList incomeVariables={variables} setVariables={setVariables} ref={childrenRefs} pinAccepted={false}/>
               <Button variant="outlined" onClick={saveType}>Save</Button>
             </Box>
           </Modal>

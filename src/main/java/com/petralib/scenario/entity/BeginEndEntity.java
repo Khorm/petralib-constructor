@@ -9,7 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "start_stop_point")
+@Table(name = "start_stop_points")
 @Getter
 @Setter
 public class BeginEndEntity {
@@ -31,7 +31,7 @@ public class BeginEndEntity {
     BlockEntity workflow;
 
     @OneToOne
-    @JoinColumn(name = "connected_block")
+    @JoinColumn(name = "connected_scenario_block")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     ScenarioBlockEntity connectedBlock;
 }

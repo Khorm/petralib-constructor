@@ -32,12 +32,13 @@ export default function Canvas() {
     const [openModal, setOpenModal] = useState(false);
 
 
-    useEffect(() => {
+    useEffect(() => {            
         addBlock(addingBlock);
     }, [addingBlock])
 
 
     useEffect(() => {
+        console.log("UPDATE WORKFLOW ", workflow);
         if (workflow !== undefined) {
             if (prevWorkflowRef.current !== undefined) {
                 save();
@@ -49,102 +50,102 @@ export default function Canvas() {
                     workflowId: workflow,
                 }
             })
-                .then((response) => {
-                    let blocks = response.data.scenarioBlocks;
-                    let beginEnd = response.data.beginEndDtoList;
-                    console.log('response.data', response.data)
-                    const model = new DiagramModel();
+            .then((response) => {
+                let blocks = response.data.scenarioBlocks;
+                let beginEnd = response.data.beginEndDtoList;
+                console.log('response.data', response.data)
+                const model = new DiagramModel();
 
-                    model.registerListener({
-                        linksUpdated: editLinks
+                model.registerListener({
+                    linksUpdated: editLinks
+                });
+
+                engine.setModel(model);
+                let dict = {};
+                blocks.forEach((block) => {
+                    let blockColor;
+                    if (block.type === 'ACTION') {
+                        blockColor = 'LightGreen';
+                    } else {
+                        blockColor = 'PowderBlue';
+                    }
+
+                    let node = new DefaultNodeModel({
+                        name: block.name,
+                        color: blockColor,
+                        block: block,
                     });
+                    dict[block.id] = node;
+                    node.setPosition(block.x, block.y);
+                    const portOut = node.addOutPort('Out');
+                    const portIn = node.addInPort("In");
 
-                    engine.setModel(model);
-                    let dict = {};
-                    blocks.forEach((block) => {
-                        let blockColor;
-                        if (block.type === 'ACTION') {
-                            blockColor = 'LightGreen';
-                        } else {
-                            blockColor = 'PowderBlue';
-                        }
+                    engine.getModel().addNode(node);
+                    node.registerListener({
+                        selectionChanged: (e) => choose(e)
+                    });
+                });
 
-                        let node = new DefaultNodeModel({
-                            name: block.name,
-                            color: blockColor,
-                            block: block,
-                        });
-                        dict[block.id] = node;
-                        node.setPosition(block.x, block.y);
+                blocks.forEach((block) => {
+                    if (block.nextBlock === null) {
+                        return;
+                    }
+                    let link = new DefaultLinkModel();
+
+                    link.setSourcePort(dict[block.id].getPort("Out"));
+                    link.setTargetPort(dict[block.nextBlock].getPort("In"));
+                    link.sourceNode = dict[block.id];
+                    link.targetNode = dict[block.nextBlock];
+                    link.registerListener({
+                        entityRemoved: removeLink,
+                    })
+
+                    engine.getModel().addLink(link);
+                });
+
+                beginEnd.forEach((beginEndBlock) => {
+                    let node = new DefaultNodeModel({
+                        name: beginEndBlock.pointType,
+                        color: 'gray',
+                        beginEndBlock: beginEndBlock,
+                    });
+                    node.setPosition(beginEndBlock.x, beginEndBlock.y);
+                    engine.getModel().addNode(node);
+
+                    let link = new DefaultLinkModel();
+                    link.registerListener({
+                        entityRemoved: removeLink,
+                    })
+
+                    if (beginEndBlock.pointType === 'START') {
                         const portOut = node.addOutPort('Out');
-                        const portIn = node.addInPort("In");
 
-                        engine.getModel().addNode(node);
+                        if (beginEndBlock.connectedBlockId === null) return;
+                        link.setSourcePort(portOut);
+                        link.setTargetPort(dict[beginEndBlock.connectedBlockId].getPort("In"));
+                        link.sourceNode = beginEndBlock.id;
+                        link.targetNode = dict[beginEndBlock.connectedBlockId];
+                        engine.getModel().addLink(link);
+
+                    } else {
+                        const portIn = node.addInPort("In");
+                        console.log('EXIT ', node);
                         node.registerListener({
                             selectionChanged: (e) => choose(e)
                         });
-                    });
 
-                    blocks.forEach((block) => {
-                        if (block.nextBlock === null) {
-                            return;
-                        }
-                        let link = new DefaultLinkModel();
-
-                        link.setSourcePort(dict[block.id].getPort("Out"));
-                        link.setTargetPort(dict[block.nextBlock].getPort("In"));
-                        link.sourceNode = dict[block.id];
-                        link.targetNode = dict[block.nextBlock];
-                        link.registerListener({
-                            entityRemoved: removeLink,
-                        })
-
+                        if (beginEndBlock.connectedBlockId === null) return;
+                        link.setTargetPort(portIn);
+                        link.setSourcePort(dict[beginEndBlock.connectedBlockId].getPort("Out"));
+                        link.sourceNode = beginEndBlock.id;
+                        link.targetNode = dict[beginEndBlock.connectedBlockId];
                         engine.getModel().addLink(link);
-                    });
+                    }
+                })
 
-                    beginEnd.forEach((beginEndBlock) => {
-                        let node = new DefaultNodeModel({
-                            name: beginEndBlock.pointType,
-                            color: 'gray',
-                            beginEndBlock: beginEndBlock,
-                        });
-                        node.setPosition(beginEndBlock.x, beginEndBlock.y);
-                        engine.getModel().addNode(node);
+                engine.repaintCanvas();
 
-                        let link = new DefaultLinkModel();
-                        link.registerListener({
-                            entityRemoved: removeLink,
-                        })
-
-                        if (beginEndBlock.pointType === 'START') {
-                            const portOut = node.addOutPort('Out');
-
-                            if (beginEndBlock.connectedBlockId === null) return;
-                            link.setSourcePort(portOut);
-                            link.setTargetPort(dict[beginEndBlock.connectedBlockId].getPort("In"));
-                            link.sourceNode = beginEndBlock.id;
-                            link.targetNode = dict[beginEndBlock.connectedBlockId];
-                            engine.getModel().addLink(link);
-
-                        } else {
-                            const portIn = node.addInPort("In");
-                            console.log('EXIT ', node);
-                            node.registerListener({
-                                selectionChanged: (e) => choose(e)
-                            });
-
-                            if (beginEndBlock.connectedBlockId === null) return;
-                            link.setTargetPort(portIn);
-                            link.setSourcePort(dict[beginEndBlock.connectedBlockId].getPort("Out"));
-                            link.sourceNode = beginEndBlock.id;
-                            link.targetNode = dict[beginEndBlock.connectedBlockId];
-                            engine.getModel().addLink(link);
-                        }
-                    })
-
-                    engine.repaintCanvas();
-
-                });
+            });
         }
 
     }, [workflow]);
@@ -214,6 +215,8 @@ export default function Canvas() {
             let block = nodes[i].options.block;
             let beginEndBlock = nodes[i].options.beginEndBlock;
 
+            console.log("SAVE ", block);
+            
             if (block) {
                 scenarioBlocks.push({
                     id: block.id,
@@ -259,7 +262,8 @@ export default function Canvas() {
 
 
     function addBlock(block) {
-        if (!block) return;
+        console.log("ADD", block, workflow);
+        if (!block || !workflow || block.id === workflow ) return;        
         let allNodes = engine.getModel().getNodes();
         for (let i = 0; i < allNodes.length; i++) {
             if (allNodes[i].options.block && allNodes[i].options.block.id === block.id) {
@@ -274,10 +278,17 @@ export default function Canvas() {
             blockColor = 'PowderBlue';
         }
 
+        const scenarioBlock = {
+            blockId: block.id,
+            name: block.name,
+            blockType: block.type,        
+
+        }
+
         const node = new DefaultNodeModel({
             name: block.name,
             color: blockColor,
-            block: block
+            block: scenarioBlock
         });
         node.setPosition(100, 100);
         const portOut = node.addOutPort('Out');
@@ -289,9 +300,8 @@ export default function Canvas() {
         engine.repaintCanvas();
     }
 
-    function choose(e) {
-        console.log("CHOOSING ,", chosenBlock.current);
 
+    function choose(e) {
         if (!e.isSelected) return;
         chosenBlock.current = e.entity.options;
     }
@@ -299,6 +309,7 @@ export default function Canvas() {
 
     function openMod() {
         save(() => {
+            if (chosenBlock.current === undefined) return;
             if (!openModal) {
                 setOpenModal(true);
             } else {
@@ -317,12 +328,12 @@ export default function Canvas() {
             </div>
             <CanvasWidget className="diagram-container" engine={engine} />
             {openModal && chosenBlock.current.block &&
-                <ScenarioBlockModal scenarioBlock={chosenBlock.current} workflow={prevWorkflowRef.current}
+                <ScenarioBlockModal scenarioBlock={chosenBlock.current.block} workflow={prevWorkflowRef.current}
                     open={openModal} handleClose={openMod} />
             }
 
             {openModal && chosenBlock.current.beginEndBlock &&
-                <WorkflowExitModal workflow={prevWorkflowRef.current}
+                <WorkflowExitModal workflow={prevWorkflowRef.current.beginEndBlock}
                     open={openModal} handleClose={openMod} />
             }
         </>

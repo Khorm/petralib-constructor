@@ -46,13 +46,14 @@ public class SecurityConfig implements WebMvcConfigurer {
                 }
         );
         http.apply(jwtConfigure);
-        http.formLogin( form -> form
+        http.formLogin(form -> form
                 .loginPage("/login")
                 .permitAll()
         );
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

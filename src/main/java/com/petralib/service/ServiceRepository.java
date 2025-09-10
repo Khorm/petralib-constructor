@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
 
@@ -21,8 +22,10 @@ public interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
     Page<ServiceEntity> findService(@Param("projectId") Long projectId,
                                  Pageable pageable);
 
-    @Query("SELECT COUNT(s) > 0 FROM ServiceEntity s where s.name = :name AND s.project.id = :projectId ")
-    boolean existsByName(@Param("name") String name, @Param("projectId") Long projectId);
+    @Query("FROM ServiceEntity s where s.name = :name AND s.project.id = :projectId ")
+    Optional<ServiceEntity> getByName(@Param("name") String name, @Param("projectId") Long projectId);
+
+
 
     @Query("FROM ServiceEntity se where se.project.id = :projectId")
     Collection<ServiceEntity> findServicesOfProject(@Param("projectId") Long projectId);

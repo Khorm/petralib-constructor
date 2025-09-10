@@ -25,7 +25,8 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     public List<ProjectEntity> getProjectsForUser(Long userId) {
-        return projectRepository.getProjectsByUser(userId);
+//        return projectRepository.getProjectsByUser(userId);
+        return projectRepository.findAll();
     }
 
     @Transactional(readOnly = true)
@@ -55,7 +56,7 @@ public class ProjectService {
         ProjectEntity project = projectRepository.findById(projectDto.getId()).orElse(new ProjectEntity());
         project.setName(projectDto.getName());
         project.setDescription(projectDto.getDescription());
-        project.addUserRole(user);
+//        project.addUserRole(user);
         return projectRepository.save(project);
     }
 

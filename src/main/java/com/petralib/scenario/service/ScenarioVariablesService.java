@@ -6,11 +6,13 @@ import com.petralib.block.enitity.VariableEntity;
 import com.petralib.block.enums.BlockType;
 import com.petralib.block.mapper.VariableMapper;
 import com.petralib.block.service.BlockService;
+import com.petralib.scenario.dto.CurrentVariableDto;
 import com.petralib.scenario.dto.ScenarioVariableDto;
 import com.petralib.scenario.dto.ScenarioVariablesDto;
 import com.petralib.scenario.entity.BeginEndEntity;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
+import com.petralib.scenario.entity.TypeDependenceEntity;
 import com.petralib.scenario.enums.BeginEndType;
 import com.petralib.scenario.mapper.ScenarioVariableMapper;
 import com.petralib.scenario.repo.BeginEndRepo;
@@ -37,22 +39,22 @@ public class ScenarioVariablesService {
     ScenarioVariableMapper scenarioVariableMapper;
     VariableMapper variableMapper;
     BlockService blockService;
+    TypeDependencyService typeDependencyService;
 
     @Transactional(readOnly = true)
     public ScenarioVariablesDto getVariables(Long scenarioBlockId) {
 
         ScenarioBlockEntity scenarioBlockEntity = scenarioBlockRepo.findById(scenarioBlockId).orElseThrow();
         Collection<VariableDto> previousVariables = variableMapper.map(getPreviousVariables(scenarioBlockEntity));
-        Collection<VariableDto> currentVariables = variableMapper.map(scenarioBlockEntity.getBlock().getVariables());
+        Collection<VariableEntity> currentVariables = scenarioBlockEntity.getBlock().getInVariables();
 
-        return new ScenarioVariablesDto(previousVariables, currentVariables,
-                scenarioVariableMapper.simpleMap(scenarioVariableRepo.findSimpleVariables(scenarioBlockId)));
+        return new ScenarioVariablesDto(previousVariables, createCurrentVariables(currentVariables, scenarioBlockEntity.getVariables()));
     }
 
     @Transactional
     public void saveVariables(Collection<ScenarioVariableDto> dtos, Long scenarioBlockId) {
 
-        Collection<ScenarioVariableEntity> variables = scenarioVariableRepo.findSimpleVariables(scenarioBlockId);
+        Collection<ScenarioVariableEntity> variables = scenarioVariableRepo.findVariables(scenarioBlockId);
         Set<Long> dtoVariableIds = dtos.stream().flatMapToLong(scenarioVariableDto ->
                         scenarioVariableDto.getScenarioVariableId() == null ? LongStream.empty() : LongStream.of(scenarioVariableDto.getScenarioVariableId()))
                 .boxed().collect(Collectors.toSet());
@@ -60,7 +62,10 @@ public class ScenarioVariablesService {
         Collection<ScenarioVariableEntity> newScenarioVars = new ArrayList<>();
         for (ScenarioVariableDto dto : dtos) {
             if (dto.getScenarioVariableId() == null) {
-                newScenarioVars.add(ScenarioVariableFactory.createVar(dto, scenarioBlockId));
+                ScenarioVariableEntity entity = ScenarioVariableFactory.createVar(dto, scenarioBlockId);
+                newScenarioVars.add(entity);
+                Collection<TypeDependenceEntity> typeDependenceEntities = typeDependencyService.createTypeDependency(dto.getTypeInheritance(), entity);
+                entity.setTypeDependence(typeDependenceEntities);
             }
         }
 
@@ -76,30 +81,30 @@ public class ScenarioVariablesService {
     }
 
     @Transactional(readOnly = true)
-    public ScenarioVariablesDto getWorkflowExitVariables(Long blockId) {
-        BlockEntity blockEntity = blockService.getBlockWithVariables(blockId);
-        if (blockEntity.getType() != BlockType.WORKFLOW) {
+    public ScenarioVariablesDto getWorkflowExitVariables(Long workflowId) {
+        BlockEntity workflow = blockService.getBlockWithVariables(workflowId);
+        if (workflow.getType() != BlockType.WORKFLOW) {
             throw new IllegalArgumentException("Block is not workflow");
         }
 
-        Optional<ScenarioBlockEntity> scenarioBlockEntityOpt = scenarioBlockRepo.findScenarioBlockForWorkflowExit(blockEntity.getId());
-        ScenarioBlockEntity lastScenarioBlock = beginEndRepo.getEndByWorkflow(blockId).getConnectedBlock();
+        //специальный блок для End блока Workflow
+        Optional<ScenarioBlockEntity> scenarioBlockEntityOpt = scenarioBlockRepo.findScenarioBlockForWorkflowExit(workflow.getId());
+        ScenarioBlockEntity lastScenarioBlock = beginEndRepo.getEndByWorkflow(workflowId).getConnectedBlock();
 
         Collection<VariableDto> inputVariables = Collections.emptyList();
 
-        if (lastScenarioBlock != null && lastScenarioBlock.getBlock() != null){
+        if (lastScenarioBlock != null && lastScenarioBlock.getBlock() != null) {
             inputVariables = variableMapper.map(lastScenarioBlock.getBlock().getVariables());
         }
         if (scenarioBlockEntityOpt.isEmpty()) {
-            return new ScenarioVariablesDto(inputVariables, variableMapper.map(blockEntity.getOutVariables()),
-                    Collections.emptyList());
+            return new ScenarioVariablesDto(inputVariables, createCurrentVariables(workflow.getOutVariables(), Collections.emptyList()));
         }
 
-        return new ScenarioVariablesDto(inputVariables, variableMapper.map(blockEntity.getOutVariables()),
-                scenarioVariableMapper.simpleMap(scenarioVariableRepo.findSimpleVariables(scenarioBlockEntityOpt.get().getId())));
+        return new ScenarioVariablesDto(inputVariables, createCurrentVariables(workflow.getOutVariables(), scenarioVariableRepo.findVariables(scenarioBlockEntityOpt.get().getId())));
+//                variableMapper.map(blockEntity.getOutVariables()),
+//                scenarioVariableMapper.simpleMap(scenarioVariableRepo.findVariables(scenarioBlockEntityOpt.get().getId())));
 
     }
-
 
     @Transactional
     public void saveVariablesExitWorkflow(Collection<ScenarioVariableDto> dtos, Long workflowId) {
@@ -119,15 +124,14 @@ public class ScenarioVariablesService {
 
     }
 
-
     private Collection<VariableEntity> getPreviousVariables(ScenarioBlockEntity scenarioBlockEntity) {
         ScenarioBlockEntity previousBlock = scenarioBlockEntity.getPreviousScenarioBlock();
         if (previousBlock == null) {
             List<BeginEndEntity> beginEndList = beginEndRepo.getStartEndByWorkflow(scenarioBlockEntity.getParentWorkflow().getId());
             for (BeginEndEntity beginEnd : beginEndList) {
-                if (beginEnd.getPointType() == BeginEndType.START) {
+                if (beginEnd.getPointType() == BeginEndType.START && beginEnd.getConnectedBlock() != null) {
                     if (!beginEnd.getConnectedBlock().getId().equals(scenarioBlockEntity.getId())) {
-                        throw new IllegalStateException("Block not connected");
+                        return Collections.emptyList();
                     } else {
                         return beginEnd.getWorkflow().getVariables();
                     }
@@ -136,7 +140,26 @@ public class ScenarioVariablesService {
         } else {
             return previousBlock.getBlock().getVariables();
         }
-        throw new NoSuchElementException("Variables not found");
+        return Collections.emptyList();
+    }
+
+    private Collection<CurrentVariableDto> createCurrentVariables(Collection<VariableEntity> currentVariables,
+                                                                  Collection<ScenarioVariableEntity> scenarioVariableEntities) {
+        Collection<CurrentVariableDto> currentVariableDtos = new ArrayList<>();
+        for (VariableEntity blockVariable : currentVariables) {
+            Collection<ScenarioVariableDto> scenarioVariableDtos = new ArrayList<>();
+            Long maxLocalId = 0L;
+            for (ScenarioVariableEntity scenarioVariable : scenarioVariableEntities) {
+                if (scenarioVariable.getOwnerVariable().getId().equals(blockVariable.getId())) {
+                    if (maxLocalId < scenarioVariable.getLocalId()) {
+                        maxLocalId = scenarioVariable.getLocalId();
+                    }
+                    scenarioVariableDtos.add(scenarioVariableMapper.entityToDto(scenarioVariable));
+                }
+            }
+            currentVariableDtos.add(new CurrentVariableDto(variableMapper.blockEntityToDto(blockVariable), maxLocalId, scenarioVariableDtos));
+        }
+        return currentVariableDtos;
     }
 
 

@@ -13,6 +13,5 @@ import java.util.Collection;
 @AllArgsConstructor
 public class ScenarioVariablesDto {
     Collection<VariableDto> inputVariables;
-    Collection<VariableDto> currentVariables;
-    Collection<ScenarioVariableDto> scenarioVariables;
+    Collection<CurrentVariableDto> currentVariables;
 }

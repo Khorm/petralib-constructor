@@ -1,7 +1,7 @@
 package com.petralib.scenario.entity;
 
-import com.petralib.type.entity.TypeEntity;
-import com.petralib.type.entity.TypeVariableEntity;
+import com.petralib.ctype.entity.CTypeEntity;
+import com.petralib.ctype.entity.CTypeFieldEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,12 +11,11 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Immutable
-@Table(name = "type_dependence")
+@Table(name = "type_dependencies")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
 public class TypeDependenceEntity {
 
     @Id
@@ -25,19 +24,18 @@ public class TypeDependenceEntity {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "scenario_variable", updatable = false, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "scenario_variable", updatable = false, insertable = false, nullable = false)
     ScenarioVariableEntity scenarioVariable;
 
     @ManyToOne
-    @JoinColumn(name = "current_type_variable", updatable = false, nullable = false)
+    @JoinColumn(name = "current_ctype_field", updatable = false, insertable = false, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    TypeVariableEntity currentTypeVariable;
+    CTypeFieldEntity currentField;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_type", updatable = false, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    TypeEntity ownerType;
+//    @ManyToOne
+//    @JoinColumn(name = "parent_type", updatable = false, nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    CTypeEntity parentType;
 
     @Column(name = "dep_count", updatable = false, nullable = false)
     Integer count;

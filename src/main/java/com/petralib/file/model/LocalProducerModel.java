@@ -1,7 +1,14 @@
 package com.petralib.file.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.Collection;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public class LocalProducerModel {
     private Long id;
     private String version;
@@ -9,28 +16,4 @@ public class LocalProducerModel {
     private Collection<RemoteConsumerModel> consumers;
     private Collection<ValueLoaderModel> lastWorkflowBlockValueParser;
     private Integer lastWorkflowBlockValuesCount;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public Collection<RemoteConsumerModel> getConsumers() {
-        return consumers;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Integer getLastWorkflowBlockValuesCount() {
-        return lastWorkflowBlockValuesCount;
-    }
-
-    public Collection<ValueLoaderModel> getLastWorkflowBlockValueParser() {
-        return lastWorkflowBlockValueParser;
-    }
 }

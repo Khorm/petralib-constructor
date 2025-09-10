@@ -8,9 +8,8 @@ import com.petralib.block.dto.BlockPage;
 import com.petralib.block.enitity.BlockEntity;
 import com.petralib.block.enitity.VariableEntity;
 import com.petralib.project.repository.ProjectRepository;
+import com.petralib.scenario.repo.ScenarioVariableRepo;
 import com.petralib.scenario.service.ScenarioBlockService;
-import com.petralib.type.enums.Multiplicity;
-import jakarta.persistence.EntityManager;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,11 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.parser.Entity;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -35,6 +30,7 @@ public class BlockService {
     ProjectRepository projectRepository;
     BlockMapper blockMapper;
     ScenarioBlockService scenarioBlockService;
+    ScenarioVariableRepo scenarioVariableRepo;
 
     @Transactional
     public BlockEntity save(BlockDto dto,Long projectId, BlockType blockType) {
@@ -45,7 +41,7 @@ public class BlockService {
 
         Set<String> namesSet = new HashSet<>();
         for (VariableEntity variable : blockEntity.getVariables()) {
-            System.out.println(variable);
+
             variable.setBlock(blockEntity);
             if (!namesSet.contains(variable.getName())){
                 namesSet.add(variable.getName());
@@ -88,12 +84,22 @@ public class BlockService {
 
     @Transactional
     public void deleteBlock(Long blockId){
+        for (VariableEntity variable : blockRepository.findById(blockId).get().getVariables()){
+            scenarioVariableRepo.deleteByVariable(variable.getId());
+        }
         blockRepository.deleteById(blockId);
     }
 
     @Transactional(readOnly = true)
-    public Collection<BlockEntity> getSourcesWithAcceptableReturnType(Long returnTypeId, Multiplicity multiplicity, Long projectId){
-        return blockRepository.findSourcesWithMultiplicityAndTypeRetVariable(multiplicity, returnTypeId, projectId);
+    public Collection<BlockEntity> getSourcesByName(Long projectId, String name){
+        if (name.length() < 3){
+            return Collections.emptyList();
+        }
+        Collection<BlockEntity> blockEntities = blockRepository.findSourcesByNameLike(projectId, name);
+        if (blockEntities.size() > 15){
+            return Collections.emptyList();
+        }
+        return blockEntities;
     }
 
 

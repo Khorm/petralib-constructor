@@ -5,6 +5,9 @@ jwt:
 
 
 spring:
+  sql:
+    init:
+      mode: always
   datasource:
     url: jdbc:postgresql://192.168.0.88/petri_constructor?useUnicode=yes&characterEncoding=UTF8
     username: ${dbUsername}
@@ -17,6 +20,14 @@ spring:
     hibernate:
       ddl-auto: none
       format_sql: true
+#    properties:
+#      javax:
+#        persistence:
+#          schema-generation:
+#            create-source: metadata
+#            scripts:
+#              action: create
+#              create-target: create.sql
 
 
 
@@ -25,6 +36,10 @@ logging:
     org:
       springframework:
         security: DEBUG
+      hibernate:
+        SQL: DEBUG
+        tool:
+          schema: DEBUG
 
 
 

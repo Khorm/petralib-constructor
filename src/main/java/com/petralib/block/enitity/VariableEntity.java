@@ -1,8 +1,8 @@
 package com.petralib.block.enitity;
 
 import com.petralib.block.enums.PinType;
-import com.petralib.type.enums.Multiplicity;
-import com.petralib.type.entity.TypeEntity;
+import com.petralib.ctype.entity.CTypeEntity;
+import com.petralib.ctype.enums.Multiplicity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "variable")
+@Table(name = "variables")
 @Getter
 @Setter
 @ToString
@@ -28,7 +28,7 @@ public class VariableEntity {
 
     @ManyToOne
     @JoinColumn(name = "var_type_id", nullable = false)
-    TypeEntity varType;
+    CTypeEntity varType;
 
     @Enumerated(EnumType.STRING)
     Multiplicity multiplicity;

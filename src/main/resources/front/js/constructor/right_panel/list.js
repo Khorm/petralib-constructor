@@ -6,8 +6,8 @@ import Tab from '@mui/material/Tab';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './list.sass';
 
-import EntityList from './block-list';
-import ServiceModal from './service-modal';
+import EntityList from './entity-list';
+import ServiceModal from './modal/service-modal';
 import TypeModal from './modal/type-modal';
 import BlockModal from './modal/block-modal';
 
@@ -34,15 +34,15 @@ export default function List() {
     }
 
     function buildModalAction(block, open, handleClose){
-        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/action'}/>)
+        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/block/action'}/>)
     }
 
     function buildModalWorkflow(block, open, handleClose){
-        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/workflow'}/>)
+        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/block/workflow'}/>)
     }
 
     function buildModalSource(block, open, handleClose){
-        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/source'}/>)
+        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/block/source'}/>)
     }
 
     function chooseWorkflowFunction(workflowId){
@@ -70,13 +70,13 @@ export default function List() {
                 <EntityList getUrl = {'/api/v1/type/'} createModal={buildModalType}/>
             }
             {value === 2 &&
-                <EntityList getUrl = {'/api/v1/action/'} createModal={buildModalAction} addFunc = {addBlockToCanvas} />
+                <EntityList getUrl = {'/api/v1/block/action/'} createModal={buildModalAction} addFunc = {addBlockToCanvas} />
             }
             {value === 3 &&
-                <EntityList getUrl = {'/api/v1/workflow/'} createModal={buildModalWorkflow} chooseFunc={chooseWorkflowFunction} addFunc = {addBlockToCanvas} />
+                <EntityList getUrl = {'/api/v1/block/workflow/'} createModal={buildModalWorkflow} chooseFunc={chooseWorkflowFunction} addFunc = {addBlockToCanvas} />
             }
             {value === 4 &&
-                <EntityList getUrl = {'/api/v1/source/'} createModal={buildModalSource}/>
+                <EntityList getUrl = {'/api/v1/block/source/'} createModal={buildModalSource}/>
             }
         </div>
     )

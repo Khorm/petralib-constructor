@@ -13,6 +13,5 @@ import java.util.Collection;
 @Data
 public class ServicePage {
     Integer pageCount;
-    Long allObjectsCount;
     Collection<ServiceDto> blocks;
 }

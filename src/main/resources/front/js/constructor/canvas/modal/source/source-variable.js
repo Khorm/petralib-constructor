@@ -14,9 +14,9 @@ import { createSelector } from '@reduxjs/toolkit';
 import { useReduxInitEffect } from '../hook';
 
 
-//currentVariable - выбранная переменная из входящих переменных блока
-//currentVariables - все текущие переменные
-//inputVariables - все входящие переменные
+//currentVariable - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+//currentVariables - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//inputVariables - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 export default function SourceVariable({currentVariable, currentVariables, inputVariables, removeVarFunc}){
 
     const SOURCE_OUT = 'SOURCE_OUT';
@@ -32,14 +32,14 @@ export default function SourceVariable({currentVariable, currentVariables, input
                 .map(data => new ScenarioVariable(data))
         )
 
-    //сценарные переменные только для этого соурса
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     const scenarioVariables = useSelector(selectSourceVariables);
 
     useReduxInitEffect(scenarioVariables, (initialData) => {
-         axios.get('/api/v1/source/acceptedSources',{ params: {
+         axios.get('/api/v1/block/source/acceptedSources',{ params: {
             projectId: getProjectId(),
             multiplicity: currentVariable.multiplicity,
-            returnTypeId: currentVariable.varType.id,
+            returnTypeId: currentVariable.fieldType.id,
         }})
         .then((response) => {
             setAcceptedSources(response.data);
@@ -56,7 +56,7 @@ export default function SourceVariable({currentVariable, currentVariables, input
 
 
     function loadNewSource(sourceId){
-        axios.get('/api/v1/source/' + sourceId,
+        axios.get('/api/v1/block/source/' + sourceId,
             { params: {
                 projectId: getProjectId(),
             }})
@@ -102,19 +102,20 @@ export default function SourceVariable({currentVariable, currentVariables, input
     function createVarName(variable){
         let type;
         if (variable.multiplicity === 'COLLECTION'){
-            type = 'Collection<' + variable.varType.name + '>';
+            type = 'Collection<' + variable.fieldType.name + '>';
         }else{
-            type = variable.varType.name;
+            type = variable.fieldType.name;
         }
-        return (<h4> {type + " " + variable.name} </h4> );
+        return (<h3> Variable: {type + " " + variable.name} </h3> );
     }
 
-    //возвращает только входящие значения выбранного соурса
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     function getOnlyEnterVariables(){
         return selectedSource?.variables.filter(variable => variable.pinType === 'IN');
     }
 
     function currentVariablesWithoutSelf(){
+        
         return currentVariables.filter(curVar => curVar.id !== currentVariable.id);
     }
 
@@ -123,7 +124,7 @@ export default function SourceVariable({currentVariable, currentVariables, input
     return(
         <div className='source'>
             <div className='header'>
-                <h3>Variable: {createVarName(currentVariable)} </h3>
+                {createVarName(currentVariable)}
                 <h4>Selected source: {selectedSource?.name}</h4>
                 <button onClick={removeScenarioVar}>Remove source</button>
             </div>
@@ -133,7 +134,7 @@ export default function SourceVariable({currentVariable, currentVariables, input
                     {getOnlyEnterVariables()?.map((variable, index) => {
                         return (
                         <div key={index} className='variable'>
-                            <h4>{createVarName(variable)}</h4>
+                            {createVarName(variable)}
                             <SourceSelectedVariable currentSourceVariable={variable}
                             currentVariables={currentVariablesWithoutSelf()} inputVariables={inputVariables}
                             sourceId = {selectedSource?.id} />

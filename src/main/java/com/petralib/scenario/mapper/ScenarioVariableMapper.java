@@ -5,7 +5,6 @@ import com.petralib.scenario.dto.TypeInheritanceDto;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 import com.petralib.scenario.entity.TypeDependenceEntity;
 import com.petralib.scenario.enums.ScenarioVariableType;
-import com.petralib.type.dto.TypeShortDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -20,11 +19,11 @@ public interface ScenarioVariableMapper {
 
     @Mapping(target = "scenarioVariableId", source = "id")
     @Mapping(target = "type", source = "type", qualifiedByName = "toTypeStr")
-    @Mapping(target = "producerVariableId", source = "producerVariable.id")
     @Mapping(target = "consumerVariableId", source = "consumerVariable.id")
     @Mapping(target = "typeInheritance", source = "typeDependence", qualifiedByName = "typeVars")
-    @Mapping(target = "sourceId", source = "source.id")
-    @Mapping(target = "script", source = "script.script")
+    @Mapping(target = "script", source = "producerScript")
+    @Mapping(target = "producerId", expression = "java(getProducer(entity))")
+    @Mapping(target = "blockVariableId", source = "ownerVariable.id")
     ScenarioVariableDto entityToDto(ScenarioVariableEntity entity);
 
 
@@ -44,12 +43,23 @@ public interface ScenarioVariableMapper {
                 .sorted(Comparator.comparingInt(TypeDependenceEntity::getCount)).toList();
 
         for (TypeDependenceEntity type : sortedVariables) {
-            ret.add(new TypeInheritanceDto(type.getCurrentTypeVariable().getId(),
-                    type.getCurrentTypeVariable().getOwner().getId(),
-                    type.getCurrentTypeVariable().getName(),
-                    new TypeShortDto(type.getCurrentTypeVariable().getVarType())));
+            ret.add(new TypeInheritanceDto(
+                    type.getId(),
+                    type.getCurrentField().getOwner().getId(),
+                    type.getCount(),
+                    type.getCurrentField().getName(),
+                    type.getCurrentField().getId(),
+                    type.getCurrentField().getFieldType().getId()
+
+            ));
         }
         return ret;
+    }
+
+    default Long getProducer(ScenarioVariableEntity entity) {
+        if (entity.getProducerVariable() != null) return entity.getProducerVariable().getId();
+        if (entity.getProducerSource() != null) return entity.getProducerSource().getId();
+        return null;
     }
 
 }

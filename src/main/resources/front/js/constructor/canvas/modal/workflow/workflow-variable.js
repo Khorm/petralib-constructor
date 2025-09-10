@@ -31,9 +31,9 @@ export default function WorkflowVariable({ currentVariable, inputVariables, curr
     function createVarName(variable) {
         let type;
         if (variable.multiplicity === 'COLLECTION') {
-            type = 'Collection<' + variable.varType.name + '>';
+            type = 'Collection<' + variable.fieldType.name + '>';
         } else {
-            type = variable.varType.name;
+            type = variable.fieldType.name;
         }
         return (<h4> {type + " : " + variable.name} </h4>);
     }

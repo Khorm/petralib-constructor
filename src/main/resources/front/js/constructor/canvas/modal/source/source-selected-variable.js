@@ -11,26 +11,25 @@ import { createSelector } from '@reduxjs/toolkit';
 
 
 
-//currentSourceVariable - текущая входящая переменная соурса
-//currentVariables - все текущие переменные
-//inputVariables - все входящие переменные
-//sourceId - текущий выбраный соурс
+//currentSourceVariable - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+//currentVariables - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//inputVariables - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//sourceId - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 export default function SourceSelectedVariable({currentSourceVariable, currentVariables, inputVariables, sourceId}){
 
 
     const dispatch = useDispatch();
-        const selectSourceVariables = createSelector(
-                state => state.scenarioVariables.list,
-                scenarioVariables => scenarioVariables
-                    .filter(variable => variable.sourceId === sourceId && variable.consumerVariableId === currentSourceVariable.id)
-                    .map(data => new ScenarioVariable(data))
-            )
+    const selectSourceVariables = createSelector(
+            state => state.scenarioVariables.list,
+            scenarioVariables => scenarioVariables
+                .filter(variable => variable.sourceId === sourceId && variable.consumerVariableId === currentSourceVariable.id)
+                .map(data => new ScenarioVariable(data))
+    )
 
-        //сценарные переменные только для этого соурса
+        //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     const scenarioVariables = useSelector(selectSourceVariables);
 
     const SOURCE_IN = 'SOURCE_IN';
-
 
 
     function addNewTypeArrayToScenarioVariable(newTypeArr){
@@ -39,6 +38,7 @@ export default function SourceSelectedVariable({currentSourceVariable, currentVa
         console.log("typeInheritance",  newScenarioSourceVariable);
         dispatch(add(new ScenarioVariable(newScenarioSourceVariable)));
     }
+
 
     function selectNewSourceVariable(e, sourceVarId) {
         const producerVarId = +e.target.value;
@@ -94,34 +94,31 @@ export default function SourceSelectedVariable({currentSourceVariable, currentVa
     }
 
 
-
+    console.log("CURRENT VARIABLES FOR SOURCE : ", currentVariables);
     return(
         <div className='source-selected-container'>
         <select defaultValue={selectDefaultValue()} onChange={(e) => selectNewSourceVariable(e, currentSourceVariable.id)}>
             <option disabled hidden value='none'> - select a producer variable - </option>
             <optgroup label="Input variables">
               {inputVariables.map((inpVariable, index) => {
-                  return(
-                    <div key={index}>
-                     <option value={inpVariable.id}>{inpVariable.name}</option>
-                    </div>
+                  return(                    
+                     <option key={index} value={inpVariable.id}>{inpVariable.name}</option>                    
                   )
               })}
             </optgroup>
 
             <optgroup label="Current variables">
               {currentVariables.map((curVariable, index) => {
-                  return(
-                    <div key={index}>
-                     <option value={curVariable.id}>{curVariable.name}</option>
-                    </div>
+                    console.log("VARIABLE FOR SOURCE : ", curVariable);
+                  return(                    
+                     <option key={index} value={curVariable.id}>{curVariable.name}</option>                    
                   )
               })}
             </optgroup>
         </select>
 
         {show() &&
-            <TypeSelector baseTypeId={producerValue().varType.id}
+            <TypeSelector baseTypeId={producerValue().fieldType.id}
                          typeArray={scenarioSourceVariable().typeInheritance}
                           setNewTypesArray={addNewTypeArrayToScenarioVariable} />
         }

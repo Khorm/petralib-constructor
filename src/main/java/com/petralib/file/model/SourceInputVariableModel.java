@@ -1,7 +1,7 @@
 package com.petralib.file.model;
 
 
-import com.petralib.type.enums.Multiplicity;
+import com.petralib.ctype.enums.Multiplicity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

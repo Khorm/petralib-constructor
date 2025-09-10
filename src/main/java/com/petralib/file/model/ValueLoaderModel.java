@@ -3,7 +3,7 @@ package com.petralib.file.model;
 
 
 import com.petralib.file.enums.LoaderType;
-import com.petralib.type.enums.Multiplicity;
+import com.petralib.ctype.enums.Multiplicity;
 import lombok.Builder;
 
 import java.util.Collection;

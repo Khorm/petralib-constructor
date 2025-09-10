@@ -5,96 +5,114 @@ import com.petralib.block.enitity.VariableEntity;
 import com.petralib.scenario.dto.ScenarioVariableDto;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
-import com.petralib.scenario.entity.Script;
-import com.petralib.scenario.entity.TypeDependenceEntity;
 import com.petralib.scenario.enums.ScenarioVariableType;
-import com.petralib.type.entity.TypeEntity;
-import com.petralib.type.entity.TypeVariableEntity;
-
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ScenarioVariableFactory {
-    private ScenarioVariableFactory(){}
+    private ScenarioVariableFactory() {
+    }
 
-    public static ScenarioVariableEntity createVar(ScenarioVariableDto dto, Long scenarioBlockId){
+    public static ScenarioVariableEntity createVar(ScenarioVariableDto dto, Long scenarioBlockId) {
         ScenarioBlockEntity scenarioBlockEntity = new ScenarioBlockEntity(scenarioBlockId);
         return switch (ScenarioVariableType.valueOf(dto.getType())) {
             case SIMPLE -> simpleVarFactory(dto, scenarioBlockEntity);
-            case SOURCE_IN -> sourceInVarFactory(dto, scenarioBlockEntity);
-            case SOURCE_OUT -> sourceOutVarFactory(dto, scenarioBlockEntity);
+//            case SOURCE_IN -> sourceInVarFactory(dto, scenarioBlockEntity);
+            case SOURCE -> sourceVarFactory(dto, scenarioBlockEntity);
             case SCRIPT -> scriptVarFactory(dto, scenarioBlockEntity);
         };
     }
 
-    public static ScenarioVariableEntity simpleVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity){
-        AtomicInteger i = new AtomicInteger(1);
-        Collection<TypeDependenceEntity> typeDependence = dto.getTypeInheritance().stream().map(typeInheritanceDto -> TypeDependenceEntity.builder()
-                .ownerType(new TypeEntity(typeInheritanceDto.getOwnerId()))
-                .currentTypeVariable(new TypeVariableEntity(typeInheritanceDto.getId()))
-                .count(i.getAndIncrement())
-                .build()).toList();
+    private static ScenarioVariableEntity simpleVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity) {
 
-        ScenarioVariableEntity scenarioVariable = ScenarioVariableEntity.builder()
-                .producerVariable(new VariableEntity(dto.getProducerVariableId()))
-                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
-                .scenarioBlock(scenarioBlockEntity)
+//        ScenarioVariableEntity scenarioVariable = ScenarioVariableEntity.builder()
+//                .id(dto.getScenarioVariableId())
+//                .producerVariable(new VariableEntity(dto.getProducerVariableId()))
+//                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
+//                .scenarioBlock(scenarioBlockEntity)
+//                .type(ScenarioVariableType.SIMPLE)
+//                .localId(dto.getLocalId())
+//                .parentId(dto.getParentId())
+//                .ownerVariable(new VariableEntity(dto.getBlockVariableId()))
+//                .build();
+
+//        scenarioVariable.getTypeDependence().forEach(typeDepend -> typeDepend.setScenarioVariable(scenarioVariable));
+        return createBase(dto, scenarioBlockEntity)
+                .producerVariable(new VariableEntity(dto.getProducerId()))
                 .type(ScenarioVariableType.SIMPLE)
-                .typeDependence(typeDependence)
                 .build();
-
-        scenarioVariable.getTypeDependence().forEach(typeDepend -> typeDepend.setScenarioVariable(scenarioVariable));
-        return scenarioVariable;
     }
 
 
-    public static ScenarioVariableEntity sourceInVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity){
-        AtomicInteger i = new AtomicInteger(1);
-        Collection<TypeDependenceEntity> typeDependence = dto.getTypeInheritance().stream().map(typeInheritanceDto -> TypeDependenceEntity.builder()
-                .ownerType(new TypeEntity(typeInheritanceDto.getOwnerId()))
-                .currentTypeVariable(new TypeVariableEntity(typeInheritanceDto.getId()))
-                .count(i.getAndIncrement())
-                .build()).toList();
+//    public static ScenarioVariableEntity sourceInVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity){
 
+//        scenarioVariable.getTypeDependence().forEach(typeDepend -> typeDepend.setScenarioVariable(scenarioVariable));
+//        return ScenarioVariableEntity.builder()
+//                .id(dto.getScenarioVariableId())
+//                .producerVariable(new VariableEntity(dto.getProducerVariableId()))
+//                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
+//                .scenarioBlock(scenarioBlockEntity)
+//                .type(ScenarioVariableType.SOURCE_IN)
+//                .producerSource(new BlockEntity(dto.getSourceId()))
+//                .localId(dto.getLocalId())
+//                .parentId(dto.getParentId())
+//                .ownerVariable(new VariableEntity(dto.getBlockVariableId()))
+//                .build();
+//        return createBase(dto, scenarioBlockEntity)
+//                .producerVariable()
+//    }
 
-        ScenarioVariableEntity scenarioVariable = ScenarioVariableEntity.builder()
-                .producerVariable(new VariableEntity(dto.getProducerVariableId()))
-                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
-                .scenarioBlock(scenarioBlockEntity)
-                .type(ScenarioVariableType.SOURCE_IN)
-                .typeDependence(typeDependence)
-                .source(new BlockEntity(dto.getSourceId()))
+    public static ScenarioVariableEntity sourceVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity) {
+//        return ScenarioVariableEntity.builder()
+//                .id(dto.getScenarioVariableId())
+//                .producerVariable(new VariableEntity(dto.getProducerVariableId()))
+//                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
+//                .scenarioBlock(scenarioBlockEntity)
+//                .type(ScenarioVariableType.SOURCE_OUT)
+//                .producerSource(new BlockEntity(dto.getSourceId()))
+//                .localId(dto.getLocalId())
+//                .parentId(dto.getParentId())
+//                .ownerVariable(new VariableEntity(dto.getBlockVariableId()))
+//                .build();
+        return createBase(dto, scenarioBlockEntity)
+                .producerSource(new BlockEntity(dto.getProducerId()))
+                .type(ScenarioVariableType.SOURCE)
                 .build();
 
-        scenarioVariable.getTypeDependence().forEach(typeDepend -> typeDepend.setScenarioVariable(scenarioVariable));
-        return scenarioVariable;
     }
 
-    public static ScenarioVariableEntity sourceOutVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity){
-        return ScenarioVariableEntity.builder()
-                .producerVariable(new VariableEntity(dto.getProducerVariableId()))
-                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
-                .scenarioBlock(scenarioBlockEntity)
-                .type(ScenarioVariableType.SOURCE_OUT)
-                .source(new BlockEntity(dto.getSourceId()))
-                .build();
-
-    }
-
-    public static ScenarioVariableEntity scriptVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity){
-        Script script = Script.builder()
-                .script(dto.getScript())
-                .build();
-
-        ScenarioVariableEntity scenarioVariable = ScenarioVariableEntity.builder()
-                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
-                .scenarioBlock(scenarioBlockEntity)
+    public static ScenarioVariableEntity scriptVarFactory(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity) {
+//        Script script = Script.builder()
+//                .script(dto.getScript())
+//                .build();
+//
+//        ScenarioVariableEntity scenarioVariable = ScenarioVariableEntity.builder()
+//                .id(dto.getScenarioVariableId())
+//                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
+//                .scenarioBlock(scenarioBlockEntity)
+//                .type(ScenarioVariableType.SCRIPT)
+//                .producerScript(script)
+//                .localId(dto.getLocalId())
+//                .parentId(dto.getParentId())
+//                .ownerVariable(new VariableEntity(dto.getBlockVariableId()))
+//                .build();
+//        script.setScenarioVariable(scenarioVariable);
+//        return scenarioVariable;
+        return createBase(dto, scenarioBlockEntity)
                 .type(ScenarioVariableType.SCRIPT)
-                .script(script)
+                .producerScript(dto.getScript())
                 .build();
-        script.setScenarioVariable(scenarioVariable);
-        return scenarioVariable;
+    }
+
+
+    private static ScenarioVariableEntity.ScenarioVariableEntityBuilder createBase(ScenarioVariableDto dto, ScenarioBlockEntity scenarioBlockEntity) {
+        return ScenarioVariableEntity.builder()
+                .id(dto.getScenarioVariableId())
+                .consumerVariable(new VariableEntity(dto.getConsumerVariableId()))
+                .scenarioBlock(scenarioBlockEntity)
+                .localId(dto.getLocalId())
+                .parentId(dto.getParentId())
+                .ownerVariable(new VariableEntity(dto.getBlockVariableId()));
 
     }
+
 
 }

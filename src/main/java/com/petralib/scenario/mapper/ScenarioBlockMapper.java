@@ -3,12 +3,11 @@ package com.petralib.scenario.mapper;
 import com.petralib.block.enitity.BlockEntity;
 import com.petralib.scenario.dto.ScenarioBlockDto;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
-import com.petralib.service.dto.ServiceDto;
-import com.petralib.service.entity.ServiceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.Collection;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -26,9 +25,9 @@ public interface ScenarioBlockMapper {
     @Mapping(target = "block", source = "blockId", qualifiedByName = "toBlock")
     ScenarioBlockEntity dtoToEntity(ScenarioBlockDto dto);
 
-    List<ScenarioBlockDto> mapEntity(List<ScenarioBlockEntity> entities);
+    List<ScenarioBlockDto> mapEntity(Collection<ScenarioBlockEntity> entities);
 
-    List<ScenarioBlockEntity> mapDto(List<ScenarioBlockDto> dtos);
+    List<ScenarioBlockEntity> mapDto(Collection<ScenarioBlockDto> dtos);
 
     @Named("toScenarioBlock")
     default ScenarioBlockEntity toScenarioBlock(Long scenarioBlockId) {

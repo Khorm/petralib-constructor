@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "constructor_user")
+@Table(name = "constructor_users")
 public class ConstructorUserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

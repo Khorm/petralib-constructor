@@ -1,17 +1,21 @@
 package com.petralib.scenario.dto;
 
-import com.petralib.type.dto.TypeShortDto;
-import com.petralib.type.dto.TypeVariableDto;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
 public class TypeInheritanceDto {
     Long id;
     Long ownerId;
-    String name;
-    TypeShortDto varType;
+    Integer count;
+    String fieldName;
+    Long fieldId;
+    Long fieldTypeId;
+//    TypeShortDto varType;
 }

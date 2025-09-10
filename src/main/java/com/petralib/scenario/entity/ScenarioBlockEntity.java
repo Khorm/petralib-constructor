@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "scenario_block")
+@Table(name = "scenario_blocks")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -47,7 +47,7 @@ public class ScenarioBlockEntity {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     ScenarioBlockEntity nextScenarioBlock;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "scenarioBlock", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "scenarioBlock")
     Collection<ScenarioVariableEntity> variables = new ArrayList<>();
 
 

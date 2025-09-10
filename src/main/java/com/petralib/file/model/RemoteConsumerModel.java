@@ -1,19 +1,14 @@
 package com.petralib.file.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public class RemoteConsumerModel {
     private Long id;
     private String version;
     private String serviceName;
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
 }

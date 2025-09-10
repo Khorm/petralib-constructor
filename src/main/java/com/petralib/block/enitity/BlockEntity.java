@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "block")
+@Table(name = "blocks")
 @Getter
 @Setter
 @ToString
@@ -46,7 +46,7 @@ public class BlockEntity {
     @Column(name = "block_type", nullable = false)
     BlockType type;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "block")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, mappedBy = "block")
     @ToString.Exclude
     Collection<VariableEntity> variables = new ArrayList<>();
     public BlockEntity(Long id) {

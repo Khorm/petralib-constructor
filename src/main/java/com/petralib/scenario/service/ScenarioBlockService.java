@@ -16,9 +16,12 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,7 +36,7 @@ public class ScenarioBlockService {
 
     @Transactional(readOnly = true)
     public ScenarioDto getScenarioBlocks(Long workflowId) {
-        List<ScenarioBlockEntity> scenarioBlockEntities = scenarioBlockRepo.findScenarioBlocksByWorkflow(workflowId);
+        Collection<ScenarioBlockEntity> scenarioBlockEntities = scenarioBlockRepo.findScenarioBlocksByWorkflow(workflowId);
         List<BeginEndEntity> beginEndEntities = beginEndRepo.getStartEndByWorkflow(workflowId);
         return new ScenarioDto(beginEndMapper.map(beginEndEntities), scenarioBlockMapper.mapEntity(scenarioBlockEntities));
     }
@@ -42,7 +45,13 @@ public class ScenarioBlockService {
     public void saveScenario(ScenarioDto dto, Long workflowId) {
         List<ScenarioBlockEntity> entities = scenarioBlockMapper.mapDto(dto.getScenarioBlocks());
         entities.forEach(entity -> entity.setParentWorkflow(blockRepository.getReferenceById(workflowId)));
-        Set<Long> existingIds = entities.stream().mapToLong(ScenarioBlockEntity::getId).boxed().collect(Collectors.toSet());
+        Set<Long> existingIds = entities.stream().flatMap((Function<ScenarioBlockEntity, Stream<Long>>) scenarioBlockEntity -> {
+            if (scenarioBlockEntity.getId() == null){
+                return Stream.empty();
+            }else {
+                return Stream.of(scenarioBlockEntity.getId());
+            }
+        }).collect(Collectors.toSet());
         for (ScenarioBlockEntity scenarioBlockEntity : scenarioBlockRepo.findScenarioBlocksByWorkflow(workflowId)){
             if (!existingIds.contains(scenarioBlockEntity.getId())){
                 scenarioBlockRepo.deleteById(scenarioBlockEntity.getId());

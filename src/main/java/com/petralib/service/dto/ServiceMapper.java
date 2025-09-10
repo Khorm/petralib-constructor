@@ -18,5 +18,5 @@ public interface ServiceMapper {
 
     Collection<ServiceDto> map(Collection<ServiceEntity> serviceEntities);
 
-    Collection<BlockDto> mapToBlock(Collection<ServiceEntity> serviceEntities);
+    Collection<ServiceDto> mapToDto(Collection<ServiceEntity> serviceEntities);
 }

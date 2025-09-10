@@ -1,5 +1,6 @@
 package com.petralib.scenario;
 
+import com.petralib.scenario.dto.CurrentVariableDto;
 import com.petralib.scenario.dto.ScenarioDto;
 import com.petralib.scenario.dto.ScenarioVariableDto;
 import com.petralib.scenario.dto.ScenarioVariablesDto;

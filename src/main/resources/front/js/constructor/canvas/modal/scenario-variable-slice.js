@@ -12,7 +12,6 @@ export const scenarioVariablesSlice = createSlice({
 
         action.payload = action.payload.getData();
 
-
         let newArr = [];
         let find = false;
         for (let i = 0; i<state.list.length; i++){

@@ -21,7 +21,7 @@ export default function SimpleVariable({currentVariable, currentVariables, input
             state => state.scenarioVariables.list,
             scenarioVariables => scenarioVariables.filter(variable => variable.consumerVariableId === currentVariable.id).map(data => new ScenarioVariable(data))
     )
-    //сценарные переменные только для этого скрипта
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     const scenarioVariables = useSelector(selectCurrentVariable);
 
 
@@ -69,11 +69,11 @@ export default function SimpleVariable({currentVariable, currentVariables, input
     function createVarName(variable){
         let type;
         if (variable.multiplicity === 'COLLECTION'){
-            type = 'Collection<' + variable.varType.name + '>';
+            type = 'Collection<' + variable.fieldType.name + '>';
         }else{
-            type = variable.varType.name;
+            type = variable.fieldType.name;
         }
-        return (<h4> {type + " : " + variable.name} </h4> );
+        return (<h3> Variable - {type + " : " + variable.name} </h3> );
     }
 
     function getDefaultVariable(){
@@ -88,14 +88,14 @@ export default function SimpleVariable({currentVariable, currentVariables, input
 
     return(
         <div className='container'>
-            <h3>Variable - {createVarName(currentVariable)}</h3>
+            {createVarName(currentVariable)}
             <button onClick={removeSimpleVar}>X</button>
             <select defaultValue={getDefaultVariable()} onChange={handleChange}>
                 <option disabled hidden value='none'> -- select a variable -- </option>
                 <optgroup label="Input variables">
                   {inputVariables.map((inpVariable, index) => {
                       return(
-                         <option value={inpVariable.id}>{inpVariable.name}</option>
+                         <option key={index} value={inpVariable.id}>{inpVariable.name}</option>
                       )
                   })}
                 </optgroup>
@@ -109,7 +109,7 @@ export default function SimpleVariable({currentVariable, currentVariables, input
                 </optgroup>
             </select>
                 {scenarioVariable() !== undefined && producerVariable() !== undefined && producerVariable().multiplicity !== 'COLLECTION' &&
-                                <TypeSelector baseTypeId={producerVariable().varType.id}
+                                <TypeSelector baseTypeId={producerVariable().fieldType.id}
                                              typeArray={scenarioVariable().typeInheritance} setNewTypesArray={setTypeCollection} />
                 }
         </div>

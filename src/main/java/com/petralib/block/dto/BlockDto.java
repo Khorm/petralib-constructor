@@ -2,7 +2,6 @@ package com.petralib.block.dto;
 
 import com.petralib.block.enums.BlockType;
 import com.petralib.service.dto.ServiceDto;
-import com.petralib.type.dto.TypeVariableDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;

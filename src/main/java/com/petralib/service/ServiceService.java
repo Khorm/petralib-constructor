@@ -2,9 +2,12 @@ package com.petralib.service;
 
 import com.petralib.block.dto.BlockDto;
 import com.petralib.block.dto.BlockPage;
+import com.petralib.file.FileConstructor;
+import com.petralib.file.model.ConstructorModel;
 import com.petralib.project.service.ProjectService;
 import com.petralib.service.dto.ServiceDto;
 import com.petralib.service.dto.ServiceMapper;
+import com.petralib.service.dto.ServicePage;
 import com.petralib.service.entity.ServiceEntity;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +29,15 @@ public class ServiceService {
     ServiceMapper serviceMapper;
     ServiceRepository serviceRepository;
     ProjectService projectService;
+    FileConstructor fileConstructor;
+
+//    @Transactional(readOnly = true)
+//    public ConstructorModel createConstructorModel(Long serviceId){
+//        return fileConstructor.create(serviceId);
+//    }
 
     @Transactional(readOnly = true)
-    public BlockPage getServiceByProjectAndName(int pageSize, int lastPageNumber, Long projectId, String serviceName) {
+    public ServicePage getServiceByProjectAndName(int pageSize, int lastPageNumber, Long projectId, String serviceName) {
         Page<ServiceEntity> serviceEntities;
         if (null != serviceName && !serviceName.isBlank()){
             serviceEntities = serviceRepository.findServiceByName(projectId, serviceName,
@@ -37,8 +46,8 @@ public class ServiceService {
             serviceEntities = serviceRepository.findService(projectId,
                     PageRequest.of(lastPageNumber - 1, pageSize, Sort.by("name")));
         }
-        Collection<BlockDto> dtos = serviceMapper.mapToBlock(serviceEntities.toList());
-        return new BlockPage(serviceEntities.getTotalPages(), dtos);
+        Collection<ServiceDto> dtos = serviceMapper.mapToDto(serviceEntities.toList());
+        return new ServicePage(lastPageNumber, dtos);
     }
 
     @Transactional(readOnly = true)
@@ -58,9 +67,8 @@ public class ServiceService {
     @Transactional
     public ServiceEntity saveService(ServiceDto serviceDto) {
         ServiceEntity serviceEntity = serviceMapper.fromDtoToEntity(serviceDto);
-        if (serviceRepository.existsByName(serviceEntity.getName(), serviceDto.getProjectId())){
-            throw new IllegalArgumentException("Service with this name already exists");
-        }
+        Optional<ServiceEntity> loadedEntity = serviceRepository.getByName(serviceEntity.getName(), serviceDto.getProjectId());
+        loadedEntity.ifPresent(entity -> serviceEntity.setId(entity.getId()));
         return serviceRepository.save(serviceEntity);
     }
 

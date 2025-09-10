@@ -3,12 +3,12 @@ package com.petralib.block.mapper;
 import com.petralib.block.dto.VariableDto;
 import com.petralib.block.enitity.VariableEntity;
 import com.petralib.block.enums.PinType;
-import com.petralib.type.enums.Multiplicity;
-import com.petralib.type.dto.TypeShortDto;
-import com.petralib.type.dto.TypeVariableDto;
-import com.petralib.type.entity.TypeEntity;
-import com.petralib.type.entity.TypeVariableEntity;
-import com.petralib.type.mapper.ShortTypeMapper;
+import com.petralib.ctype.entity.CTypeEntity;
+import com.petralib.ctype.entity.CTypeFieldEntity;
+import com.petralib.ctype.enums.Multiplicity;
+import com.petralib.ctype.dto.CTypeShortDto;
+import com.petralib.ctype.dto.CTypeFieldDto;
+import com.petralib.ctype.mapper.ShortTypeMapper;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,25 +20,26 @@ import java.util.Collection;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         uses = ShortTypeMapper.class)
 public interface VariableMapper {
-    TypeVariableDto entityToDto(TypeVariableEntity entity);
+    CTypeFieldDto entityToDto(CTypeFieldEntity entity);
 
-    @Mapping(target = "varType", source = "varType", qualifiedByName = "varTypeToType")
+    @Mapping(target = "varType", source = "variableType")
     @Mapping(target = "multiplicity", source = "multiplicity", qualifiedByName = "strMultiplicityToEnum")
     @Mapping(target = "pinType", source = "pinType", qualifiedByName = "strPinTypeToEnum")
     VariableEntity dtoToEntity(VariableDto dto);
 
+    @Mapping(source = "varType", target = "variableType")
     VariableDto blockEntityToDto(VariableEntity entity);
 
     Collection<VariableDto> map(Collection<VariableEntity> entities);
 
 
-    @Named("varTypeToType")
-    default TypeEntity varTypeToType(TypeShortDto dto) {
-        if (dto == null) return null;
-        TypeEntity type = new TypeEntity();
-        type.setId(dto.getId());
-        return type;
-    }
+//    @Named("varTypeToType")
+//    default CTypeEntity varTypeToType(CTypeShortDto dto) {
+//        if (dto == null) return null;
+//        CTypeEntity type = new CTypeEntity();
+//        type.setId(dto.getId());
+//        return type;
+//    }
 
     @Named("strMultiplicityToEnum")
     default Multiplicity strMultiplicityToEnum(String val){
