@@ -49,8 +49,8 @@ public class BlockRestController {
     }
 
     @GetMapping("source/acceptedSources")
-    public Collection<BlockDto> getSourcesAcceptable(@RequestParam Long projectId, @RequestParam String name) {
-        Collection<BlockEntity> sources = blockService.getSourcesByName(projectId, name);
+    public Collection<BlockDto> getSourcesAcceptable(@RequestParam Long projectId) {
+        Collection<BlockEntity> sources = blockService.getSourcesByName(projectId);
         return blockMapper.map(sources);
     }
 

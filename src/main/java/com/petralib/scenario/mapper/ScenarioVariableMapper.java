@@ -1,5 +1,6 @@
 package com.petralib.scenario.mapper;
 
+import com.petralib.ctype.dto.CTypeShortDto;
 import com.petralib.scenario.dto.ScenarioVariableDto;
 import com.petralib.scenario.dto.TypeInheritanceDto;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
@@ -46,10 +47,11 @@ public interface ScenarioVariableMapper {
             ret.add(new TypeInheritanceDto(
                     type.getId(),
                     type.getCurrentField().getOwner().getId(),
-                    type.getCount(),
-                    type.getCurrentField().getName(),
                     type.getCurrentField().getId(),
-                    type.getCurrentField().getFieldType().getId()
+                    type.getCurrentField().getName(),
+                    new CTypeShortDto(type.getCurrentField().getFieldType().getId(),
+                            type.getCurrentField().getFieldType().getName(),
+                            type.getCurrentField().getDescription())
 
             ));
         }

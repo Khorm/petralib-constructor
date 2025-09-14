@@ -34,6 +34,7 @@ public class BlockService {
 
     @Transactional
     public BlockEntity save(BlockDto dto,Long projectId, BlockType blockType) {
+        dto.getVariables().forEach(variable -> System.out.println("SAVE VAR : " + variable.getName() + " " + variable.getVariableType().getId()));
         BlockEntity blockEntity = blockMapper.fromDtoToEntity(dto);
         blockEntity.setType(blockType);
 
@@ -91,15 +92,12 @@ public class BlockService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<BlockEntity> getSourcesByName(Long projectId, String name){
-        if (name.length() < 3){
-            return Collections.emptyList();
-        }
-        Collection<BlockEntity> blockEntities = blockRepository.findSourcesByNameLike(projectId, name);
-        if (blockEntities.size() > 15){
-            return Collections.emptyList();
-        }
-        return blockEntities;
+    public Collection<BlockEntity> getSourcesByName(Long projectId){
+//        Collection<BlockEntity> blockEntities = blockRepository.findSourcesByNameLike(projectId, name);
+//        if (blockEntities.size() > 15){
+//            return Collections.emptyList();
+//        }
+        return blockRepository.findBlocksByType(projectId, BlockType.SOURCE);
     }
 
 

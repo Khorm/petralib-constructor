@@ -24,18 +24,14 @@ public class TypeDependenceEntity {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "scenario_variable", updatable = false, insertable = false, nullable = false)
+    @JoinColumn(name = "scenario_variable", updatable = false, nullable = false)
     ScenarioVariableEntity scenarioVariable;
 
     @ManyToOne
-    @JoinColumn(name = "current_ctype_field", updatable = false, insertable = false, nullable = false)
+    @JoinColumn(name = "current_ctype_field", updatable = false, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     CTypeFieldEntity currentField;
 
-//    @ManyToOne
-//    @JoinColumn(name = "parent_type", updatable = false, nullable = false)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    CTypeEntity parentType;
 
     @Column(name = "dep_count", updatable = false, nullable = false)
     Integer count;

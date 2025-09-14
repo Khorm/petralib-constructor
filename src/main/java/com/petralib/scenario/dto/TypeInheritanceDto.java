@@ -1,5 +1,6 @@
 package com.petralib.scenario.dto;
 
+import com.petralib.ctype.dto.CTypeShortDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,9 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class TypeInheritanceDto {
     Long id;
     Long ownerId;
-    Integer count;
-    String fieldName;
     Long fieldId;
-    Long fieldTypeId;
-//    TypeShortDto varType;
+    String fieldName;
+    CTypeShortDto fieldType;
 }

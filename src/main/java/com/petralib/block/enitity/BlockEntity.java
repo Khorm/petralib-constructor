@@ -46,7 +46,7 @@ public class BlockEntity {
     @Column(name = "block_type", nullable = false)
     BlockType type;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true, mappedBy = "block")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "block", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @ToString.Exclude
     Collection<VariableEntity> variables = new ArrayList<>();
     public BlockEntity(Long id) {

@@ -50,7 +50,7 @@ const Variable = forwardRef(({ variable, types, removeVar, index, pinAccepted },
     handleVarName(variable.name);
     handleDescription(variable.description);
     handleMultiplicity(variable.multiplicity);
-    handleType('', variable.fieldType);
+    handleType('', variable.variableType);
     handlePinType(variable.pinType)
 
     inputRef.current.id = variable.id;
@@ -78,7 +78,7 @@ const Variable = forwardRef(({ variable, types, removeVar, index, pinAccepted },
 
   function handleType(event, newValue) {
     if (newValue === undefined) newValue = {};
-    inputRef.current.fieldType = newValue;
+    inputRef.current.variableType = newValue;
     setType(newValue);
   }
 

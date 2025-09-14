@@ -33,7 +33,9 @@ public class TypeDependencyService {
         }else {
             previous = new HashMap<>();
         }
+        int count = 0;
         for (TypeInheritanceDto typeInheritanceDto : dtos) {
+            count++;
             if (previous.containsKey(typeInheritanceDto.getId())) {
                 typeDependencyList.add(previous.get(typeInheritanceDto.getId()));
                 continue;
@@ -42,8 +44,8 @@ public class TypeDependencyService {
             TypeDependenceEntity typeDependenceEntity = new TypeDependenceEntity(
                     null,
                     scenarioVariable,
-                    typeFieldRepo.getReferenceById(typeInheritanceDto.getFieldTypeId()),
-                    typeInheritanceDto.getCount()
+                    typeFieldRepo.getReferenceById(typeInheritanceDto.getFieldId()),
+                    count
             );
             typeDependencyList.add(typeDependenceEntity);
         }

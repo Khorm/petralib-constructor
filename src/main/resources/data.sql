@@ -121,7 +121,7 @@ create table if not exists scenario_variables (
     producer_variable_id bigint,
     producer_source_id bigint,
     producer_script text,
-    type_var varchar(255) not null check (type_var in ('SIMPLE','SOURCE_IN','SOURCE_OUT','SCRIPT')),
+    type_var varchar(255) not null check (type_var in ('SIMPLE','SOURCE','SCRIPT')),
     local_id bigint not null,
     parent_id bigint not null,
     primary key (scenario_variable_id),

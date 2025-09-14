@@ -22,7 +22,7 @@ import java.util.Collection;
 public interface VariableMapper {
     CTypeFieldDto entityToDto(CTypeFieldEntity entity);
 
-    @Mapping(target = "varType", source = "variableType")
+    @Mapping(target = "varType", source = "variableType", qualifiedByName = "varTypeToType")
     @Mapping(target = "multiplicity", source = "multiplicity", qualifiedByName = "strMultiplicityToEnum")
     @Mapping(target = "pinType", source = "pinType", qualifiedByName = "strPinTypeToEnum")
     VariableEntity dtoToEntity(VariableDto dto);
@@ -33,13 +33,13 @@ public interface VariableMapper {
     Collection<VariableDto> map(Collection<VariableEntity> entities);
 
 
-//    @Named("varTypeToType")
-//    default CTypeEntity varTypeToType(CTypeShortDto dto) {
-//        if (dto == null) return null;
-//        CTypeEntity type = new CTypeEntity();
-//        type.setId(dto.getId());
-//        return type;
-//    }
+    @Named("varTypeToType")
+    default CTypeEntity varTypeToType(CTypeShortDto dto) {
+        if (dto == null) return null;
+        CTypeEntity type = new CTypeEntity();
+        type.setId(dto.getId());
+        return type;
+    }
 
     @Named("strMultiplicityToEnum")
     default Multiplicity strMultiplicityToEnum(String val){

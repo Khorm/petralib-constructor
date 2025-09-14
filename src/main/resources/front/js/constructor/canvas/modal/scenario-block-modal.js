@@ -9,7 +9,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { set, clear } from './scenario-variable-slice';
-import { add } from './selector/id/local-id-slice';
+// import { add } from './selector/id/local-id-slice';
+
+import  idGenerator  from './selector/hooks/id-generator-hook'
 
 import ScenarioVariable from './scenario-variable';
 
@@ -34,6 +36,7 @@ export default function ScenarioBlockModal({scenarioBlock, workflow, open, handl
     const dispatch = useDispatch();
     const scenarioVariables = useSelector((state) =>state.scenarioVariables.list);
     
+    
 
 
     useEffect(() => {
@@ -51,8 +54,8 @@ export default function ScenarioBlockModal({scenarioBlock, workflow, open, handl
             response.data.currentVariables.forEach(element => {
                 variables.push(element.variable);
                 localVariables.push(element.variable);                
-                scenarioValues.push(...element.scenarioVariables);
-                dispatch(add({id:element.variable.id, localId: element.maxLocalId}));
+                scenarioValues.push(...element.scenarioVariables);                
+                idGenerator.setId(element.variable.id, element.maxLocalId)
             });
             setAllVariables(variables);
             setCurrentVariables(localVariables)  
@@ -67,7 +70,7 @@ export default function ScenarioBlockModal({scenarioBlock, workflow, open, handl
 
 
     function save() {
-        
+        console.log('SAVE : ', scenarioVariables);
         axios.post('/api/v1/scenario/' + scenarioBlock.id + '/variables',scenarioVariables,{ params: {
                 projectId: getProjectId()
             }}
@@ -82,6 +85,11 @@ export default function ScenarioBlockModal({scenarioBlock, workflow, open, handl
            })
     }
 
+
+    function findDefaultLocalId(variableId){
+        return scenarioVariables.find(scenarioVar => scenarioVar.blockVariableId === variableId && scenarioVar.parentId === 0)?.localId       
+    }
+
     return(
         <Modal
             open={open}
@@ -91,7 +99,8 @@ export default function ScenarioBlockModal({scenarioBlock, workflow, open, handl
                 <h2>{scenarioBlock.name}</h2>
                 {currentVariables.map((currentVariable, index) => {
                     return(
-                        <ScenarioVariable key={index} currentVariable = {currentVariable} inputVariables={allVariables}/>
+                        <ScenarioVariable key={index} currentVariable = {currentVariable} inputVariables={allVariables}
+                         defaultLocalId={findDefaultLocalId(currentVariable.id)}/>
                     )
                 })}
                 <Button variant="outlined" onClick={save}>Save</Button>

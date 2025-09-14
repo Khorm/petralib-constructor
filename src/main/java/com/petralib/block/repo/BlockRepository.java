@@ -27,6 +27,9 @@ public interface BlockRepository extends JpaRepository<BlockEntity, Long> {
             " lower(CONCAT('%', :name, '%'))")
     Collection<BlockEntity> findSourcesByNameLike(@Param("projectId") Long projectId, @Param("name") String name);
 
+    @Query("FROM BlockEntity be WHERE be.project.projectId = :projectId AND be.type = :type")
+    Collection<BlockEntity> findBlocksByType(@Param("projectId") Long projectId, @Param("type") BlockType type);
+
 //    @Query("SELECT DISTINCT source FROM BlockEntity source " +
 //            "JOIN FETCH source.variables vars " +
 //            "WHERE EXISTS ( " +

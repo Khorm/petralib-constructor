@@ -32,14 +32,21 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
             setDropdownObj(undefined);
             return;
         }
+        
+        const typeDependency = {
+            ownerId: selectedField.ownerId,
+            fieldId: selectedField.id,
+            fieldName: selectedField.name,
+            fieldType: selectedField.fieldType,
+        }
 
         let newTypeArr = [];
         if (typeArray !== undefined){
             let find = false;
             for (let i = 0; i < typeArray.length; i++){
-                if (selectedField.ownerId === typeArray[i].ownerId || selectedField.ownerId === baseTypeId){
+                if (typeDependency.ownerId === typeArray[i].ownerId || typeDependency.ownerId === baseTypeId){
                     if (!remove){
-                        newTypeArr.push(selectedField);
+                        newTypeArr.push(typeDependency);
                     }
                     find = true;
                     break;
@@ -49,23 +56,32 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
             }
 
             if (!find && !remove){
-                newTypeArr.push(selectedField);
+                newTypeArr.push(typeDependency);
             }
         }else{
-            newTypeArr.push(selectedField)
+            newTypeArr.push(typeDependency)
         }
         setNewTypesArray(newTypeArr);
         setDropdownObj(undefined);
     }
 
     function checkNextVar(){
+        // if (typeArray === undefined || typeArray.length == 0){
+        //     return;
+        // }
+
+        let fieldTypeId;
         if (typeArray === undefined || typeArray.length == 0){
-            return;
+            fieldTypeId = baseTypeId;
+        }else{
+            fieldTypeId = typeArray[typeArray.length - 1].fieldType.id;
         }
-        axios.get('/api/v1/type/fields/' + typeArray[typeArray.length - 1].fieldTypeId,{ params: {
+        console.log("NEXT FIELDS : ", typeArray, fieldTypeId);
+        axios.get('/api/v1/type/fields/' + fieldTypeId,{ params: {
             projectId: getProjectId()
         }})
         .then((response) => {
+            
             setNextVarAccept(response.data.length > 0);
         }).catch((error) => {
             console.log(error);
@@ -81,7 +97,7 @@ export default function TypeSelector({baseTypeId, typeArray, setNewTypesArray}){
                     return(
                         <div className='variable-container' key={index}>
                             <button className='btn-type' type="button" onClick={(e)=>handleOpen(type.ownerId,e, type)}>
-                                {type.name}
+                                {type.fieldName}
                             </button>
                             {index < typeArray.length-1 &&
                                 <h4>|</h4>
