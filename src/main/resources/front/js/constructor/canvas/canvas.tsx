@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
+import _forEach from 'lodash/forEach';
 
 import axios from 'axios';
 
@@ -11,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import ScenarioBlockModal from './modal/scenario-block-modal';
 import WorkflowExitModal from './modal/workflow/workflow-exit-modal';
+import CustomDeleteItemsAction from './CustomDeleteItemsAction'
 
 
 
@@ -20,7 +22,7 @@ export default function Canvas() {
     const workflow = useSelector((state) => state.workflow.value);
     const addingBlock = useSelector((state) => state.canvasFunctions.addBlock);
     const engine = useMemo(() => {
-        const engine = createEngine();
+        const engine = createEngine({ registerDefaultDeleteItemsAction: false });
         engine.setModel(new DiagramModel()); // ������������� ������
         engine.maxNumberPointsPerLink = 0;
         return engine;
@@ -32,7 +34,7 @@ export default function Canvas() {
     const [openModal, setOpenModal] = useState(false);
 
 
-    useEffect(() => {            
+    useEffect(() => {
         addBlock(addingBlock);
     }, [addingBlock])
 
@@ -50,119 +52,119 @@ export default function Canvas() {
                     workflowId: workflow,
                 }
             })
-            .then((response) => {
-                let blocks = response.data.scenarioBlocks;
-                let beginEnd = response.data.beginEndDtoList;
-                console.log('response.data', response.data)
-                const model = new DiagramModel();
+                .then((response) => {
+                    let blocks = response.data.scenarioBlocks;
+                    let beginEnd = response.data.beginEndDtoList;
+                    console.log('response.data', response.data)
+                    const model = new DiagramModel();
 
-                model.registerListener({
-                    linksUpdated: editLinks
-                });
-
-                engine.setModel(model);
-                let dict = {};
-                blocks.forEach((block) => {
-                    let blockColor;
-                    if (block.type === 'ACTION') {
-                        blockColor = 'LightGreen';
-                    } else {
-                        blockColor = 'PowderBlue';
-                    }
-
-                    let node = new DefaultNodeModel({
-                        name: block.name,
-                        color: blockColor,
-                        block: block,
+                    model.registerListener({
+                        linksUpdated: editLinks
                     });
-                    dict[block.id] = node;
-                    node.setPosition(block.x, block.y);
-                    const portOut = node.addOutPort('Out');
-                    const portIn = node.addInPort("In");
 
-                    engine.getModel().addNode(node);
-                    node.registerListener({
-                        selectionChanged: (e) => choose(e)
-                    });
-                });
+                    engine.setModel(model);
+                    let dict = {};
+                    blocks.forEach((block) => {
+                        let blockColor;
+                        if (block.type === 'ACTION') {
+                            blockColor = 'LightGreen';
+                        } else {
+                            blockColor = 'PowderBlue';
+                        }
 
-                blocks.forEach((block) => {
-                    if (block.nextBlock === null) {
-                        return;
-                    }
-                    let link = new DefaultLinkModel();
-
-                    link.setSourcePort(dict[block.id].getPort("Out"));
-                    link.setTargetPort(dict[block.nextBlock].getPort("In"));
-                    link.sourceNode = dict[block.id];
-                    link.targetNode = dict[block.nextBlock];
-                    link.registerListener({
-                        entityRemoved: removeLink,
-                    })
-
-                    engine.getModel().addLink(link);
-                });
-
-                beginEnd.forEach((beginEndBlock) => {
-                    let node = new DefaultNodeModel({
-                        name: beginEndBlock.pointType,
-                        color: 'gray',
-                        beginEndBlock: beginEndBlock,
-                    });
-                    node.setPosition(beginEndBlock.x, beginEndBlock.y);
-                    engine.getModel().addNode(node);
-
-                    let link = new DefaultLinkModel();
-                    link.registerListener({
-                        entityRemoved: removeLink,
-                    })
-
-                    if (beginEndBlock.pointType === 'START') {
-                        const portOut = node.addOutPort('Out');
-
-                        if (beginEndBlock.connectedBlockId === null) return;
-                        link.setSourcePort(portOut);
-                        link.setTargetPort(dict[beginEndBlock.connectedBlockId].getPort("In"));
-                        link.sourceNode = beginEndBlock.id;
-                        link.targetNode = dict[beginEndBlock.connectedBlockId];
-                        engine.getModel().addLink(link);
-
-                    } else {
-                        const portIn = node.addInPort("In");
-                        console.log('EXIT ', node);
-                        node.registerListener({
-                            selectionChanged: (e) => choose(e)
+                        let node = new DefaultNodeModel({
+                            name: block.name,
+                            color: blockColor,
+                            block: block,
                         });
+                        dict[block.id] = node;
+                        node.setPosition(block.x, block.y);
+                        const portOut = node.addOutPort('Out');
+                        const portIn = node.addInPort("In");
 
-                        if (beginEndBlock.connectedBlockId === null) return;
-                        link.setTargetPort(portIn);
-                        link.setSourcePort(dict[beginEndBlock.connectedBlockId].getPort("Out"));
-                        link.sourceNode = beginEndBlock.id;
-                        link.targetNode = dict[beginEndBlock.connectedBlockId];
+                        engine.getModel().addNode(node);
+                        node.registerListener({
+                            selectionChanged: (e) => choose(e),
+
+                        });
+                    });
+
+                    blocks.forEach((block) => {
+                        if (block.nextBlock === null) {
+                            return;
+                        }
+                        let link = new DefaultLinkModel();
+
+                        link.setSourcePort(dict[block.id].getPort("Out"));
+                        link.setTargetPort(dict[block.nextBlock].getPort("In"));
+                        link.sourceNode = dict[block.id];
+                        link.targetNode = dict[block.nextBlock];
+                        link.registerListener({
+                            entityRemoved: removeLink,
+                        })
+
                         engine.getModel().addLink(link);
-                    }
-                })
+                    });
 
-                engine.repaintCanvas();
+                    beginEnd.forEach((beginEndBlock) => {
+                        let node = new DefaultNodeModel({
+                            name: beginEndBlock.pointType,
+                            color: 'gray',
+                            beginEndBlock: beginEndBlock,
+                        });
+                        node.setPosition(beginEndBlock.x, beginEndBlock.y);
+                        engine.getModel().addNode(node);
 
-            });
+                        let link = new DefaultLinkModel();
+                        link.registerListener({
+                            entityRemoved: (e) => removeLink(e.entity),
+                        })
+
+                        if (beginEndBlock.pointType === 'START') {
+                            const portOut = node.addOutPort('Out');
+
+                            if (beginEndBlock.connectedBlockId === null) return;
+                            link.setSourcePort(portOut);
+                            link.setTargetPort(dict[beginEndBlock.connectedBlockId].getPort("In"));
+                            link.sourceNode = beginEndBlock.id;
+                            link.targetNode = dict[beginEndBlock.connectedBlockId];
+                            engine.getModel().addLink(link);
+
+                        } else {
+                            const portIn = node.addInPort("In");
+                            console.log('EXIT ', node);
+                            node.registerListener({
+                                selectionChanged: (e) => choose(e)
+                            });
+
+                            if (beginEndBlock.connectedBlockId === null) return;
+                            link.setTargetPort(portIn);
+                            link.setSourcePort(dict[beginEndBlock.connectedBlockId].getPort("Out"));
+                            link.sourceNode = beginEndBlock.id;
+                            link.targetNode = dict[beginEndBlock.connectedBlockId];
+                            engine.getModel().addLink(link);
+                        }
+                    })
+
+                    engine.repaintCanvas();
+
+                });
         }
 
     }, [workflow]);
 
-    function removeLink(e) {
+    function removeLink(entity) {
 
-        if (e.entity.sourceNode === undefined || e.entity.targetNode === undefined) return;
-        let sourceBlock = e.entity.sourceNode.options.block;
-        let targetBlock = e.entity.targetNode.options.block;
-        let beginEndSourceBlock = e.entity.sourceNode.options.beginEndBlock;
-        let beginEndTargetBlock = e.entity.targetNode.options.beginEndBlock;
+        if (entity.sourceNode === undefined || entity.targetNode === undefined) return;
+        let sourceBlock = entity.sourceNode.options.block;
+        let targetBlock = entity.targetNode.options.block;
+        let beginEndSourceBlock = entity.sourceNode.options.beginEndBlock;
+        let beginEndTargetBlock = entity.targetNode.options.beginEndBlock;
 
         if (sourceBlock) sourceBlock.nextBlock = null;
         if (targetBlock) targetBlock.previousBlock = null;
         if (beginEndSourceBlock) beginEndSourceBlock.connectedBlockId = null;
         if (beginEndTargetBlock) beginEndTargetBlock.connectedBlockId = null;
-
 
     }
 
@@ -170,7 +172,7 @@ export default function Canvas() {
 
         if (e.isCreated) {
             e.link.registerListener({
-                entityRemoved: removeLink,
+                entityRemoved: (e) => removeLink(e.entity),
                 targetPortChanged: targetPortUpdate
             })
             e.link.sourceNode = e.link.sourcePort.parent;
@@ -216,7 +218,7 @@ export default function Canvas() {
             let beginEndBlock = nodes[i].options.beginEndBlock;
 
             console.log("SAVE ", block);
-            
+
             if (block) {
                 scenarioBlocks.push({
                     id: block.id,
@@ -263,7 +265,7 @@ export default function Canvas() {
 
     function addBlock(block) {
         console.log("ADD", block, workflow);
-        if (!block || !workflow || block.id === workflow ) return;        
+        if (!block || !workflow || block.id === workflow) return;
         let allNodes = engine.getModel().getNodes();
         for (let i = 0; i < allNodes.length; i++) {
             if (allNodes[i].options.block && allNodes[i].options.block.id === block.id) {
@@ -281,7 +283,7 @@ export default function Canvas() {
         const scenarioBlock = {
             blockId: block.id,
             name: block.name,
-            blockType: block.type,        
+            blockType: block.type,
 
         }
 
@@ -319,12 +321,38 @@ export default function Canvas() {
 
     }
 
+    function deleteBlock() {
+        const nodes = engine.getModel().getNodes();
+        _forEach(nodes, (node) => {
+            // console.log('DELET : ', node.options,  chosenBlock.current)
+            if (node.options.block !== undefined && node.options.block.blockId === chosenBlock.current?.block.blockId) {
+                engine.getModel().removeNode(node);
+            }
+        });
+        
+        const links = engine.getModel().getLinks();
+        _forEach(links, (link) => {            
+            if (link.sourceNode?.options.block !== undefined && link.sourceNode?.options.block.blockId === chosenBlock.current?.block.blockId){
+                removeLink(link);
+                engine.getModel().removeLink(link);                
+            }
+            if (link.targetNode?.options.block !== undefined && link.targetNode?.options.block.blockId === chosenBlock.current?.block.blockId){
+                // console.log('DELET LINK: ', link,  chosenBlock.current);
+                removeLink(link);
+                engine.getModel().removeLink(link);                
+            }
+        });
+        chosenBlock.current = undefined;
+        engine.repaintCanvas();
+    }
+
 
     return (
         <>
             <div>
-                <button style={{ width: '100%', height: '50%' }} onClick={openMod}>edit</button>
-                <button style={{ width: '100%', height: '50%' }} onClick={save} >save</button>
+                <button style={{ width: '100%', height: '33%' }} onClick={openMod}>edit</button>
+                <button style={{ width: '100%', height: '33%' }} onClick={save} >save</button>
+                <button style={{ width: '100%', height: '33%' }} onClick={deleteBlock} >delete</button>
             </div>
             <CanvasWidget className="diagram-container" engine={engine} />
             {openModal && chosenBlock.current.block &&
