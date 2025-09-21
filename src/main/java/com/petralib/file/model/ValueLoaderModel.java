@@ -4,77 +4,72 @@ package com.petralib.file.model;
 
 import com.petralib.file.enums.LoaderType;
 import com.petralib.ctype.enums.Multiplicity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 import java.util.List;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class ValueLoaderModel {
-    private Long id;
+
+    //айди переменной сценария
+    private Long scenarioVariableId;
+
+    //айди переменной в дереве
+    private Long localId;
+
+    //имя переменнок
     private String name;
     private String multiplicity;
-    private List<Long> parents;
+
+
+    //тип лоадера
     private String loaderType;
+
+    //зависимые переменные
     private Collection<ValueLoaderModel> children;
-    private Long inputValueId;
+
+    //айди родителя переменной блока
+    private Long parent;
+
+    //переменные блока, которые необходимо загрузить до загрузки текущего значения
+    private Collection<Long> requiredBlockVariables;
+
+    //входящая переменная
+    private Long producerVariableId;
+
+    private Long consumerVariableId;
+
+    //строка извлечения для сложного объекта
     private String extractionString;
+
+    //скрипт
     private String script;
-    private Long sourceId;
+
+//    //айди соурса
+//    private Long sourceId;
+
+    //версия соурса
     private String sourceVersion;
     private String sourceName;
-    private Collection<SourceInputVariableModel> sourceInputVariableModels;
+    private String sourceServiceName;
+
+    //переменные соурса
+//    private Collection<ValueLoaderModel> sourceInputVariableModels;
 
 
     public LoaderType getLoaderType() {
         return LoaderType.valueOf(loaderType);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public Multiplicity getMultiplicity() {
         return Multiplicity.valueOf(multiplicity);
     }
 
-    public List<Long> getParents() {
-        return parents;
-    }
-
-    public Collection<ValueLoaderModel> getChildren() {
-        return children;
-    }
-
-    public Long getInputValueId() {
-        return inputValueId;
-    }
-
-    public String getExtractionString() {
-        return extractionString;
-    }
-
-    public String getScript() {
-        return script;
-    }
-
-    public Long getSourceId() {
-        return sourceId;
-    }
-
-    public String getSourceVersion() {
-        return sourceVersion;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public Collection<SourceInputVariableModel> getSourceInputVariableModels() {
-        return sourceInputVariableModels;
-    }
 }

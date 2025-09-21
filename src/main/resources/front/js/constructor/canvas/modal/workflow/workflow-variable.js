@@ -38,6 +38,8 @@ export default function WorkflowVariable({ currentVariable, inputVariables, curr
         return (<h4> {type + " : " + variable.name} </h4>);
     }
 
+    
+
     return (
         <div>
             {currentVarType === SIMPLE &&

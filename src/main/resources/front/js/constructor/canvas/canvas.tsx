@@ -40,11 +40,16 @@ export default function Canvas() {
 
 
     useEffect(() => {
+        init();
+    }, [workflow]);
+
+
+    function init() {
         console.log("UPDATE WORKFLOW ", workflow);
         if (workflow !== undefined) {
-            if (prevWorkflowRef.current !== undefined) {
-                save();
-            }
+            // if (prevWorkflowRef.current !== undefined) {
+            //     save();
+            // }
             prevWorkflowRef.current = workflow;
 
             axios.get('/api/v1/scenario', {
@@ -150,8 +155,7 @@ export default function Canvas() {
 
                 });
         }
-
-    }, [workflow]);
+    }
 
     function removeLink(entity) {
 
@@ -171,12 +175,14 @@ export default function Canvas() {
     function editLinks(e) {
 
         if (e.isCreated) {
+            let blockColor = 'LightGreen';
             e.link.registerListener({
                 entityRemoved: (e) => removeLink(e.entity),
                 targetPortChanged: targetPortUpdate
             })
             e.link.sourceNode = e.link.sourcePort.parent;
-
+            e.link.color = blockColor;
+            engine.repaintCanvas();
         }
     }
 
@@ -253,6 +259,7 @@ export default function Canvas() {
             }
         }
         ).then((response) => {
+            init();
             if (typeof callback === 'function') {
                 callback();
             }
@@ -273,12 +280,12 @@ export default function Canvas() {
             }
         }
 
-        let blockColor;
-        if (block.type === 'ACTION') {
-            blockColor = 'LightGreen';
-        } else {
-            blockColor = 'PowderBlue';
-        }
+        let blockColor = 'LightGreen';
+        // if (block.type === 'ACTION') {
+        //     blockColor = 'LightGreen';
+        // } else {
+        //     blockColor = 'PowderBlue';
+        // }
 
         const scenarioBlock = {
             blockId: block.id,
@@ -310,14 +317,15 @@ export default function Canvas() {
 
 
     function openMod() {
-        save(() => {
-            if (chosenBlock.current === undefined) return;
-            if (!openModal) {
-                setOpenModal(true);
-            } else {
-                setOpenModal(false);
-            }
-        })
+        // save(() => {
+            
+        // })
+        if (chosenBlock.current === undefined) return;
+        if (!openModal) {
+            setOpenModal(true);
+        } else {
+            setOpenModal(false);
+        }
 
     }
 
@@ -329,17 +337,17 @@ export default function Canvas() {
                 engine.getModel().removeNode(node);
             }
         });
-        
+
         const links = engine.getModel().getLinks();
-        _forEach(links, (link) => {            
-            if (link.sourceNode?.options.block !== undefined && link.sourceNode?.options.block.blockId === chosenBlock.current?.block.blockId){
+        _forEach(links, (link) => {
+            if (link.sourceNode?.options.block !== undefined && link.sourceNode?.options.block.blockId === chosenBlock.current?.block.blockId) {
                 removeLink(link);
-                engine.getModel().removeLink(link);                
+                engine.getModel().removeLink(link);
             }
-            if (link.targetNode?.options.block !== undefined && link.targetNode?.options.block.blockId === chosenBlock.current?.block.blockId){
+            if (link.targetNode?.options.block !== undefined && link.targetNode?.options.block.blockId === chosenBlock.current?.block.blockId) {
                 // console.log('DELET LINK: ', link,  chosenBlock.current);
                 removeLink(link);
-                engine.getModel().removeLink(link);                
+                engine.getModel().removeLink(link);
             }
         });
         chosenBlock.current = undefined;
@@ -361,7 +369,7 @@ export default function Canvas() {
             }
 
             {openModal && chosenBlock.current.beginEndBlock &&
-                <WorkflowExitModal workflow={prevWorkflowRef.current.beginEndBlock}
+                <WorkflowExitModal workflow={prevWorkflowRef.current}
                     open={openModal} handleClose={openMod} />
             }
         </>

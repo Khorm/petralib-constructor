@@ -3,11 +3,9 @@ package com.petralib.block.mapper;
 import com.petralib.block.dto.VariableDto;
 import com.petralib.block.enitity.VariableEntity;
 import com.petralib.block.enums.PinType;
-import com.petralib.ctype.entity.CTypeEntity;
-import com.petralib.ctype.entity.CTypeFieldEntity;
-import com.petralib.ctype.enums.Multiplicity;
 import com.petralib.ctype.dto.CTypeShortDto;
-import com.petralib.ctype.dto.CTypeFieldDto;
+import com.petralib.ctype.entity.CTypeEntity;
+import com.petralib.ctype.enums.Multiplicity;
 import com.petralib.ctype.mapper.ShortTypeMapper;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -20,7 +18,7 @@ import java.util.Collection;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         uses = ShortTypeMapper.class)
 public interface VariableMapper {
-    CTypeFieldDto entityToDto(CTypeFieldEntity entity);
+//    CTypeFieldDto entityToDto(CTypeFieldEntity entity);
 
     @Mapping(target = "varType", source = "variableType", qualifiedByName = "varTypeToType")
     @Mapping(target = "multiplicity", source = "multiplicity", qualifiedByName = "strMultiplicityToEnum")
@@ -42,12 +40,12 @@ public interface VariableMapper {
     }
 
     @Named("strMultiplicityToEnum")
-    default Multiplicity strMultiplicityToEnum(String val){
+    default Multiplicity strMultiplicityToEnum(String val) {
         return Multiplicity.valueOf(val);
     }
 
     @Named("strPinTypeToEnum")
-    default PinType strPinTypeToEnum(String val){
+    default PinType strPinTypeToEnum(String val) {
         return PinType.valueOf(val);
     }
 }

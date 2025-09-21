@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ScenarioBlockRepo extends JpaRepository<ScenarioBlockEntity, Long> {
 
-    @Query("FROM ScenarioBlockEntity sbe WHERE sbe.parentWorkflow.id = :workflowId")
+    @Query("FROM ScenarioBlockEntity sbe WHERE sbe.parentWorkflow.id = :workflowId AND sbe.block.id <> :workflowId")
     Collection<ScenarioBlockEntity> findScenarioBlocksByWorkflow(@Param("workflowId") Long workflowId);
 
     @Query("FROM ScenarioBlockEntity sbe WHERE sbe.block.service.id = :serviceId")

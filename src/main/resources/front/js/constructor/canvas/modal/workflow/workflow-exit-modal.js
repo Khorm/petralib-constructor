@@ -9,8 +9,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { set, clear } from '../scenario-variable-slice';
+import  idGenerator  from '../selector/hooks/id-generator-hook'
 
-import WorkflowVariable from './workflow-variable';
+import ScenarioVariable from '../scenario-variable';
 
 const style = {
   position: 'absolute',
@@ -28,10 +29,10 @@ const style = {
 
 export default function WorkflowExitModal({workflow, open, handleClose}){
 
-    const [inputVariables, setInputVariables] = React.useState([]);
+    const [allVariables, setAllVariables] = React.useState([]);
     const [currentVariables, setCurrentVariables] = React.useState([]);
     const dispatch = useDispatch();
-    const scenarioVariables = useSelector((state) => state.scenarioVariables.list);
+    const scenarioVariables = useSelector((state) =>state.scenarioVariables.list);
 
 
     useEffect(() => {        
@@ -39,10 +40,21 @@ export default function WorkflowExitModal({workflow, open, handleClose}){
             projectId: getProjectId()
         }})
         .then((response) => {
-            setInputVariables(response.data.inputVariables);
-            setCurrentVariables(response.data.currentVariables);
-            console.log("LOADED : ", response.data.scenarioVariables)
-            dispatch(set(response.data.scenarioVariables));
+            let variables = [];
+            let localVariables = [];
+            let scenarioValues = [];
+            variables.push(...response.data.inputVariables);           
+            console.log("LOADED : ", response.data)  
+            response.data.currentVariables.forEach(element => {
+                variables.push(element.variable);
+                localVariables.push(element.variable);                
+                scenarioValues.push(...element.scenarioVariables);                
+                idGenerator.setId(element.variable.id, element.maxLocalId)
+            });
+            setAllVariables(variables);
+            setCurrentVariables(localVariables)  
+                               
+            dispatch(set(scenarioValues));
         }).catch((error) => {
             console.error(error);
             alert(error.message)
@@ -65,17 +77,21 @@ export default function WorkflowExitModal({workflow, open, handleClose}){
            })
     }
 
+    function findDefaultLocalId(variableId){
+        return scenarioVariables.find(scenarioVar => scenarioVar.blockVariableId === variableId && scenarioVar.parentId === 0)?.localId       
+    }
+
     return(
         <Modal
             open={open}
             onClose={handleClose}
           >
             <Box sx={style}>
-                <h2>{workflow.name}</h2>
+                <h2>Exit</h2>
                 {currentVariables.map((currentVariable, index) => {
                     return(
-                        <WorkflowVariable key={index} currentVariable = {currentVariable}  inputVariables={inputVariables}
-                        currentVariables={currentVariables}/>
+                        <ScenarioVariable key={index} currentVariable = {currentVariable} inputVariables={allVariables}
+                         defaultLocalId={findDefaultLocalId(currentVariable.id)}/>
                     )
                 })}
                 <Button variant="outlined" onClick={save}>Save</Button>

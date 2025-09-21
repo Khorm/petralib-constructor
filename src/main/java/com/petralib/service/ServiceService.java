@@ -31,10 +31,10 @@ public class ServiceService {
     ProjectService projectService;
     FileConstructor fileConstructor;
 
-//    @Transactional(readOnly = true)
-//    public ConstructorModel createConstructorModel(Long serviceId){
-//        return fileConstructor.create(serviceId);
-//    }
+    @Transactional(readOnly = true)
+    public ConstructorModel createConstructorModel(Long serviceId){
+        return fileConstructor.create(serviceId);
+    }
 
     @Transactional(readOnly = true)
     public ServicePage getServiceByProjectAndName(int pageSize, int lastPageNumber, Long projectId, String serviceName) {

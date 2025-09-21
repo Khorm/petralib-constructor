@@ -5,19 +5,21 @@ import com.petralib.file.model.ValueLoaderModel;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 final class InputValueBuilder extends ValueBuilder{
 
-    public InputValueBuilder(ScenarioBlockEntity scenarioBlock, ScenarioVariableEntity scenarioVariable, Map<Long, ValueLoaderModel> loaderModelMap) {
-        super(scenarioBlock, scenarioVariable, loaderModelMap);
+    public InputValueBuilder(ScenarioBlockEntity scenarioBlock, ScenarioVariableEntity scenarioVariable) {
+        super(scenarioBlock, scenarioVariable);
     }
 
     @Override
     void extendedBuild(ValueLoaderModel.ValueLoaderModelBuilder builder) {
         builder.loaderType(LoaderType.INPUT_LOADER.name())
-                .parents(Collections.singletonList(getScenarioVariable().getProducerVariable().getId()))
-                .extractionString(getScenarioVariable().getExtractionString());
+                .producerVariableId(getCurrentScenarioVariable().getProducerVariable().getId())
+                .requiredBlockVariables(Collections.singletonList(getCurrentScenarioVariable().getProducerVariable().getId()))
+                .extractionString(getCurrentScenarioVariable().getExtractionString());
     }
 }

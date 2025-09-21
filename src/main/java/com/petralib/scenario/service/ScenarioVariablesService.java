@@ -94,7 +94,7 @@ public class ScenarioVariablesService {
         Collection<VariableDto> inputVariables = Collections.emptyList();
 
         if (lastScenarioBlock != null && lastScenarioBlock.getBlock() != null) {
-            inputVariables = variableMapper.map(lastScenarioBlock.getBlock().getVariables());
+            inputVariables = variableMapper.map(lastScenarioBlock.getBlock().getOutVariables());
         }
         if (scenarioBlockEntityOpt.isEmpty()) {
             return new ScenarioVariablesDto(inputVariables, createCurrentVariables(workflow.getOutVariables(), Collections.emptyList()));
@@ -133,12 +133,12 @@ public class ScenarioVariablesService {
                     if (!beginEnd.getConnectedBlock().getId().equals(scenarioBlockEntity.getId())) {
                         return Collections.emptyList();
                     } else {
-                        return beginEnd.getWorkflow().getVariables();
+                        return beginEnd.getWorkflow().getInVariables();
                     }
                 }
             }
         } else {
-            return previousBlock.getBlock().getVariables();
+            return previousBlock.getBlock().getOutVariables();
         }
         return Collections.emptyList();
     }

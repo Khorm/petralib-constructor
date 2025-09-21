@@ -18,6 +18,7 @@ import java.util.Collection;
 public interface TypeVariableMapper {
 
     @Mapping(source = "owner.id", target = "ownerId")
+
     CTypeFieldDto entityToDto(CTypeFieldEntity entity);
 
     @Mapping(target = "fieldType", source = "fieldType", qualifiedByName = "varTypeToType")
