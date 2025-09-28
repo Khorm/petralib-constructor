@@ -58,8 +58,6 @@ var config = {
 
 
 
-
-
 var constructorConfig = Object.assign({}, config, {
     name: "constructor",
     entry: {
@@ -72,10 +70,13 @@ var constructorConfig = Object.assign({}, config, {
     },
 
      plugins: [
-     new BundleTracker({filename: path.join('constructor','webpack-constructor.json')}),
+     new BundleTracker({
+        filename: 'webpack-constructor.json',
+        path: path.resolve('../static/constructor/')
+     }),
 	new MiniCssExtractPlugin({
-		  filename: devMode ? path.join('constructor','[name].css') : '[name].[hash].css',
-		  chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+		  filename: '[name].css',
+		  chunkFilename:  '[id].css' ,
 		}),
 	],
 
@@ -93,10 +94,13 @@ var loginConfig = Object.assign({}, config, {
     },
 
      plugins: [
-     new BundleTracker({filename: path.join('login','webpack-login.json')}),
+     new BundleTracker({
+        filename: 'webpack-login.json',
+        path: path.resolve('../static/login/')
+     }),
 	new MiniCssExtractPlugin({
-	      filename: path.join('login','login.css'),
-	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+	      filename: 'login.css',
+	      chunkFilename: '[id].css',
 	    }),
     ],
 
@@ -115,10 +119,13 @@ var projectsConfig = Object.assign({}, config, {
 
      plugins: [
      //new CleanWebpackPlugin(),
-     new BundleTracker({filename: path.join('projects','webpack-projects.json')}),
+     new BundleTracker({
+        filename: 'webpack-projects.json',
+        path: path.resolve('../static/projects/')
+     }),
 	new MiniCssExtractPlugin({
-	      filename: devMode ? path.join('projects','[name].css') : '[name].[hash].css',
-	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+	      filename: 'projects.css',
+	      chunkFilename: '[id].css',
 	    }),
     ],
 
