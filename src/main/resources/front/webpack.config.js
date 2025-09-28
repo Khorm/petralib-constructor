@@ -66,8 +66,8 @@ var constructorConfig = Object.assign({}, config, {
 		constructor_react:'./js/constructor/constructor-react.js',
 	},
     output: {
-      path: path.resolve('../static/'),
-      filename: path.join("constructor","constructor.js"),
+      path: path.resolve('../static/constructor/'),
+      filename: "constructor.js",
 	  //clean: true,
     },
 
@@ -87,8 +87,8 @@ var loginConfig = Object.assign({}, config, {
 		login_root:'./js/login/login-root.js',
 	},
     output: {
-      path: path.resolve('../static/'),
-      filename: path.join("login","login.js"),
+      path: path.resolve('../static/login/'),
+      filename: "login.js",
 	  //clean: true,
     },
 
@@ -108,8 +108,8 @@ var projectsConfig = Object.assign({}, config, {
 		projects_react:'./js/projects/projects-react.js',
 	},
     output: {
-      path: path.resolve('../static/'),
-      filename:  path.join("projects","projects.js"),
+      path: path.resolve('../static/projects/'),
+      filename:  "projects.js",
 	  //clean: true,
     },
 
@@ -125,47 +125,47 @@ var projectsConfig = Object.assign({}, config, {
 });
 
 
-var blockConfig = Object.assign({}, config, {
-    name: "block",
-    entry: {
-		block_react:'./js/block/block-react.js',
-	},
-    output: {
-      path: path.resolve('../static/'),
-      filename:  path.join("block","block.js"),
-	  //clean: true,
-    },
-
-     plugins: [
-     new BundleTracker({filename: path.join('block','webpack-block.json')}),
-	new MiniCssExtractPlugin({
-	      filename: devMode ? path.join('block','[name].css') : '[name].[hash].css',
-	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
-	    }),
-    ],
-
-});
-
-var serviceConfig = Object.assign({}, config, {
-    name: "service",
-    entry: {
-		service_react:'./js/service/service-react.js',
-	},
-    output: {
-      path: path.resolve('../static/'),
-      filename:  path.join("service","service.js"),
-	  //clean: true,
-    },
-
-     plugins: [
-     new BundleTracker({filename: path.join('service','webpack-service.json')}),
-	new MiniCssExtractPlugin({
-	      filename: devMode ? path.join('service','[name].css') : '[name].[hash].css',
-	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
-	    }),
-    ],
-
-});
+//var blockConfig = Object.assign({}, config, {
+//    name: "block",
+//    entry: {
+//		block_react:'./js/block/block-react.js',
+//	},
+//    output: {
+//      path: path.resolve('../static/'),
+//      filename:  path.join("block","block.js"),
+//	  //clean: true,
+//    },
+//
+//     plugins: [
+//     new BundleTracker({filename: path.join('block','webpack-block.json')}),
+//	new MiniCssExtractPlugin({
+//	      filename: devMode ? path.join('block','[name].css') : '[name].[hash].css',
+//	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+//	    }),
+//    ],
+//
+//});
+//
+//var serviceConfig = Object.assign({}, config, {
+//    name: "service",
+//    entry: {
+//		service_react:'./js/service/service-react.js',
+//	},
+//    output: {
+//      path: path.resolve('../static/'),
+//      filename:  path.join("service","service.js"),
+//	  //clean: true,
+//    },
+//
+//     plugins: [
+//     new BundleTracker({filename: path.join('service','webpack-service.json')}),
+//	new MiniCssExtractPlugin({
+//	      filename: devMode ? path.join('service','[name].css') : '[name].[hash].css',
+//	      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+//	    }),
+//    ],
+//
+//});
 
 
 

@@ -17,11 +17,11 @@ public class ConstructorUserDetailsService implements UserDetailsService {
 
     private final ConstructorUserRepository constructorUserRepository;
 
-    @Value("${usr}")
-    private String username;
-
-    @Value("${psw}")
-    private String password;
+//    @Value("${usr}")
+//    private String username;
+//
+//    @Value("${psw}")
+//    private String password;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

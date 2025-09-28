@@ -61,7 +61,7 @@ public class ServiceRestController {
     public ResponseEntity<ByteArrayResource> getFIle(@PathVariable Long serviceId) {
         ConstructorModel constructorModel = serviceService.createConstructorModel(serviceId);
 
-        // 2. Конвертируем в JSON
+        // 2. РљРѕРЅРІРµСЂС‚РёСЂСѓРµРј РІ JSON
         String jsonData;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -70,11 +70,11 @@ public class ServiceRestController {
             throw new RuntimeException("Error generating JSON", e);
         }
 
-        // 3. Создаем ресурс для скачивания
+        // 3. РЎРѕР·РґР°РµРј СЂРµСЃСѓСЂСЃ РґР»СЏ СЃРєР°С‡РёРІР°РЅРёСЏ
         byte[] bytes = jsonData.getBytes(StandardCharsets.UTF_8);
         ByteArrayResource resource = new ByteArrayResource(bytes);
 
-        // 4. Формируем ответ с заголовками для скачивания
+        // 4. Р¤РѕСЂРјРёСЂСѓРµРј РѕС‚РІРµС‚ СЃ Р·Р°РіРѕР»РѕРІРєР°РјРё РґР»СЏ СЃРєР°С‡РёРІР°РЅРёСЏ
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data_export.json")
                 .contentType(MediaType.APPLICATION_JSON)
