@@ -8,7 +8,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Component;
 
 /**
- * Класс добавлявляет фильтер до стандартного фильтра аутентификации
+ * РљР»Р°СЃСЃ РґРѕР±Р°РІР»СЏРІР»СЏРµС‚ С„РёР»СЊС‚РµСЂ РґРѕ СЃС‚Р°РЅРґР°СЂС‚РЅРѕРіРѕ С„РёР»СЊС‚СЂР° Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёРё
  */
 @Component
 @RequiredArgsConstructor

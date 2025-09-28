@@ -87,7 +87,7 @@ public class ScenarioVariablesService {
             throw new IllegalArgumentException("Block is not workflow");
         }
 
-        //специальный блок для End блока Workflow
+        //СЃРїРµС†РёР°Р»СЊРЅС‹Р№ Р±Р»РѕРє РґР»СЏ End Р±Р»РѕРєР° Workflow
         Optional<ScenarioBlockEntity> scenarioBlockEntityOpt = scenarioBlockRepo.findScenarioBlockForWorkflowExit(workflow.getId());
         ScenarioBlockEntity lastScenarioBlock = beginEndRepo.getEndByWorkflow(workflowId).getConnectedBlock();
 

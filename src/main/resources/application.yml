@@ -1,15 +1,6 @@
-jwt:
-  header: Authorization
-  secret: petra
-  expiration: 2629800000
-
-
 spring:
-  sql:
-    init:
-      mode: always
   datasource:
-    url: jdbc:postgresql://192.168.0.88/petri_constructor?useUnicode=yes&characterEncoding=UTF8
+    url: jdbc:postgresql://192.168.0.88/petri_constructor
     username: ${dbUsername}
     password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
@@ -20,15 +11,14 @@ spring:
     hibernate:
       ddl-auto: none
       format_sql: true
-#    properties:
-#      javax:
-#        persistence:
-#          schema-generation:
-#            create-source: metadata
-#            scripts:
-#              action: create
-#              create-target: create.sql
+  sql:
+    init:
+      mode: always
 
+jwt:
+  header: Authorization
+  secret: petra
+  expiration: 2629800000
 
 
 logging:

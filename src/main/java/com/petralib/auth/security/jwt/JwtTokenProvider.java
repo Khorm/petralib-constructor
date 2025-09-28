@@ -16,7 +16,7 @@ import java.util.Base64;
 import java.util.Date;
 
 /**
- * Сервис, обслуживающий расчет токенов
+ * РЎРµСЂРІРёСЃ, РѕР±СЃР»СѓР¶РёРІР°СЋС‰РёР№ СЂР°СЃС‡РµС‚ С‚РѕРєРµРЅРѕРІ
  */
 @Component
 public class JwtTokenProvider {
