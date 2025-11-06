@@ -26,26 +26,136 @@
   },
   {
     "id": "TC006",
+    "title": "project management api get current user",
+    "description": "Test the endpoint to retrieve current authenticated user information, verifying user details are correctly returned."
+  },
+  {
+    "id": "TC007",
     "title": "block management api get workflow blocks page",
     "description": "Test pagination and searching of workflow blocks by project ID, page number, name filter, and page elements count."
   },
   {
-    "id": "TC007",
+    "id": "TC008",
+    "title": "block management api get action blocks page",
+    "description": "Test pagination and searching of action blocks by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC009",
+    "title": "block management api get source blocks page",
+    "description": "Test pagination and searching of source blocks by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC010",
     "title": "block management api create or update action block",
     "description": "Test creation and update of action blocks with valid and invalid data, including validation of required fields and max length."
   },
   {
-    "id": "TC008",
+    "id": "TC011",
+    "title": "block management api create or update workflow block",
+    "description": "Test creation and update of workflow blocks with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC012",
+    "title": "block management api create or update source block",
+    "description": "Test creation and update of source blocks with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC013",
+    "title": "block management api get accepted sources",
+    "description": "Test retrieval of accepted sources for a project, verifying the list of available source blocks is correctly returned."
+  },
+  {
+    "id": "TC014",
+    "title": "block management api get source by id",
+    "description": "Test retrieval of a specific source block by ID, verifying all block details including variables are correctly returned."
+  },
+  {
+    "id": "TC015",
+    "title": "block management api delete block",
+    "description": "Test deletion of a block by block type and ID, verifying the block is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC016",
+    "title": "type management api get types page",
+    "description": "Test pagination and searching of custom types by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC017",
+    "title": "type management api get all types",
+    "description": "Test retrieval of all custom types for a project, verifying the complete list of types is correctly returned."
+  },
+  {
+    "id": "TC018",
     "title": "type management api create or update type",
     "description": "Test creation and update of custom types with validation of required fields, max length, and proper handling of variables."
   },
   {
-    "id": "TC009",
+    "id": "TC019",
+    "title": "type management api delete type",
+    "description": "Test deletion of a custom type by ID and verify that the type is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC020",
+    "title": "type management api get type fields",
+    "description": "Test retrieval of type fields for a specific type ID, verifying all field details are correctly returned."
+  },
+  {
+    "id": "TC021",
+    "title": "scenario management api get scenario blocks for workflow",
+    "description": "Test retrieval of scenario blocks for a workflow, verifying beginEndDtoList and scenarioBlocks are correctly returned."
+  },
+  {
+    "id": "TC022",
     "title": "scenario management api save scenario",
     "description": "Test saving of scenario data including complex nested structures for beginEndDtoList and scenarioBlocks."
   },
   {
-    "id": "TC010",
+    "id": "TC023",
+    "title": "scenario management api get scenario variables",
+    "description": "Test retrieval of scenario variables for a specific scenario block ID, verifying all variables are correctly returned."
+  },
+  {
+    "id": "TC024",
+    "title": "scenario management api save scenario variables",
+    "description": "Test saving of scenario variables for a specific scenario block, verifying variables are correctly stored and associated."
+  },
+  {
+    "id": "TC025",
+    "title": "scenario management api get workflow exit variables",
+    "description": "Test retrieval of workflow exit variables for a specific workflow ID, verifying exit variables are correctly returned."
+  },
+  {
+    "id": "TC026",
+    "title": "scenario management api save workflow exit variables",
+    "description": "Test saving of workflow exit variables, verifying variables are correctly stored and associated with the workflow."
+  },
+  {
+    "id": "TC027",
+    "title": "service management api get services page",
+    "description": "Test pagination and searching of services by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC028",
+    "title": "service management api get all services",
+    "description": "Test retrieval of all services for a project, verifying the complete list of services is correctly returned."
+  },
+  {
+    "id": "TC029",
+    "title": "service management api create or update service",
+    "description": "Test creation and update of services with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC030",
+    "title": "service management api get service by id",
+    "description": "Test retrieval of a specific service by ID, verifying all service details are correctly returned."
+  },
+  {
+    "id": "TC031",
+    "title": "service management api delete service",
+    "description": "Test deletion of a service by ID and verify that the service is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC032",
     "title": "service management api download service file",
     "description": "Test downloading of service configuration file as JSON by service ID and verify content correctness and response headers."
   }
