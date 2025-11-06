@@ -39,3 +39,5 @@ testsprite_tests/tmp/credentials.json
 
 # Gradle
 .gradle/
+bin/
+.vscode/
