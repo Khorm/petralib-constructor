@@ -1,0 +1,377 @@
+[
+  {
+    "id": "TC001",
+    "title": "authentication api user login",
+    "description": "Test the user login endpoint with valid and invalid credentials to verify JWT token issuance and error handling."
+  },
+  {
+    "id": "TC002",
+    "title": "authentication api user logout",
+    "description": "Test the user logout endpoint to ensure proper session termination and token invalidation."
+  },
+  {
+    "id": "TC003",
+    "title": "project management api get all projects",
+    "description": "Verify retrieval of all projects for the authenticated user, ensuring proper authorization and data correctness."
+  },
+  {
+    "id": "TC004",
+    "title": "project management api create new project",
+    "description": "Test project creation with valid data and validate enforcement of required fields and maximum string length constraints."
+  },
+  {
+    "id": "TC005",
+    "title": "project management api delete project",
+    "description": "Test deletion of a project by ID and verify that the project is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC006",
+    "title": "project management api get current user",
+    "description": "Test the endpoint to retrieve current authenticated user information, verifying user details are correctly returned."
+  },
+  {
+    "id": "TC007",
+    "title": "block management api get workflow blocks page",
+    "description": "Test pagination and searching of workflow blocks by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC008",
+    "title": "block management api get action blocks page",
+    "description": "Test pagination and searching of action blocks by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC009",
+    "title": "block management api get source blocks page",
+    "description": "Test pagination and searching of source blocks by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC010",
+    "title": "block management api create or update action block",
+    "description": "Test creation and update of action blocks with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC011",
+    "title": "block management api create or update workflow block",
+    "description": "Test creation and update of workflow blocks with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC012",
+    "title": "block management api create or update source block",
+    "description": "Test creation and update of source blocks with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC013",
+    "title": "block management api get accepted sources",
+    "description": "Test retrieval of accepted sources for a project, verifying the list of available source blocks is correctly returned."
+  },
+  {
+    "id": "TC014",
+    "title": "block management api get source by id",
+    "description": "Test retrieval of a specific source block by ID, verifying all block details including variables are correctly returned."
+  },
+  {
+    "id": "TC015",
+    "title": "block management api delete block",
+    "description": "Test deletion of a block by block type and ID, verifying the block is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC016",
+    "title": "type management api get types page",
+    "description": "Test pagination and searching of custom types by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC017",
+    "title": "type management api get all types",
+    "description": "Test retrieval of all custom types for a project, verifying the complete list of types is correctly returned."
+  },
+  {
+    "id": "TC018",
+    "title": "type management api create or update type",
+    "description": "Test creation and update of custom types with validation of required fields, max length, and proper handling of variables."
+  },
+  {
+    "id": "TC019",
+    "title": "type management api delete type",
+    "description": "Test deletion of a custom type by ID and verify that the type is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC020",
+    "title": "type management api get type fields",
+    "description": "Test retrieval of type fields for a specific type ID, verifying all field details are correctly returned."
+  },
+  {
+    "id": "TC021",
+    "title": "scenario management api get scenario blocks for workflow",
+    "description": "Test retrieval of scenario blocks for a workflow, verifying beginEndDtoList and scenarioBlocks are correctly returned."
+  },
+  {
+    "id": "TC022",
+    "title": "scenario management api save scenario",
+    "description": "Test saving of scenario data including complex nested structures for beginEndDtoList and scenarioBlocks."
+  },
+  {
+    "id": "TC023",
+    "title": "scenario management api get scenario variables",
+    "description": "Test retrieval of scenario variables for a specific scenario block ID, verifying all variables are correctly returned."
+  },
+  {
+    "id": "TC024",
+    "title": "scenario management api save scenario variables",
+    "description": "Test saving of scenario variables for a specific scenario block, verifying variables are correctly stored and associated."
+  },
+  {
+    "id": "TC025",
+    "title": "scenario management api get workflow exit variables",
+    "description": "Test retrieval of workflow exit variables for a specific workflow ID, verifying exit variables are correctly returned."
+  },
+  {
+    "id": "TC026",
+    "title": "scenario management api save workflow exit variables",
+    "description": "Test saving of workflow exit variables, verifying variables are correctly stored and associated with the workflow."
+  },
+  {
+    "id": "TC027",
+    "title": "service management api get services page",
+    "description": "Test pagination and searching of services by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC028",
+    "title": "service management api get all services",
+    "description": "Test retrieval of all services for a project, verifying the complete list of services is correctly returned."
+  },
+  {
+    "id": "TC029",
+    "title": "service management api create or update service",
+    "description": "Test creation and update of services with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC030",
+    "title": "service management api get service by id",
+    "description": "Test retrieval of a specific service by ID, verifying all service details are correctly returned."
+  },
+  {
+    "id": "TC031",
+    "title": "service management api delete service",
+    "description": "Test deletion of a service by ID and verify that the service is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC032",
+    "title": "service management api download service file",
+    "description": "Test downloading of service configuration file as JSON by service ID and verify content correctness and response headers."
+  },
+  {
+    "id": "TC033",
+    "title": "authentication api login with invalid credentials",
+    "description": "Test login endpoint with wrong email and password to verify proper error handling and 403 Forbidden response."
+  },
+  {
+    "id": "TC034",
+    "title": "authentication api login with missing fields",
+    "description": "Test login endpoint with missing email or password fields to verify validation errors."
+  },
+  {
+    "id": "TC035",
+    "title": "authentication api login with empty fields",
+    "description": "Test login endpoint with empty email or password to verify validation errors."
+  },
+  {
+    "id": "TC036",
+    "title": "authentication api logout without token",
+    "description": "Test logout endpoint without JWT token to verify 401 Unauthorized response."
+  },
+  {
+    "id": "TC037",
+    "title": "authentication api logout with invalid token",
+    "description": "Test logout endpoint with invalid or expired JWT token to verify proper error handling."
+  },
+  {
+    "id": "TC038",
+    "title": "project management api get projects without authentication",
+    "description": "Test GET /api/v1/project without JWT token to verify 401 Unauthorized response."
+  },
+  {
+    "id": "TC039",
+    "title": "project management api create project with empty name",
+    "description": "Test project creation with empty name field to verify validation error (Required field)."
+  },
+  {
+    "id": "TC040",
+    "title": "project management api create project with name exceeding max length",
+    "description": "Test project creation with name longer than 100 characters to verify validation error (max length constraint)."
+  },
+  {
+    "id": "TC041",
+    "title": "project management api create project without authentication",
+    "description": "Test project creation without JWT token to verify 401 Unauthorized response."
+  },
+  {
+    "id": "TC042",
+    "title": "project management api delete non-existent project",
+    "description": "Test deletion of project with non-existent ID to verify proper error handling."
+  },
+  {
+    "id": "TC043",
+    "title": "block management api get blocks page with invalid pagination",
+    "description": "Test pagination endpoints with negative page numbers, zero page elements, or invalid project ID to verify validation."
+  },
+  {
+    "id": "TC044",
+    "title": "block management api create block with empty name",
+    "description": "Test block creation with empty name field to verify validation error."
+  },
+  {
+    "id": "TC045",
+    "title": "block management api create block with name exceeding max length",
+    "description": "Test block creation with name longer than 100 characters to verify validation error."
+  },
+  {
+    "id": "TC046",
+    "title": "block management api create block with invalid block type",
+    "description": "Test block creation with invalid block type value to verify validation error."
+  },
+  {
+    "id": "TC047",
+    "title": "block management api create block with duplicate variable names",
+    "description": "Test block creation with duplicate variable names in variables array to verify validation error."
+  },
+  {
+    "id": "TC048",
+    "title": "block management api get source by invalid id",
+    "description": "Test GET /api/v1/block/source/{sourceId} with non-existent ID to verify 404 Not Found response."
+  },
+  {
+    "id": "TC049",
+    "title": "block management api delete block without authentication",
+    "description": "Test block deletion without JWT token to verify 401 Unauthorized response."
+  },
+  {
+    "id": "TC050",
+    "title": "type management api get types page with invalid parameters",
+    "description": "Test type pagination with negative page numbers, invalid project ID, or zero page elements to verify validation."
+  },
+  {
+    "id": "TC051",
+    "title": "type management api create type with empty name",
+    "description": "Test type creation with empty name field to verify validation error."
+  },
+  {
+    "id": "TC052",
+    "title": "type management api create type with name exceeding max length",
+    "description": "Test type creation with name longer than 100 characters to verify validation error."
+  },
+  {
+    "id": "TC053",
+    "title": "type management api create type with invalid variable multiplicity",
+    "description": "Test type creation with invalid multiplicity value (not SINGLE or COLLECTION) to verify validation error."
+  },
+  {
+    "id": "TC054",
+    "title": "type management api create type with circular dependency",
+    "description": "Test type creation that creates circular dependency between types to verify 406 Not Acceptable response."
+  },
+  {
+    "id": "TC055",
+    "title": "type management api get type fields for non-existent type",
+    "description": "Test GET /api/v1/type/fields/{typeId} with non-existent type ID to verify 404 Not Found response."
+  },
+  {
+    "id": "TC056",
+    "title": "scenario management api get scenario with invalid workflow id",
+    "description": "Test GET /api/v1/scenario with non-existent workflow ID to verify proper error handling."
+  },
+  {
+    "id": "TC057",
+    "title": "scenario management api save scenario with invalid data structure",
+    "description": "Test scenario save with malformed beginEndDtoList or scenarioBlocks to verify validation errors."
+  },
+  {
+    "id": "TC058",
+    "title": "scenario management api get scenario variables for non-existent block",
+    "description": "Test GET /api/v1/scenario/{scenarioBlockId}/variables with non-existent scenario block ID."
+  },
+  {
+    "id": "TC059",
+    "title": "scenario management api save scenario variables with invalid data",
+    "description": "Test saving scenario variables with invalid variable types or malformed data to verify validation."
+  },
+  {
+    "id": "TC060",
+    "title": "service management api create service with empty required fields",
+    "description": "Test service creation with empty name, path, or null projectId to verify validation errors."
+  },
+  {
+    "id": "TC061",
+    "title": "service management api create service with fields exceeding max length",
+    "description": "Test service creation with name or path longer than 100 characters to verify validation error."
+  },
+  {
+    "id": "TC062",
+    "title": "service management api get service by invalid id",
+    "description": "Test GET /api/v1/service/{serviceId} with non-existent service ID to verify 404 Not Found response."
+  },
+  {
+    "id": "TC063",
+    "title": "service management api download file for non-existent service",
+    "description": "Test GET /api/v1/service/file/{serviceId} with non-existent service ID to verify proper error handling."
+  },
+  {
+    "id": "TC064",
+    "title": "api security test unauthorized access to protected endpoints",
+    "description": "Test all protected endpoints without JWT token to verify 401 Unauthorized response for all endpoints."
+  },
+  {
+    "id": "TC065",
+    "title": "api security test invalid jwt token format",
+    "description": "Test protected endpoints with malformed JWT token to verify proper rejection."
+  },
+  {
+    "id": "TC066",
+    "title": "api pagination test edge cases",
+    "description": "Test pagination with edge cases: page 0, negative page numbers, very large page numbers, page elements count = 0 or negative."
+  },
+  {
+    "id": "TC067",
+    "title": "api data integrity test cascade delete",
+    "description": "Test that deleting a project properly cascades and removes all related blocks, types, services, and scenarios."
+  },
+  {
+    "id": "TC068",
+    "title": "api data integrity test orphaned references",
+    "description": "Test that deleting entities (blocks, types, services) does not leave orphaned references in related tables."
+  },
+  {
+    "id": "TC069",
+    "title": "api input validation test sql injection attempts",
+    "description": "Test endpoints with SQL injection attempts in string fields to verify proper sanitization and error handling."
+  },
+  {
+    "id": "TC070",
+    "title": "api input validation test xss attempts",
+    "description": "Test endpoints with XSS attempts in string fields to verify proper sanitization and security."
+  },
+  {
+    "id": "TC071",
+    "title": "api input validation test special characters",
+    "description": "Test endpoints with special characters, unicode, emoji in string fields to verify proper handling."
+  },
+  {
+    "id": "TC072",
+    "title": "api input validation test boundary values",
+    "description": "Test endpoints with boundary values: exactly 100 characters (max length), exactly 1 character, empty strings."
+  },
+  {
+    "id": "TC073",
+    "title": "api performance test concurrent requests",
+    "description": "Test API endpoints with multiple concurrent requests to verify system stability and response times."
+  },
+  {
+    "id": "TC074",
+    "title": "api integration test complete workflow",
+    "description": "Test complete workflow: create project -> create blocks -> create types -> create scenario -> create service -> verify all relationships."
+  },
+  {
+    "id": "TC075",
+    "title": "api integration test update operations",
+    "description": "Test update operations: create entity -> update with new data -> verify changes -> update again -> verify final state."
+  }
+]
