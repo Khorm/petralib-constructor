@@ -1,0 +1,805 @@
+{
+  "tech_stack": [
+    "Java 15/17",
+    "Spring Boot 3.3.11",
+    "Spring Security",
+    "JWT",
+    "PostgreSQL",
+    "JPA/Hibernate",
+    "MapStruct",
+    "Lombok",
+    "React",
+    "Thymeleaf"
+  ],
+  "features": [
+    {
+      "name": "Authentication API",
+      "description": "User authentication and authorization using JWT tokens",
+      "files": [
+        "src/main/java/com/petralib/auth/rest/AuthController.java",
+        "src/main/java/com/petralib/auth/rest/AuthRequestDTO.java",
+        "src/main/java/com/petralib/auth/security/jwt/JwtTokenProvider.java"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Authentication API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/v1/auth/login": {
+            "post": {
+              "summary": "User login",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string"
+                        },
+                        "password": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["email", "password"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Success",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "email": {"type": "string"},
+                          "token": {"type": "string"}
+                        }
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Invalid credentials"
+                }
+              }
+            }
+          },
+          "/api/v1/auth/logout": {
+            "post": {
+              "summary": "User logout",
+              "responses": {
+                "200": {
+                  "description": "Success"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Project Management API",
+      "description": "CRUD operations for projects",
+      "files": [
+        "src/main/java/com/petralib/project/ProjectRestController.java",
+        "src/main/java/com/petralib/project/dto/ProjectDto.java",
+        "src/main/java/com/petralib/project/service/ProjectService.java"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Project Management API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/v1/project": {
+            "get": {
+              "summary": "Get all projects for current user",
+              "security": [{"bearerAuth": []}],
+              "responses": {
+                "200": {
+                  "description": "List of projects",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {"type": "integer"},
+                            "name": {"type": "string"},
+                            "description": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "post": {
+              "summary": "Create a new project",
+              "security": [{"bearerAuth": []}],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer"},
+                        "name": {"type": "string", "maxLength": 100},
+                        "description": {"type": "string"}
+                      },
+                      "required": ["name"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Project created",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer"},
+                          "name": {"type": "string"},
+                          "description": {"type": "string"}
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Validation errors"
+                }
+              }
+            }
+          },
+          "/api/v1/project/current-user": {
+            "get": {
+              "summary": "Get current authenticated user",
+              "security": [{"bearerAuth": []}],
+              "responses": {
+                "200": {
+                  "description": "Current user info",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer"},
+                          "email": {"type": "string"},
+                          "username": {"type": "string"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/v1/project/{projectId}": {
+            "delete": {
+              "summary": "Delete a project",
+              "security": [{"bearerAuth": []}],
+              "parameters": [
+                {
+                  "name": "projectId",
+                  "in": "path",
+                  "required": true,
+                  "schema": {"type": "integer"}
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Project deleted"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Block Management API",
+      "description": "CRUD operations for blocks (workflow, action, source)",
+      "files": [
+        "src/main/java/com/petralib/block/BlockRestController.java",
+        "src/main/java/com/petralib/block/dto/BlockDto.java",
+        "src/main/java/com/petralib/block/service/BlockService.java"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Block Management API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/v1/block/workflow/page": {
+            "get": {
+              "summary": "Get workflow blocks page",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "pageNumber", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "name", "in": "query", "required": true, "schema": {"type": "string"}},
+                {"name": "pageElementsCount", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Block page"
+                }
+              }
+            }
+          },
+          "/api/v1/block/action/page": {
+            "get": {
+              "summary": "Get action blocks page",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "pageNumber", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "name", "in": "query", "required": true, "schema": {"type": "string"}},
+                {"name": "pageElementsCount", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Block page"
+                }
+              }
+            }
+          },
+          "/api/v1/block/source/page": {
+            "get": {
+              "summary": "Get source blocks page",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "pageNumber", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "name", "in": "query", "required": true, "schema": {"type": "string"}},
+                {"name": "pageElementsCount", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Block page"
+                }
+              }
+            }
+          },
+          "/api/v1/block/source/acceptedSources": {
+            "get": {
+              "summary": "Get accepted sources",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "List of accepted sources",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {"type": "integer"},
+                            "name": {"type": "string"},
+                            "description": {"type": "string"},
+                            "type": {"type": "string"},
+                            "variables": {"type": "array"}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/v1/block/source/{sourceId}": {
+            "get": {
+              "summary": "Get source by ID",
+              "parameters": [
+                {"name": "sourceId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Source block details"
+                }
+              }
+            }
+          },
+          "/api/v1/block/action": {
+            "post": {
+              "summary": "Create or update action block",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer"},
+                        "name": {"type": "string", "maxLength": 100},
+                        "description": {"type": "string"},
+                        "type": {"type": "string"},
+                        "service": {"type": "object"},
+                        "variables": {"type": "array"}
+                      },
+                      "required": ["name"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Block saved"
+                },
+                "400": {
+                  "description": "Validation errors"
+                }
+              }
+            }
+          },
+          "/api/v1/block/workflow": {
+            "post": {
+              "summary": "Create or update workflow block",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer"},
+                        "name": {"type": "string", "maxLength": 100},
+                        "description": {"type": "string"},
+                        "type": {"type": "string"},
+                        "service": {"type": "object"},
+                        "variables": {"type": "array"}
+                      },
+                      "required": ["name"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Block saved"
+                },
+                "400": {
+                  "description": "Validation errors"
+                }
+              }
+            }
+          },
+          "/api/v1/block/source": {
+            "post": {
+              "summary": "Create or update source block",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer"},
+                        "name": {"type": "string", "maxLength": 100},
+                        "description": {"type": "string"},
+                        "type": {"type": "string"},
+                        "service": {"type": "object"},
+                        "variables": {"type": "array"}
+                      },
+                      "required": ["name"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Block saved"
+                },
+                "400": {
+                  "description": "Validation errors"
+                }
+              }
+            }
+          },
+          "/api/v1/block/{blockType}/{blockId}": {
+            "delete": {
+              "summary": "Delete a block",
+              "parameters": [
+                {"name": "blockType", "in": "path", "required": true, "schema": {"type": "string"}},
+                {"name": "blockId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Block deleted"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Type Management API",
+      "description": "CRUD operations for custom types (CTypes)",
+      "files": [
+        "src/main/java/com/petralib/ctype/TypeRestController.java",
+        "src/main/java/com/petralib/ctype/dto/TypeFullDto.java",
+        "src/main/java/com/petralib/ctype/TypeService.java"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Type Management API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/v1/type/page": {
+            "get": {
+              "summary": "Get types page",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "pageNumber", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "name", "in": "query", "required": true, "schema": {"type": "string"}},
+                {"name": "pageElementsCount", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Type page"
+                }
+              }
+            }
+          },
+          "/api/v1/type": {
+            "get": {
+              "summary": "Get all types for project",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "List of types"
+                }
+              }
+            },
+            "post": {
+              "summary": "Create or update a type",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer"},
+                        "name": {"type": "string", "maxLength": 100},
+                        "description": {"type": "string"},
+                        "variables": {
+                          "type": "array",
+                          "items": {"type": "object"}
+                        }
+                      },
+                      "required": ["name"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Type saved"
+                },
+                "400": {
+                  "description": "Validation errors"
+                },
+                "406": {
+                  "description": "Not acceptable"
+                }
+              }
+            }
+          },
+          "/api/v1/type/{typeId}": {
+            "delete": {
+              "summary": "Delete a type",
+              "parameters": [
+                {"name": "typeId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Type deleted"
+                }
+              }
+            }
+          },
+          "/api/v1/type/fields/{typeId}": {
+            "get": {
+              "summary": "Get type fields",
+              "parameters": [
+                {"name": "typeId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "List of type fields"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Scenario Management API",
+      "description": "CRUD operations for scenarios and scenario variables",
+      "files": [
+        "src/main/java/com/petralib/scenario/ScenarioRestController.java",
+        "src/main/java/com/petralib/scenario/dto/ScenarioDto.java",
+        "src/main/java/com/petralib/scenario/service/ScenarioBlockService.java"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Scenario Management API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/v1/scenario": {
+            "get": {
+              "summary": "Get scenario blocks for workflow",
+              "parameters": [
+                {"name": "workflowId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Scenario data",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "beginEndDtoList": {"type": "array"},
+                          "scenarioBlocks": {"type": "array"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "post": {
+              "summary": "Save scenario",
+              "parameters": [
+                {"name": "workflowId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "beginEndDtoList": {"type": "array"},
+                        "scenarioBlocks": {"type": "array"}
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Scenario saved"
+                }
+              }
+            }
+          },
+          "/api/v1/scenario/{scenarioBlockId}/variables": {
+            "get": {
+              "summary": "Get scenario variables",
+              "parameters": [
+                {"name": "scenarioBlockId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Scenario variables"
+                }
+              }
+            },
+            "post": {
+              "summary": "Save scenario variables",
+              "parameters": [
+                {"name": "scenarioBlockId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Variables saved"
+                }
+              }
+            }
+          },
+          "/api/v1/scenario/{workflowId}/variables/exit": {
+            "get": {
+              "summary": "Get workflow exit variables",
+              "parameters": [
+                {"name": "workflowId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Exit variables"
+                }
+              }
+            },
+            "put": {
+              "summary": "Save workflow exit variables",
+              "parameters": [
+                {"name": "workflowId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Exit variables saved"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Service Management API",
+      "description": "CRUD operations for services",
+      "files": [
+        "src/main/java/com/petralib/service/ServiceRestController.java",
+        "src/main/java/com/petralib/service/dto/ServiceDto.java",
+        "src/main/java/com/petralib/service/ServiceService.java"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "info": {
+          "title": "Service Management API",
+          "version": "1.0.0"
+        },
+        "paths": {
+          "/api/v1/service/page": {
+            "get": {
+              "summary": "Get services page",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "pageNumber", "in": "query", "required": true, "schema": {"type": "integer"}},
+                {"name": "name", "in": "query", "required": true, "schema": {"type": "string"}},
+                {"name": "pageElementsCount", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Service page"
+                }
+              }
+            }
+          },
+          "/api/v1/service": {
+            "get": {
+              "summary": "Get all services for project",
+              "parameters": [
+                {"name": "projectId", "in": "query", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "List of services"
+                }
+              }
+            },
+            "post": {
+              "summary": "Create or update a service",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer"},
+                        "name": {"type": "string", "maxLength": 100},
+                        "projectId": {"type": "integer"},
+                        "description": {"type": "string"},
+                        "path": {"type": "string", "maxLength": 100}
+                      },
+                      "required": ["name", "projectId", "path"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Service saved"
+                },
+                "400": {
+                  "description": "Validation errors"
+                }
+              }
+            }
+          },
+          "/api/v1/service/{serviceId}": {
+            "get": {
+              "summary": "Get service by ID",
+              "parameters": [
+                {"name": "serviceId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Service details"
+                }
+              }
+            },
+            "delete": {
+              "summary": "Delete a service",
+              "parameters": [
+                {"name": "serviceId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "Service deleted"
+                }
+              }
+            }
+          },
+          "/api/v1/service/file/{serviceId}": {
+            "get": {
+              "summary": "Download service file as JSON",
+              "parameters": [
+                {"name": "serviceId", "in": "path", "required": true, "schema": {"type": "integer"}}
+              ],
+              "responses": {
+                "200": {
+                  "description": "JSON file download",
+                  "content": {
+                    "application/json": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+

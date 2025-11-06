@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "authentication api user login",
+    "description": "Test the user login endpoint with valid and invalid credentials to verify JWT token issuance and error handling."
+  },
+  {
+    "id": "TC002",
+    "title": "authentication api user logout",
+    "description": "Test the user logout endpoint to ensure proper session termination and token invalidation."
+  },
+  {
+    "id": "TC003",
+    "title": "project management api get all projects",
+    "description": "Verify retrieval of all projects for the authenticated user, ensuring proper authorization and data correctness."
+  },
+  {
+    "id": "TC004",
+    "title": "project management api create new project",
+    "description": "Test project creation with valid data and validate enforcement of required fields and maximum string length constraints."
+  },
+  {
+    "id": "TC005",
+    "title": "project management api delete project",
+    "description": "Test deletion of a project by ID and verify that the project is removed without leaving orphaned references."
+  },
+  {
+    "id": "TC006",
+    "title": "block management api get workflow blocks page",
+    "description": "Test pagination and searching of workflow blocks by project ID, page number, name filter, and page elements count."
+  },
+  {
+    "id": "TC007",
+    "title": "block management api create or update action block",
+    "description": "Test creation and update of action blocks with valid and invalid data, including validation of required fields and max length."
+  },
+  {
+    "id": "TC008",
+    "title": "type management api create or update type",
+    "description": "Test creation and update of custom types with validation of required fields, max length, and proper handling of variables."
+  },
+  {
+    "id": "TC009",
+    "title": "scenario management api save scenario",
+    "description": "Test saving of scenario data including complex nested structures for beginEndDtoList and scenarioBlocks."
+  },
+  {
+    "id": "TC010",
+    "title": "service management api download service file",
+    "description": "Test downloading of service configuration file as JSON by service ID and verify content correctness and response headers."
+  }
+]

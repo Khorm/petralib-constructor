@@ -1,0 +1,21 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://94.180.117.77:8081",
+  "webEndpoint": "http://94.180.117.77:8080",
+  "backendAuthType": "public",
+  "executionArgs": {
+    "projectName": "petralib-constructor",
+    "projectPath": "C:\\Users\\user\\Desktop\\petralib\\petralib-constructor",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-EnwFxOEobN3qPgmXQbTdQoAR6LQP_H5wcEU48TBs2HrQzJ29nYi_Hgzi3vNAInFmVyHKX4dz9-x3GxLbw7kA3c53hgzFtEP1FB1ZNn4eoJYYUEHnBs-LQ2w_abqlF1z6tW4",
+      "TEST_EMAIL": "r0meo1.ru@gmail.com",
+      "TEST_PASSWORD": "8K3uLnPVGTtcm5a",
+      "WEB_USERNAME": "dm",
+      "WEB_PASSWORD": "dm"
+    }
+  }
+}

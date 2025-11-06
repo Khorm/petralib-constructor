@@ -22,3 +22,20 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# TestSprite temporary files
+testsprite_tests/tmp/*.log
+testsprite_tests/tmp/raw_report.md
+testsprite_execution.log
+test_execution.log
+*.log
+
+# Credentials and sensitive data
+*.credentials.json
+*credentials*.json
+testsprite_tests/tmp/credentials.json
+.env
+.env.local
+
+# Gradle
+.gradle/

@@ -1,0 +1,17 @@
+{
+  "status": "configured",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://94.180.117.77:8081",
+  "backendAuthType": "public",
+  "executionArgs": {
+    "projectName": "petralib-constructor",
+    "projectPath": "C:\\Users\\user\\Desktop\\petralib\\petralib-constructor",
+    "testIds": [],
+    "additionalInstruction": "Testing against remote server at http://94.180.117.77:8081",
+    "envs": {
+      "API_KEY": "sk-user-EnwFxOEobN3qPgmXQbTdQoAR6LQP_H5wcEU48TBs2HrQzJ29nYi_Hgzi3vNAInFmVyHKX4dz9-x3GxLbw7kA3c53hgzFtEP1FB1ZNn4eoJYYUEHnBs-LQ2w_abqlF1z6tW4"
+    }
+  }
+}
+

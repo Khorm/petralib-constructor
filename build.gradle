@@ -73,6 +73,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework/spring-aop
     implementation group: 'org.springframework', name: 'spring-aop', version: '6.0.10'
     implementation 'org.postgresql:postgresql:42.7.7'
+    runtimeOnly 'com.h2database:h2:2.2.224'
 
 //    implementation 'org.springframework.boot:spring-boot-devtools:3.5.5'
 //    implementation 'ch.qos.logback:logback-classic:1.5.18'
