@@ -1,0 +1,11 @@
+# Пример локальной конфигурации для разработки
+# Скопируйте этот файл в application-local.yml и заполните своими данными
+# application-local.yml добавлен в .gitignore и не будет закоммичен
+
+spring:
+  datasource:
+    url: jdbc:postgresql://94.180.117.77:5432/petri_constructor
+    username: petra
+    password: your-password-here
+    driver-class-name: org.postgresql.Driver
+

@@ -52,3 +52,9 @@ Thumbs.db
 TEST_DATA_SUMMARY.md
 *_LOGIN*.md
 *_CREDENTIALS*.md
+
+# Local configuration files with credentials
+application-local.yml
+application-local.properties
+*.local.yml
+*.local.properties
