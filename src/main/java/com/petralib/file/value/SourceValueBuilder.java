@@ -13,13 +13,11 @@ final class SourceValueBuilder extends ValueBuilder {
     }
 
     @Override
-    void extendedBuild(ValueLoaderModel.ValueLoaderModelBuilder builder) {
-        builder
-                .loaderType(LoaderType.SOURCE_LOADER.name())
-                .sourceName(getCurrentScenarioVariable().getProducerSource().getName())
-                .producerVariableId(getCurrentScenarioVariable().getProducerSource().getId())
-                .sourceVersion("0")
-                .sourceName(getCurrentScenarioVariable().getProducerSource().getName())
-                .sourceServiceName(getCurrentScenarioVariable().getProducerSource().getService().getPath());
+    void extendedBuild(ValueLoaderModel model) {
+        model.setLoaderType(LoaderType.SOURCE_LOADER.name());
+        model.setSourceName(getCurrentScenarioVariable().getProducerSource().getName());
+        model.setProducerVariableId(getCurrentScenarioVariable().getProducerSource().getId());
+        model.setSourceVersion("0");
+        model.setSourceServiceName(getCurrentScenarioVariable().getProducerSource().getService().getPath());
     }
 }

@@ -19,16 +19,16 @@ final class ScriptValueBuilder extends ValueBuilder {
     }
 
     @Override
-    void extendedBuild(ValueLoaderModel.ValueLoaderModelBuilder builder) {
-        builder.loaderType(LoaderType.SCRIPT_LOADER.name())
-                .script(getCurrentScenarioVariable().getProducerScript())
-                .requiredBlockVariables(getScenarioBlock().getBlock().getInVariables().stream()
-                        .flatMap((Function<VariableEntity, Stream<Long>>) entity -> {
-                            if (getCurrentScenarioVariable().getProducerScript().contains(entity.getName())) {
-                                return Stream.of(entity.getId());
-                            } else {
-                                return Stream.empty();
-                            }
-                        }).collect(Collectors.toList()));
+    void extendedBuild(ValueLoaderModel model) {
+        model.setLoaderType(LoaderType.SCRIPT_LOADER.name());
+        model.setScript(getCurrentScenarioVariable().getProducerScript());
+        model.setRequiredBlockVariables(getScenarioBlock().getBlock().getInVariables().stream()
+                .flatMap((Function<VariableEntity, Stream<Long>>) entity -> {
+                    if (getCurrentScenarioVariable().getProducerScript().contains(entity.getName())) {
+                        return Stream.of(entity.getId());
+                    } else {
+                        return Stream.empty();
+                    }
+                }).collect(Collectors.toList()));
     }
 }

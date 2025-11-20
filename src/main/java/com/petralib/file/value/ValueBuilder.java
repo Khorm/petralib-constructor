@@ -28,16 +28,15 @@ public abstract class ValueBuilder {
     }
 
     public ValueLoaderModel build() {
-        ValueLoaderModel.ValueLoaderModelBuilder builder = ValueLoaderModel.builder();
-        builder
-                .scenarioVariableId(currentScenarioVariable.getId())
-                .consumerVariableId(currentScenarioVariable.getConsumerVariable().getId())
-                .name(currentScenarioVariable.getConsumerVariable().getName())
-                .multiplicity(currentScenarioVariable.getConsumerVariable().getMultiplicity().name())
-                .parent(currentScenarioVariable.getParentId())
-                .localId(currentScenarioVariable.getLocalId())
-                ;
-        extendedBuild(builder);
+        ValueLoaderModel model = new ValueLoaderModel();
+        model.setScenarioVariableId(currentScenarioVariable.getId());
+        model.setConsumerVariableId(currentScenarioVariable.getConsumerVariable().getId());
+        model.setName(currentScenarioVariable.getConsumerVariable().getName());
+        model.setMultiplicity(currentScenarioVariable.getConsumerVariable().getMultiplicity().name());
+        model.setParent(currentScenarioVariable.getParentId());
+        model.setLocalId(currentScenarioVariable.getLocalId());
+        
+        extendedBuild(model);
 
         Collection<ScenarioVariableEntity> children = scenarioBlock.getVariables().stream()
                 .filter(entity -> entity.getParentId().equals(currentScenarioVariable.getLocalId())).toList();
@@ -49,13 +48,13 @@ public abstract class ValueBuilder {
             }
             return Stream.empty();
         }).collect(Collectors.toList());
-        builder.children(childrenModels);
+        model.setChildren(childrenModels);
 
         //        loaderModelMap.put(currentScenarioVariable.getConsumerVariable().getId(), model);
-        return builder.build();
+        return model;
     }
 
-    abstract void extendedBuild(ValueLoaderModel.ValueLoaderModelBuilder builder);
+    abstract void extendedBuild(ValueLoaderModel model);
 
 //    Collection<ScenarioVariableEntity> sourceInVariables(Long sourceId, Long parentId) {
 //        return scenarioBlock.getVariables().stream()

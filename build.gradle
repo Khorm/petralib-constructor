@@ -45,7 +45,7 @@ repositories {
 ext {
 
     mapstructVersion = "1.5.5.Final"
-    lombokVersion = "1.18.28"
+    lombokVersion = "1.18.34"
     boot = "2.7.18"
 }
 

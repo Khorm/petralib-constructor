@@ -8,15 +8,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Collection;
 import java.util.List;
 
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class ValueLoaderModel {
+    
+    public ValueLoaderModel() {
+        // Default constructor
+    }
 
     //айди переменной сценария
     private Long scenarioVariableId;

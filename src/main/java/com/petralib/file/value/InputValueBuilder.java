@@ -16,10 +16,10 @@ final class InputValueBuilder extends ValueBuilder{
     }
 
     @Override
-    void extendedBuild(ValueLoaderModel.ValueLoaderModelBuilder builder) {
-        builder.loaderType(LoaderType.INPUT_LOADER.name())
-                .producerVariableId(getCurrentScenarioVariable().getProducerVariable().getId())
-                .requiredBlockVariables(Collections.singletonList(getCurrentScenarioVariable().getProducerVariable().getId()))
-                .extractionString(getCurrentScenarioVariable().getExtractionString());
+    void extendedBuild(ValueLoaderModel model) {
+        model.setLoaderType(LoaderType.INPUT_LOADER.name());
+        model.setProducerVariableId(getCurrentScenarioVariable().getProducerVariable().getId());
+        model.setRequiredBlockVariables(Collections.singletonList(getCurrentScenarioVariable().getProducerVariable().getId()));
+        model.setExtractionString(getCurrentScenarioVariable().getExtractionString());
     }
 }
