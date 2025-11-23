@@ -46,7 +46,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
                 }
         );
-        http.apply(jwtConfigure);
+        jwtConfigure.configure(http);
         http.formLogin(form -> form
                 .loginPage("/login")
                 .permitAll()
