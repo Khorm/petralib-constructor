@@ -51,14 +51,23 @@ param(
 # Проверка наличия токена
 $token = $env:GITHUB_TOKEN
 if (-not $token) {
-    Write-Host "❌ Ошибка: Не найден GitHub токен!" -ForegroundColor Red
-    Write-Host ""
-    Write-Host "Установите переменную окружения GITHUB_TOKEN:" -ForegroundColor Yellow
-    Write-Host "  `$env:GITHUB_TOKEN = 'your-token-here'" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "Или создайте PR вручную по ссылке:" -ForegroundColor Yellow
-    Write-Host "  https://github.com/$Repo/compare/$BaseBranch...$HeadBranch" -ForegroundColor Cyan
-    exit 1
+    # Попробуем получить токен из аргументов
+    if ($args.Count -gt 0) {
+        $token = $args[0]
+    } else {
+        Write-Host "❌ Ошибка: Не найден GitHub токен!" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Использование:" -ForegroundColor Yellow
+        Write-Host "  .\create_pr.ps1 <github-token>" -ForegroundColor White
+        Write-Host ""
+        Write-Host "Или установите переменную окружения:" -ForegroundColor Yellow
+        Write-Host "  `$env:GITHUB_TOKEN = 'your-token-here'" -ForegroundColor White
+        Write-Host "  .\create_pr.ps1" -ForegroundColor White
+        Write-Host ""
+        Write-Host "Или создайте PR вручную по ссылке:" -ForegroundColor Yellow
+        Write-Host "  https://github.com/$Repo/compare/$BaseBranch...$HeadBranch" -ForegroundColor Cyan
+        exit 1
+    }
 }
 
 # Создание PR через API
