@@ -65,7 +65,10 @@ public class BlockRestController {
     }
 
     @PostMapping("workflow")
-    public ResponseEntity<?> saveWorkflow(@RequestParam Long projectId, @Valid @RequestBody BlockDto dto, Errors errors) {
+    public ResponseEntity<?> saveWorkflow(@RequestParam(required = false) Long projectId, @Valid @RequestBody BlockDto dto, Errors errors) {
+        if (projectId == null) {
+            return new ResponseEntity<>("Project ID is required", HttpStatus.BAD_REQUEST);
+        }
         return saveBlock(projectId, dto, BlockType.WORKFLOW, errors);
     }
 
@@ -81,8 +84,13 @@ public class BlockRestController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
         }
-        blockService.save(dto, projectId, type);
-        return ResponseEntity.ok("ok");
+        try {
+            BlockEntity savedBlock = blockService.save(dto, projectId, type);
+            BlockDto savedDto = blockMapper.fromEntityToDto(savedBlock);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error saving block: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("{blockType}/{blockId}")

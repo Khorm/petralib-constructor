@@ -1,0 +1,446 @@
+[
+  {
+    "id": "TC001",
+    "title": "User login with valid credentials",
+    "description": "Verify that a user can successfully log in with correct email and password and receives a valid JWT token.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/auth/login with valid email and password"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response contains a JWT token"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User login with invalid credentials",
+    "description": "Verify that login fails with incorrect email or password and returns appropriate error.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/auth/login with invalid email and/or password"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response contains error message indicating authentication failure"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Access protected endpoint without JWT token",
+    "description": "Verify that accessing any protected API endpoint without a JWT token returns authorization error.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/project without 'Authorization' header"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 403 Forbidden or 401 Unauthorized"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response contains error indicating missing or invalid token"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Create new project with valid data",
+    "description": "Ensure a user can create a new project with a unique name not exceeding 100 characters.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate and obtain JWT token"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/project with a unique project name under 100 characters"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 201 Created"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify project is returned with correct details"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Reject project creation with duplicate name",
+    "description": "Verify that creating a project with a name already used by the user is rejected with an error.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate and create project with name 'TestProject'"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/project with the same project name 'TestProject'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 400 Bad Request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message indicates project name duplication"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Retrieve user's projects list with pagination",
+    "description": "Verify the system returns the authenticated user's projects list with correct pagination and filtering.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate and obtain JWT token"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/project/current-user?page=0&size=10"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response contains up to 10 projects with pagination metadata"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Create workflow block with valid variables",
+    "description": "Verify that a workflow block can be created successfully with valid variable definitions including multiplicity and types.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate and obtain JWT token"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/block/workflow with valid block data and variables"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 201 Created"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify returned workflow block contains correct variables and metadata"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Reject creation of block with invalid variable types",
+    "description": "Ensure the API returns 400 Bad Request when block variables contain invalid or undefined types.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/block/action with block variables referencing invalid types"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 400 Bad Request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message explains variable type validation error"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "List blocks by type with pagination and filtering",
+    "description": "Verify GET requests for /block/{type}/page correctly paginate, filter by name, and return appropriate results.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate and obtain JWT token"
+      },
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/block/workflow/page?page=0&size=5&name=Sample"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response includes blocks filtered by 'Sample' with pagination data"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Create custom data type with fields and inheritance",
+    "description": "Verify creation of a new data type including fields and validate inheritance from an existing type without conflicts.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/type with valid new type data including inherited parent type and custom fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 201 Created"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify fields and inheritance are correctly set in the response"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Reject type creation with conflicting field names",
+    "description": "Ensure that type creation is rejected with a 406 Not Acceptable error if field names conflict with inherited types.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/type with fields that conflict with inherited parent fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 406 Not Acceptable"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message indicates field name conflicts"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Delete existing service",
+    "description": "Verify that an authenticated user can delete a service by serviceId and the service is removed from the listing.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send DELETE request to /api/v1/service/{serviceId} with valid serviceId"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 204 No Content"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to GET the deleted service and expect 404 Not Found"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Export service configuration JSON file",
+    "description": "Verify that the service configuration can be exported and downloaded in JSON format.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/service/file/{serviceId}"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response Content-Type is application/json"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Create workflow scenario with blocks and variables",
+    "description": "Verify the creation of a valid workflow scenario including scenario blocks and associated variables.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/scenario with valid scenario block and variable definitions"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 201 Created"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the scenario details include blocks and variable linkages"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Get scenario variables for a scenario block",
+    "description": "Retrieve variables associated with a given scenario block and validate consistency.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/scenario/{scenarioBlockId}/variables with a valid scenarioBlockId"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify variables belong to the specified scenario block and data is consistent"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Update exit variables of a workflow scenario",
+    "description": "Verify that the exit variables of a workflow scenario can be updated and validated correctly.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send PUT request to /api/v1/scenario/{workflowId}/variables/exit with updated variables"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify exit variables are updated in the system"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Handle invalid pagination parameters",
+    "description": "Verify APIs correctly handle invalid pagination parameters and respond with appropriate errors or defaults.",
+    "category": "error handling",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET request to /api/v1/project?page=-1&size=0"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 400 Bad Request or defaults applied"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "JWT token expiration enforcement",
+    "description": "Verify that expired JWT tokens are rejected when accessing protected endpoints.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Use an expired JWT token to access a protected endpoint"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response indicates token expiration"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Logout invalidates current JWT token",
+    "description": "Verify that logging out successfully invalidates the JWT token and subsequent requests with that token fail.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate and obtain JWT token"
+      },
+      {
+        "type": "action",
+        "description": "Send POST request to /api/v1/auth/logout with valid JWT token"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 200 OK"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to access a protected endpoint with the logged out token"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 401 Unauthorized"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Role-based access control enforcement",
+    "description": "Verify that endpoints enforce role-based permissions and deny actions unauthorized for the user's role.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate as a user lacking required role for a restricted action"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to perform a restricted action (e.g., deleting a project)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status is 403 Forbidden"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message indicates insufficient permissions"
+      }
+    ]
+  }
+]
