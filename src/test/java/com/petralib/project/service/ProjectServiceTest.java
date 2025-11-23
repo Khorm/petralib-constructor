@@ -4,6 +4,7 @@ import com.petralib.auth.security.entity.ConstructorUserEntity;
 import com.petralib.project.dto.ProjectDto;
 import com.petralib.project.entity.ProjectEntity;
 import com.petralib.project.repository.ProjectRepository;
+import com.petralib.test.annotation.AutoTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@AutoTest
 class ProjectServiceTest {
 
     @Mock
@@ -57,14 +59,14 @@ class ProjectServiceTest {
     void testGetProjectsForUser() {
         // Given
         Long userId = 1L;
-        when(projectRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+        when(projectRepository.findAll()).thenReturn(Collections.emptyList());
 
         // When
         List<ProjectEntity> result = projectService.getProjectsForUser(userId);
 
         // Then
         assertNotNull(result);
-        verify(projectRepository).findByUserId(userId);
+        verify(projectRepository).findAll();
     }
 
     @Test

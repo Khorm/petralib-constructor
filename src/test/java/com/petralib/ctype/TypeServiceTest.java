@@ -4,6 +4,7 @@ import com.petralib.ctype.dto.TypeFullDto;
 import com.petralib.ctype.entity.CTypeEntity;
 import com.petralib.ctype.mapper.TypeMapper;
 import com.petralib.ctype.repository.TypeRepo;
+import com.petralib.test.annotation.AutoTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@AutoTest
 class TypeServiceTest {
 
     @Mock

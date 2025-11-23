@@ -86,7 +86,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.5.6'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.11'
+    testImplementation 'org.springframework.security:spring-security-test:6.3.0'
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
@@ -95,6 +96,38 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    // По умолчанию запускаем только автотесты
+    useJUnitPlatform {
+        includeTags("auto")
+        excludeTags("manual")
+    }
+}
+
+// Задача для запуска всех тестов (включая ручные)
+tasks.register('testAll', Test) {
+    useJUnitPlatform()
+    description = 'Запускает все тесты, включая ручные'
+    group = 'verification'
+}
+
+// Задача для запуска только автотестов
+tasks.register('testAuto', Test) {
+    useJUnitPlatform {
+        includeTags("auto")
+        excludeTags("manual")
+    }
+    description = 'Запускает только автоматические тесты'
+    group = 'verification'
+}
+
+// Задача для запуска только ручных тестов
+tasks.register('testManual', Test) {
+    useJUnitPlatform {
+        includeTags("manual")
+        excludeTags("auto")
+    }
+    description = 'Запускает только ручные тесты'
+    group = 'verification'
 }
 
 

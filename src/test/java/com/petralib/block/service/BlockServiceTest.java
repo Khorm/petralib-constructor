@@ -4,6 +4,7 @@ import com.petralib.block.dto.BlockDto;
 import com.petralib.block.enums.BlockType;
 import com.petralib.block.mapper.BlockMapper;
 import com.petralib.block.repo.BlockRepository;
+import com.petralib.test.annotation.AutoTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@AutoTest
 class BlockServiceTest {
 
     @Mock
