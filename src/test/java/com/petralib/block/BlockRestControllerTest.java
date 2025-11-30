@@ -1,124 +1,193 @@
 package com.petralib.block;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petralib.block.dto.BlockDto;
+import com.petralib.project.dto.ProjectDto;
+import com.petralib.test.BaseApiTest;
 import com.petralib.test.annotation.AutoTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
+/**
+ * Автотесты для API управления блоками.
+ * Тесты делают реальные HTTP запросы к API и проверяют ответы.
+ */
 @AutoTest
-class BlockRestControllerTest {
+class BlockRestControllerTest extends BaseApiTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private String jwtToken;
+    private Long projectId;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @BeforeEach
+    void setUp() throws Exception {
+        // Получаем JWT токен
+        jwtToken = getJwtToken();
+
+        // Создаем проект для тестов
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName("Test Project for Blocks " + System.currentTimeMillis());
+
+        String createResponse = mockMvc.perform(post("/api/v1/project")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(projectDto)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        ProjectDto createdProject = objectMapper.readValue(createResponse, ProjectDto.class);
+        projectId = createdProject.getId();
+    }
 
     @Test
-    @WithMockUser
-    void testGetWorkflowPage() throws Exception {
+    void testGetWorkflowPage_WithValidProjectId_ReturnsOk() throws Exception {
         mockMvc.perform(get("/api/v1/block/workflow/page")
-                        .param("projectId", "1")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString())
                         .param("pageNumber", "0")
                         .param("name", "")
                         .param("pageElementsCount", "10"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists());
     }
 
     @Test
-    @WithMockUser
-    void testGetActionPage() throws Exception {
+    void testGetWorkflowPage_WithoutToken_ReturnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/v1/block/workflow/page")
+                        .param("projectId", projectId.toString())
+                        .param("pageNumber", "0")
+                        .param("pageElementsCount", "10"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testGetActionPage_WithValidProjectId_ReturnsOk() throws Exception {
         mockMvc.perform(get("/api/v1/block/action/page")
-                        .param("projectId", "1")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString())
                         .param("pageNumber", "0")
                         .param("name", "")
                         .param("pageElementsCount", "10"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists());
     }
 
     @Test
-    @WithMockUser
-    void testGetSourcePage() throws Exception {
+    void testGetSourcePage_WithValidProjectId_ReturnsOk() throws Exception {
         mockMvc.perform(get("/api/v1/block/source/page")
-                        .param("projectId", "1")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString())
                         .param("pageNumber", "0")
                         .param("name", "")
                         .param("pageElementsCount", "10"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists());
     }
 
     @Test
-    @WithMockUser
-    void testGetAcceptedSources() throws Exception {
+    void testGetAcceptedSources_WithValidProjectId_ReturnsOk() throws Exception {
         mockMvc.perform(get("/api/v1/block/source/acceptedSources")
-                        .param("projectId", "1"))
-                .andExpect(status().isOk());
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists());
     }
 
     @Test
-    @WithMockUser
-    void testGetSourceById() throws Exception {
-        mockMvc.perform(get("/api/v1/block/source/1"))
-                .andExpect(status().isOk());
+    void testSaveWorkflow_WithValidData_ReturnsCreated() throws Exception {
+        BlockDto blockDto = new BlockDto();
+        blockDto.setName("Test Workflow " + System.currentTimeMillis());
+
+        mockMvc.perform(post("/api/v1/block/workflow")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(blockDto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value(blockDto.getName()));
     }
 
     @Test
-    @WithMockUser
-    void testSaveWorkflow() throws Exception {
+    void testSaveWorkflow_WithoutProjectId_ReturnsBadRequest() throws Exception {
         BlockDto blockDto = new BlockDto();
         blockDto.setName("Test Workflow");
 
         mockMvc.perform(post("/api/v1/block/workflow")
-                        .param("projectId", "1")
+                        .header("Authorization", "Bearer " + jwtToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(blockDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    @WithMockUser
-    void testSaveAction() throws Exception {
+    void testSaveAction_WithValidData_ReturnsCreated() throws Exception {
         BlockDto blockDto = new BlockDto();
-        blockDto.setName("Test Action");
+        blockDto.setName("Test Action " + System.currentTimeMillis());
 
         mockMvc.perform(post("/api/v1/block/action")
-                        .param("projectId", "1")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(blockDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value(blockDto.getName()));
     }
 
     @Test
-    @WithMockUser
-    void testSaveSource() throws Exception {
+    void testSaveSource_WithValidData_ReturnsCreated() throws Exception {
         BlockDto blockDto = new BlockDto();
-        blockDto.setName("Test Source");
+        blockDto.setName("Test Source " + System.currentTimeMillis());
 
         mockMvc.perform(post("/api/v1/block/source")
-                        .param("projectId", "1")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(blockDto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value(blockDto.getName()));
+    }
+
+    @Test
+    void testDeleteBlock_WithValidId_ReturnsOk() throws Exception {
+        // Сначала создаем блок для удаления
+        BlockDto blockDto = new BlockDto();
+        blockDto.setName("Block to Delete " + System.currentTimeMillis());
+
+        String createResponse = mockMvc.perform(post("/api/v1/block/workflow")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .param("projectId", projectId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(blockDto)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        BlockDto createdBlock = objectMapper.readValue(createResponse, BlockDto.class);
+        Long blockId = createdBlock.getId();
+
+        // Удаляем блок
+        mockMvc.perform(delete("/api/v1/block/workflow/" + blockId)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser
-    void testDeleteBlock() throws Exception {
+    void testDeleteBlock_WithoutToken_ReturnsUnauthorized() throws Exception {
         mockMvc.perform(delete("/api/v1/block/workflow/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isUnauthorized());
     }
 }
 

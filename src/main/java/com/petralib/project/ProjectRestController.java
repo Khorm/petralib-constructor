@@ -33,6 +33,9 @@ public class ProjectRestController {
 
     @GetMapping
     public List<ProjectDto> getProjects(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException("Authentication required");
+        }
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
         System.out.println(securityUser.getUsername());
         List<ProjectEntity> projectEntities = projectService.getProjectsForUser(securityUser.getId());
@@ -41,7 +44,13 @@ public class ProjectRestController {
 
     @GetMapping("/current-user")
     public UserDto getCurrentUser(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException("Authentication required");
+        }
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        if (securityUser == null || securityUser.getUser() == null) {
+            throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException("Invalid user data");
+        }
         return userMapper.securityUserToDto(securityUser);
     }
 
@@ -52,7 +61,13 @@ public class ProjectRestController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
         }
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return new ResponseEntity<>("Authentication required", HttpStatus.UNAUTHORIZED);
+        }
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        if (securityUser == null || securityUser.getUser() == null) {
+            return new ResponseEntity<>("Invalid user data", HttpStatus.UNAUTHORIZED);
+        }
 
         ProjectEntity entity = projectService.save(projectDto, securityUser.getUser());
         ProjectDto answer = projectMapper.entityToDto(entity);

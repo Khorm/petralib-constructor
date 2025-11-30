@@ -38,14 +38,15 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .requestMatchers("/login/**").permitAll()
                             .requestMatchers("/*.css").permitAll()
                             .requestMatchers("/*.ico").permitAll()
-                            .requestMatchers("/*.js").permitAll();
-
-                    authorizeHttpRequests.anyRequest()
-                            .authenticated();
+                            .requestMatchers("/*.js").permitAll()
+                            // Все API endpoints требуют аутентификации
+                            .requestMatchers("/api/v1/**").authenticated()
+                            // Все остальные запросы требуют аутентификации
+                            .anyRequest().authenticated();
 
                 }
         );
-        http.apply(jwtConfigure);
+        jwtConfigure.configure(http);
         http.formLogin(form -> form
                 .loginPage("/login")
                 .permitAll()

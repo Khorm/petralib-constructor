@@ -90,9 +90,13 @@ public class ServiceRestController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
         }
-
-        serviceService.saveService(serviceDto);
-        return ResponseEntity.ok("ok");
+        try {
+            ServiceEntity savedService = serviceService.saveService(serviceDto);
+            ServiceDto savedDto = serviceMapper.fromEntityToDto(savedService);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error saving service: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("{serviceId}")

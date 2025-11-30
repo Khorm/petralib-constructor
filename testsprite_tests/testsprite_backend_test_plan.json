@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "verify_user_authentication_with_jwt_token",
+    "description": "Test the POST /api/v1/auth/login endpoint to ensure users can authenticate successfully with valid credentials and receive a JWT token."
+  },
+  {
+    "id": "TC002",
+    "title": "verify_user_logout_and_token_invalidation",
+    "description": "Test the POST /api/v1/auth/logout endpoint to ensure that the user's JWT token is invalidated and the session is properly ended."
+  },
+  {
+    "id": "TC003",
+    "title": "verify_project_creation_with_unique_name_per_user",
+    "description": "Test the POST /api/v1/project endpoint to ensure projects can be created with unique names per user and validate the maximum length constraint of 100 characters."
+  },
+  {
+    "id": "TC004",
+    "title": "verify_project_retrieval_for_current_user",
+    "description": "Test the GET /api/v1/project/current-user endpoint to ensure it returns the list of projects accessible to the authenticated user."
+  },
+  {
+    "id": "TC005",
+    "title": "verify_block_creation_and_pagination_for_workflow_type",
+    "description": "Test the POST /api/v1/block/workflow endpoint for creating workflow blocks with valid variables and types, and GET /api/v1/block/workflow/page for pagination and filtering."
+  },
+  {
+    "id": "TC006",
+    "title": "verify_type_definition_and_inheritance_validation",
+    "description": "Test the POST /api/v1/type endpoint to ensure custom data types can be created with valid fields and inheritance rules, and conflicts are detected and handled."
+  },
+  {
+    "id": "TC007",
+    "title": "verify_service_creation_and_json_export",
+    "description": "Test the POST /api/v1/service endpoint for creating services with required fields and validation, and GET /api/v1/service/file/{serviceId} for exporting service configuration as JSON."
+  },
+  {
+    "id": "TC008",
+    "title": "verify_scenario_variable_management_and_workflow_execution",
+    "description": "Test the POST /api/v1/scenario/{scenarioBlockId}/variables endpoint for adding variables to scenario blocks, and GET /api/v1/scenario/{workflowId}/variables/exit for retrieving exit variables."
+  },
+  {
+    "id": "TC009",
+    "title": "verify_api_security_with_jwt_and_role_based_access",
+    "description": "Test that all endpoints except login require a valid JWT token in the Authorization header and enforce role-based and project-level permissions."
+  },
+  {
+    "id": "TC010",
+    "title": "verify_pagination_and_filtering_for_project_and_block_lists",
+    "description": "Test pagination and filtering parameters on endpoints like GET /api/v1/project and GET /api/v1/block/{blockType}/page to ensure correct page counts and filtered results."
+  }
+]

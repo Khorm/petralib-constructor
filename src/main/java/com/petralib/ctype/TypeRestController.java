@@ -7,7 +7,6 @@ import com.petralib.ctype.entity.CTypeEntity;
 import com.petralib.ctype.mapper.TypeMapper;
 import com.petralib.ctype.mapper.TypeVariableMapper;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,7 +41,10 @@ public class TypeRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody TypeFullDto dto, @RequestParam @NotNull Long projectId, Errors errors){
+    public ResponseEntity<?> save(@Valid @RequestBody TypeFullDto dto, @RequestParam(required = false) Long projectId, Errors errors){
+        if (projectId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Project ID is required");
+        }
         if (errors.hasErrors()) {
             Collection<String> validationErrors = errors.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
@@ -50,9 +52,9 @@ public class TypeRestController {
         }
         try {
             CTypeEntity result = typeService.save(dto, projectId);
-            return ResponseEntity.ok(typeMapper.entityToDto(result));
+            return ResponseEntity.status(HttpStatus.CREATED).body(typeMapper.entityToDto(result));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving type: " + e.getMessage());
         }
 
     }

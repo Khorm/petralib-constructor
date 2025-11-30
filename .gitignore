@@ -58,3 +58,9 @@ application-local.yml
 application-local.properties
 *.local.yml
 *.local.properties
+
+# TestSprite temporary files
+testsprite_tests/tmp/
+testsprite_tests/*.html
+testsprite_tests/*.py
+testsprite_tests/tmp/**/*
