@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:petralib;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+      format_sql: false
+  sql:
+    init:
+      mode: never
+
+jwt:
+  header: Authorization
+  secret: test-secret-key-for-testing-purposes-only
+  expiration: 3600000
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+      hibernate:
+        SQL: DEBUG
+
+server:
+  port: 0

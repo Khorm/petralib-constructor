@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Автотесты, покрывающие основные сценарии из документации (auth/projects/services/types/blocks)
+ * Интеграционные тесты по документации API (auth/projects/services/types/blocks)
  * на тестовом профиле (H2, тестовый пользователь из TestDataInitializer).
  */
 @AutoTest
