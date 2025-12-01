@@ -14,7 +14,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -22,13 +25,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final JwtConfigure jwtConfigure;
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(configure -> configure.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.exceptionHandling(customizer -> customizer
+                .authenticationEntryPoint((request, response, authException) ->
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                .accessDeniedHandler((request, response, accessDeniedException) ->
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN))
+        );
 
         http.authorizeHttpRequests((authorizeHttpRequests) -> {
                     authorizeHttpRequests
@@ -47,10 +60,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                 }
         );
         jwtConfigure.configure(http);
-        http.formLogin(form -> form
-                .loginPage("/login")
-                .permitAll()
-        );
 
         return http.build();
     }
@@ -63,8 +72,9 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .build();
+        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        return builder.build();
     }
 
 //    @Override
