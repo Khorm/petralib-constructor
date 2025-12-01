@@ -6,7 +6,6 @@ import com.petralib.ctype.dto.CTypeShortDto;
 import com.petralib.ctype.dto.TypeFullDto;
 import com.petralib.project.dto.ProjectDto;
 import com.petralib.service.dto.ServiceDto;
-import com.petralib.test.annotation.AutoTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -23,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Интеграционные тесты по документации API (auth/projects/services/types/blocks)
  * на тестовом профиле (H2, тестовый пользователь из TestDataInitializer).
  */
-@AutoTest
 class ApiDocAutoTests extends BaseApiTest {
 
     @Test
