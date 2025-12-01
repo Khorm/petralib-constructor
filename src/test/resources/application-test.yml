@@ -1,19 +1,19 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:petralib;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://94.180.117.77:5432/petri_constructor
+    username: petra
+    password: petra4321
+    driver-class-name: org.postgresql.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    generate-ddl: true
-    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: false
+    show-sql: true
     hibernate:
-      ddl-auto: create-drop
-      format_sql: false
+      ddl-auto: none
+      format_sql: true
   sql:
     init:
-      mode: never
+      mode: always
 
 jwt:
   header: Authorization

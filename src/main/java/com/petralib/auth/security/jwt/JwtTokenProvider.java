@@ -74,10 +74,6 @@ public class JwtTokenProvider {
     public String resolveToken(HttpServletRequest request) {
         String headerToken = request.getHeader(authorizationHeader);
         if (headerToken != null) {
-            // Strip Bearer prefix if present to validate the raw token value
-            if (headerToken.startsWith("Bearer ")) {
-                return headerToken.substring(7);
-            }
             return headerToken;
         } else {
             Cookie[] cookies = request.getCookies();
