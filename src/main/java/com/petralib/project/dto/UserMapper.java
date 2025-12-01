@@ -9,5 +9,6 @@ public interface UserMapper {
 
     @Mapping(source = "user.name", target = "name")
     @Mapping(source = "user.email", target = "email")
+    @Mapping(source = "user.id", target = "id")
     UserDto securityUserToDto(SecurityUser securityUser);
 }

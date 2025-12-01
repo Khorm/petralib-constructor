@@ -88,6 +88,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.11'
     testImplementation 'org.springframework.security:spring-security-test:6.3.0'
+    testImplementation 'com.h2database:h2:2.2.224'
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 

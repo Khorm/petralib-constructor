@@ -53,7 +53,9 @@ public class ProjectService {
 
     @Transactional
     public ProjectEntity save(ProjectDto projectDto, ConstructorUserEntity user){
-        ProjectEntity project = projectRepository.findById(projectDto.getId()).orElse(new ProjectEntity());
+        ProjectEntity project = Optional.ofNullable(projectDto.getId())
+                .flatMap(projectRepository::findById)
+                .orElse(new ProjectEntity());
         project.setName(projectDto.getName());
         project.setDescription(projectDto.getDescription());
 //        project.addUserRole(user);

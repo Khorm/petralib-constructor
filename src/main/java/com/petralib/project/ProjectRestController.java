@@ -71,7 +71,7 @@ public class ProjectRestController {
 
         ProjectEntity entity = projectService.save(projectDto, securityUser.getUser());
         ProjectDto answer = projectMapper.entityToDto(entity);
-        return ResponseEntity.ok(answer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(answer);
     }
 
     @DeleteMapping("{projectId}")

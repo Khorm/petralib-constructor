@@ -14,6 +14,7 @@ public interface ServiceMapper {
     @Mapping(target = "project", source = "projectId")
     ServiceEntity fromDtoToEntity(ServiceDto serviceDto);
 
+    @Mapping(target = "projectId", source = "project.projectId")
     ServiceDto fromEntityToDto(ServiceEntity serviceentity);
 
     Collection<ServiceDto> map(Collection<ServiceEntity> serviceEntities);
