@@ -32,4 +32,6 @@ public class ServiceEntity {
 
     @Column(name = "service_path" , nullable = false)
     String path;
+
+
 }
