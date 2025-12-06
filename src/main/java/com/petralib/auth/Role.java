@@ -16,6 +16,10 @@ public enum Role {
         Collections.addAll(this.userActions, userActions);
     }
 
+    public EnumSet<UserAction> getUserActions() {
+        return EnumSet.copyOf(userActions);
+    }
+
     public boolean isActionAccepted(UserAction userAction){
         return userActions.contains(userAction);
     }
