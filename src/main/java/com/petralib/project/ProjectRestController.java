@@ -34,7 +34,7 @@ public class ProjectRestController {
 
     // тут разные примеры использования @PreAuthorize
     @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('OWNER')")
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public List<ProjectDto> getProjects(Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
             throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException("Authentication required");

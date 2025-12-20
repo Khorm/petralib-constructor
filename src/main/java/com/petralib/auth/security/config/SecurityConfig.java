@@ -1,11 +1,13 @@
 package com.petralib.auth.security.config;
 
+import com.petralib.auth.security.ConstructorUserDetailsService;
 import com.petralib.auth.security.jwt.JwtConfigure;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,16 +46,18 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/*.js").permitAll()
 
                 // ===== ЗАЩИТА ПО РОЛЯМ (Role enum) =====
-                // OWNER только для админ-панели
-                .requestMatchers("/api/v1/admin/**").hasRole("OWNER")
+                // ADMIN только для админ-панели
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                // Только владелец может создавать пользователей (POST /api/users)
+                .requestMatchers("/api/users/**").hasRole("ADMIN")
 
                 // MANAGER+ для создания/изменения проектов
-                .requestMatchers(HttpMethod.POST, "/api/v1/projects/**").hasAnyRole("MANAGER", "OWNER")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/projects/**").hasAnyRole("MANAGER", "OWNER")
-                .requestMatchers(HttpMethod.PATCH, "/api/v1/projects/**").hasAnyRole("MANAGER", "OWNER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/projects/**").hasAnyRole("MANAGER", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/projects/**").hasAnyRole("MANAGER", "ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/projects/**").hasAnyRole("MANAGER", "ADMIN")
 
                 // USER+ для чтения проектов (все вошедшие, кроме NONE)
-                .requestMatchers(HttpMethod.GET, "/api/v1/projects/**").hasAnyRole("USER", "MANAGER", "OWNER")
+                .requestMatchers(HttpMethod.GET, "/api/v1/projects/**").hasAnyRole("USER", "MANAGER", "ADMIN")
 
                 // ===== ТОНКАЯ ЗАЩИТА ПО ДЕЙСТВИЯМ (UserAction enum) =====
                 // Полное удаление (только DELETE право)
@@ -98,4 +102,15 @@ public class SecurityConfig implements WebMvcConfigurer {
 //    }
 
 
+    //Чтобы Spring точно знал, что нужно использовать именно наш сервис и наш способ кодирования паролей
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(
+            ConstructorUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService); // Связываем сервис с БД
+        authProvider.setPasswordEncoder(passwordEncoder);       // Связываем проверку пароля
+        return authProvider;
+    }
 }

@@ -5,7 +5,6 @@ import com.petralib.auth.ConstructorUserRepository;
 import com.petralib.auth.security.model.SecurityUser;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConstructorUserDetailsService implements UserDetailsService {
 
-    private final ConstructorUserRepository constructorUserRepository;
+    private final ConstructorUserRepository repository;
 
 //    @Value("${usr}")
 //    private String username;
@@ -24,8 +23,8 @@ public class ConstructorUserDetailsService implements UserDetailsService {
 //    private String password;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        ConstructorUserEntity user = constructorUserRepository.findByEmail(email).orElseThrow(() ->
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+        ConstructorUserEntity user = repository.findByName(name).orElseThrow(() ->
                 new UsernameNotFoundException("User doesn't exist"));
 //        if (!email.equals(username)){
 //            throw new UsernameNotFoundException("User doesn't exist");
