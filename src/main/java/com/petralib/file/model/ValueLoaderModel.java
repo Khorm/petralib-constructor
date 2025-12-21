@@ -17,7 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ValueLoaderModel {
+@Deprecated
+class ValueLoaderModel {
     
     public ValueLoaderModel() {
         // Default constructor

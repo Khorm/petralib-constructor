@@ -34,15 +34,15 @@ export default function List() {
     }
 
     function buildModalAction(block, open, handleClose){
-        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/block/action'}/>)
+        return(<BlockModal block={block} open={open} handleClose={handleClose} type={'ACTION'}/>)
     }
 
     function buildModalWorkflow(block, open, handleClose){
-        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/block/workflow'}/>)
+        return(<BlockModal block={block} open={open} handleClose={handleClose} type={'WORKFLOW'}/>)
     }
 
     function buildModalSource(block, open, handleClose){
-        return(<BlockModal block={block} open={open} handleClose={handleClose} url={'/api/v1/block/source'}/>)
+        return(<BlockModal block={block} open={open} handleClose={handleClose} type={'SOURCE'}/>)
     }
 
     function chooseWorkflowFunction(workflowId){

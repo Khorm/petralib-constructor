@@ -3,11 +3,14 @@ package com.petralib.block.enitity;
 import com.petralib.block.enums.PinType;
 import com.petralib.ctype.entity.CTypeEntity;
 import com.petralib.ctype.enums.Multiplicity;
+import com.petralib.scenario.entity.ScenarioVariableEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Collection;
 
 @Entity
 @Table(name = "variables")
@@ -41,6 +44,10 @@ public class VariableEntity {
     @JoinColumn(name = "block_id", updatable = false)
     @ToString.Exclude
     BlockEntity block;
+
+//    @OneToMany(mappedBy = "ownerVariable", fetch = FetchType.LAZY)
+//    @ToString.Exclude
+//    Collection<ScenarioVariableEntity> scenarioAttachedVariables;
 
     public VariableEntity(Long id){
         this.id = id;

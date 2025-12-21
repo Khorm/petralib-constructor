@@ -14,5 +14,6 @@ public class LocalSourceModel {
     private Long id;
     private String version;
     private String name;
-    private Collection<ValueDto> outputModels;
+    private Collection<ValueDto> inputModels;
+    private ValueDto outputModels;
 }

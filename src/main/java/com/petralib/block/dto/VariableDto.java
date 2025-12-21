@@ -26,7 +26,6 @@ public class VariableDto {
     @NotEmpty(message = "Pin type is empty")
     String pinType;
 
-
     @NotNull(message = "Variable type is empty")
     CTypeShortDto variableType;
 }

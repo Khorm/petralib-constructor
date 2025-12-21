@@ -2,7 +2,9 @@ package com.petralib.block.dto;
 
 import com.petralib.block.enums.BlockType;
 import com.petralib.service.dto.ServiceDto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -18,7 +20,13 @@ public class BlockDto {
     @Size(max = 100, message = "Block name is too long")
     String name;
     String description;
+
+    @NotNull(message = "Block type is empty")
     BlockType type;
+
+    @NotNull(message = "Service is empty")
     ServiceDto service;
+
+    @Valid
     List<VariableDto> variables;
 }

@@ -6,25 +6,23 @@ import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 
+/**
+ * Это непосредственно workflow
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class LocalProducerModel {
-    //айди продюсера - workflow
     private Long id;
-
-    //версия продюсера
     private String version;
 
-    //имя продюсера
     private String name;
 
-    //удаленные блоки в этом продюсере
+    /**
+     * Потребители внутри workflow
+     */
     private Collection<RemoteConsumerModel> consumers;
-
-    //парсер выходных данных для продюсера
-    private Collection<ValueLoaderModel> lastWorkflowBlockValueParser;
-//    private Integer lastWorkflowBlockValuesCount;
+    private ValuesCollectionModel exitValues;
 
 
 }

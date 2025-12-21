@@ -1,6 +1,7 @@
 package com.petralib.file.value;
 
-import com.petralib.file.model.ValueLoaderModel;
+import com.petralib.file.enums.LoaderType;
+import com.petralib.file.model.ValueModel;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 import lombok.AccessLevel;
@@ -8,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,7 +21,7 @@ import java.util.stream.Stream;
 public abstract class ValueBuilder {
     final ScenarioBlockEntity scenarioBlock;
     final ScenarioVariableEntity currentScenarioVariable;
-//    final Map<Long, ValueLoaderModel> loaderModelMap;
+    final AtomicInteger counter;
 
     ScenarioBlockEntity getScenarioBlock() {
         return scenarioBlock;
@@ -27,39 +31,41 @@ public abstract class ValueBuilder {
         return currentScenarioVariable;
     }
 
-    public ValueLoaderModel build() {
-        ValueLoaderModel model = new ValueLoaderModel();
-        model.setScenarioVariableId(currentScenarioVariable.getId());
-        model.setConsumerVariableId(currentScenarioVariable.getConsumerVariable().getId());
+    public ValueModel build() {
+        ValueModel model = new ValueModel();
+        model.setId(currentScenarioVariable.getConsumerVariable().getId());
         model.setName(currentScenarioVariable.getConsumerVariable().getName());
         model.setMultiplicity(currentScenarioVariable.getConsumerVariable().getMultiplicity().name());
-        model.setParent(currentScenarioVariable.getParentId());
-        model.setLocalId(currentScenarioVariable.getLocalId());
-        
+        ScenarioVariableEntity parent = getCurrentScenarioVariable().getParent();
+        if (parent != null) {
+            model.setParents(List.of(parent.getId()));
+        }
+        model.setLoaderType(LoaderType.fromScenarioVariableType(currentScenarioVariable.getType()).name());
+        model.setExtractionString(currentScenarioVariable.getExtractionString());
+
         extendedBuild(model);
 
         Collection<ScenarioVariableEntity> children = scenarioBlock.getVariables().stream()
-                .filter(entity -> entity.getParentId().equals(currentScenarioVariable.getLocalId())).toList();
+                .filter(scenarioVariableEntity -> {
+                    if (scenarioVariableEntity.getParent() == null) {
+                        return false;
+                    }
+                    return scenarioVariableEntity.getParent().getId().equals(currentScenarioVariable.getLocalId());
+                }).toList();
 
-        Collection<ValueLoaderModel> childrenModels = children.stream().flatMap(entity -> {
-            Optional<ValueBuilder> b = BuilderConstructor.createBuilder(scenarioBlock, entity.getConsumerVariable().getId());
+        Collection<ValueModel> childrenModels = children.stream().flatMap(entity -> {
+            Optional<ValueBuilder> b = BuilderConstructor.createBuilder(scenarioBlock, entity.getConsumerVariable().getId(), counter);
             if (b.isPresent()) {
+                counter.incrementAndGet();
                 return Stream.of(b.get().build());
             }
             return Stream.empty();
         }).collect(Collectors.toList());
         model.setChildren(childrenModels);
-
-        //        loaderModelMap.put(currentScenarioVariable.getConsumerVariable().getId(), model);
         return model;
     }
 
-    abstract void extendedBuild(ValueLoaderModel model);
+    abstract void extendedBuild(ValueModel model);
 
-//    Collection<ScenarioVariableEntity> sourceInVariables(Long sourceId, Long parentId) {
-//        return scenarioBlock.getVariables().stream()
-//                .filter(entity -> entity.getProducerSource().getId().equals(sourceId) && entity.getParentId().equals(parentId))
-//                .toList();
-//    }
 
 }

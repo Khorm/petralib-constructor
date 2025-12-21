@@ -2,6 +2,7 @@ package com.petralib.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.petralib.file.model.ConstructorModel;
 import com.petralib.service.dto.ServiceDto;
 import com.petralib.service.dto.ServiceMapper;
@@ -65,6 +66,7 @@ public class ServiceRestController {
         String jsonData;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // Красивый JSON
             jsonData = objectMapper.writeValueAsString(constructorModel);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error generating JSON", e);

@@ -62,7 +62,8 @@ public class ScenarioVariablesService {
         Collection<ScenarioVariableEntity> newScenarioVars = new ArrayList<>();
         for (ScenarioVariableDto dto : dtos) {
             if (dto.getScenarioVariableId() == null) {
-                ScenarioVariableEntity entity = ScenarioVariableFactory.createVar(dto, scenarioBlockId);
+                ScenarioVariableEntity parent = scenarioVariableRepo.findById(dto.getParentId()).orElseThrow();
+                ScenarioVariableEntity entity = ScenarioVariableFactory.createVar(dto, scenarioBlockId, parent);
                 newScenarioVars.add(entity);
                 Collection<TypeDependenceEntity> typeDependenceEntities = typeDependencyService.createTypeDependency(dto.getTypeInheritance(), entity);
                 entity.setTypeDependence(typeDependenceEntities);

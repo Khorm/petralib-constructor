@@ -41,6 +41,7 @@ public interface BlockRepository extends JpaRepository<BlockEntity, Long> {
 //                                                                          @Param("varTypeId") Long varTypeId,
 //                                                                          @Param("projectId") Long projectId);
 
-    @Query("FROM BlockEntity WHERE service.id = :serviceId")
-    Collection<BlockEntity> findBlocksByService(@Param("serviceId") Long serviceId);
+
+    @Query("FROM BlockEntity WHERE service.id = :serviceId AND type = :type")
+    Collection<BlockEntity> findBlocksByServiceAndType(@Param("serviceId") Long serviceId, @Param("type") BlockType type);
 }

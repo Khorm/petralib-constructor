@@ -1,46 +1,52 @@
 package com.petralib.file.value;
 
 import com.petralib.block.enitity.VariableEntity;
-import com.petralib.file.model.ValueLoaderModel;
+import com.petralib.file.model.ValueModel;
+import com.petralib.file.model.ValuesCollectionModel;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class BuilderConstructor {
     BuilderConstructor() {
     }
 
-    public static Collection<ValueLoaderModel> loaderModelMap(ScenarioBlockEntity scenarioBlock){
-        Collection<ValueLoaderModel> ret = new ArrayList<>();
-        for (VariableEntity variable: scenarioBlock.getBlock().getInVariables()){
-            Optional<ValueBuilder> builder = createBuilder(scenarioBlock, variable.getId());
-            if (builder.isEmpty()){
+    public static ValuesCollectionModel loaderModelMap(ScenarioBlockEntity scenarioBlock) {
+
+        Collection<ValueModel> ret = new ArrayList<>();
+        AtomicInteger counter = new AtomicInteger(0);
+        for (VariableEntity variable : scenarioBlock.getBlock().getInVariables()) {
+            Optional<ValueBuilder> builder = createBuilder(scenarioBlock, variable.getId(), counter);
+            if (builder.isEmpty()) {
                 continue;
             }
             ret.add(builder.get().build());
         }
-        return ret;
+        return new ValuesCollectionModel(ret, counter.get());
     }
 
 
     static Optional<ValueBuilder> createBuilder(ScenarioBlockEntity scenarioBlock,
-                                                Long variableId) {
+                                                Long newProducerVariableId, AtomicInteger counter) {
         Optional<ScenarioVariableEntity> scenarioVariableOpt = scenarioBlock.getVariables().stream()
-                .filter(entity -> entity.getConsumerVariable().getId().equals(variableId)).findFirst();
-        if (scenarioVariableOpt.isEmpty()){
+                .filter(entity -> entity.getConsumerVariable().getId().equals(newProducerVariableId)).findFirst();
+        if (scenarioVariableOpt.isEmpty()) {
             return Optional.empty();
         }
         ScenarioVariableEntity scenarioVariable = scenarioVariableOpt.get();
         switch (scenarioVariable.getType()) {
             case SCRIPT -> {
-                return Optional.of(new ScriptValueBuilder(scenarioBlock, scenarioVariable));
+                return Optional.of(new ScriptValueBuilder(scenarioBlock, scenarioVariable, counter));
             }
             case SIMPLE -> {
-                return Optional.of(new InputValueBuilder(scenarioBlock, scenarioVariable));
+                return Optional.of(new InputValueBuilder(scenarioBlock, scenarioVariable, counter));
             }
             case SOURCE -> {
-                return Optional.of(new SourceValueBuilder(scenarioBlock, scenarioVariable));
+                return Optional.of(new SourceValueBuilder(scenarioBlock, scenarioVariable, counter));
             }
             default -> throw new NullPointerException();
         }

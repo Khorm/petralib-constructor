@@ -2,8 +2,10 @@ package com.petralib.block;
 
 import com.petralib.block.dto.BlockDto;
 import com.petralib.block.dto.BlockPage;
+import com.petralib.block.dto.VariableDto;
 import com.petralib.block.enitity.BlockEntity;
 import com.petralib.block.enums.BlockType;
+import com.petralib.block.enums.PinType;
 import com.petralib.block.mapper.BlockMapper;
 import com.petralib.block.service.BlockService;
 import jakarta.validation.Valid;
@@ -17,6 +19,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/block")
@@ -79,11 +83,25 @@ public class BlockRestController {
 
 
     private ResponseEntity<?> saveBlock(Long projectId, BlockDto dto, BlockType type, Errors errors) {
+        // Валидация стандартных ошибок @Valid
         if (errors.hasErrors()) {
             Collection<String> validationErrors = errors.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
         }
+
+        // Специфичная валидация: SOURCE может иметь только одну OUT переменную
+        if (type == BlockType.SOURCE && dto.getVariables() != null) {
+            List<VariableDto> outPinTypes = dto.getVariables().stream()
+                    .filter(v -> PinType.OUT.name().equalsIgnoreCase(v.getPinType()))
+                    .toList();
+
+            if (outPinTypes.size() > 1) {
+                return ResponseEntity.badRequest()
+                        .body("A SOURCE block can have at most one variable with pinType = 'OUT'");
+            }
+        }
+
         try {
             BlockEntity savedBlock = blockService.save(dto, projectId, type);
             BlockDto savedDto = blockMapper.fromEntityToDto(savedBlock);

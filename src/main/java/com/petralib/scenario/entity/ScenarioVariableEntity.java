@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Связь между объектами сценария
  */
 @Entity
 @Table(name = "scenario_variables")
@@ -33,15 +33,22 @@ public class ScenarioVariableEntity {
     @Column(name = "scenario_variable_id", nullable = false)
     Long id;
 
+    /**
+     * Переменная, принимающая данные от поставщика
+     */
     @ManyToOne
     @JoinColumn(name = "consumer_variable_id", updatable = false, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     VariableEntity consumerVariable;
 
+    /**
+     * Переменная высшего уровня, к которой принадлежит эта связь, т.е. переменная блока сценария
+     */
     @ManyToOne
     @JoinColumn(name = "owner_variable", updatable = false, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     VariableEntity ownerVariable;
+
 
     @ManyToOne
     @JoinColumn(name = "scenario_block_id", updatable = false, nullable = false)
@@ -56,6 +63,9 @@ public class ScenarioVariableEntity {
             mappedBy = "scenarioVariable")
     Collection<TypeDependenceEntity> typeDependence;
 
+    /**
+     *Переменная, которая является источником данных для этой связи
+     */
     @ManyToOne
     @JoinColumn(name = "producer_variable_id", updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -70,11 +80,22 @@ public class ScenarioVariableEntity {
     @Column(name = "producer_script")
     String producerScript;
 
+    /**
+     * ID локальной переменной в сценарии
+     */
     @Column(name = "local_id", nullable = false)
     Long localId;
 
-    @Column(name = "parent_id", nullable = false)
-    Long parentId;
+//    @Column(name = "parent_id", nullable = false)
+//    Long parentId;
+
+    /**
+     * Родительская переменная в дереве переменных сценария
+     */
+    @ManyToOne
+    @JoinColumn(name = "parent_id", referencedColumnName = "local_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    ScenarioVariableEntity parent;
 
     public String getExtractionString() {
         return typeDependence.stream().sorted(Comparator.comparingInt(TypeDependenceEntity::getCount))

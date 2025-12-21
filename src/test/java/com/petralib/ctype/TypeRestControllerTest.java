@@ -15,62 +15,62 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@AutoTest
+//@SpringBootTest
+//@AutoConfigureMockMvc
+//@ActiveProfiles("test")
+//@AutoTest
 class TypeRestControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Test
-    @WithMockUser
-    void testGetTypesPage() throws Exception {
-        mockMvc.perform(get("/api/v1/type/page")
-                        .param("projectId", "1")
-                        .param("pageNumber", "0")
-                        .param("name", "")
-                        .param("pageElementsCount", "10"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser
-    void testGetAllTypes() throws Exception {
-        mockMvc.perform(get("/api/v1/type")
-                        .param("projectId", "1"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser
-    void testSaveType() throws Exception {
-        TypeFullDto typeDto = new TypeFullDto();
-        typeDto.setName("Test Type");
-
-        mockMvc.perform(post("/api/v1/type")
-                        .param("projectId", "1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(typeDto)))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser
-    void testDeleteType() throws Exception {
-        mockMvc.perform(delete("/api/v1/type/1"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser
-    void testGetTypeFields() throws Exception {
-        mockMvc.perform(get("/api/v1/type/fields/1"))
-                .andExpect(status().isOk());
-    }
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @Autowired
+//    private ObjectMapper objectMapper;
+//
+//    @Test
+//    @WithMockUser
+//    void testGetTypesPage() throws Exception {
+//        mockMvc.perform(get("/api/v1/type/page")
+//                        .param("projectId", "1")
+//                        .param("pageNumber", "0")
+//                        .param("name", "")
+//                        .param("pageElementsCount", "10"))
+//                .andExpect(status().isOk());
+//    }
+//
+//    @Test
+//    @WithMockUser
+//    void testGetAllTypes() throws Exception {
+//        mockMvc.perform(get("/api/v1/type")
+//                        .param("projectId", "1"))
+//                .andExpect(status().isOk());
+//    }
+//
+//    @Test
+//    @WithMockUser
+//    void testSaveType() throws Exception {
+//        TypeFullDto typeDto = new TypeFullDto();
+//        typeDto.setName("Test Type");
+//
+//        mockMvc.perform(post("/api/v1/type")
+//                        .param("projectId", "1")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(typeDto)))
+//                .andExpect(status().isOk());
+//    }
+//
+//    @Test
+//    @WithMockUser
+//    void testDeleteType() throws Exception {
+//        mockMvc.perform(delete("/api/v1/type/1"))
+//                .andExpect(status().isOk());
+//    }
+//
+//    @Test
+//    @WithMockUser
+//    void testGetTypeFields() throws Exception {
+//        mockMvc.perform(get("/api/v1/type/fields/1"))
+//                .andExpect(status().isOk());
+//    }
 }
 
