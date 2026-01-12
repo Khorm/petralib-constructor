@@ -94,7 +94,7 @@ public class ScenarioVariableEntity {
      */
     @ManyToOne
     @JoinColumn(name = "parent_id", referencedColumnName = "local_id")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     ScenarioVariableEntity parent;
 
     public String getExtractionString() {

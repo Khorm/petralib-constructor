@@ -1,5 +1,7 @@
 package com.petralib.scenario.dto;
 
+import com.petralib.ctype.dto.CTypeFieldDto;
+import com.petralib.ctype.entity.CTypeFieldEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +18,7 @@ public class ScenarioVariableDto {
     String type;
     Long consumerVariableId;
     Long producerId;
-    List<TypeInheritanceDto> typeInheritance = new ArrayList<>();
+    List<CTypeFieldDto> typeInheritance = new ArrayList<>();
     String script;
     Long localId;
     Long parentId;

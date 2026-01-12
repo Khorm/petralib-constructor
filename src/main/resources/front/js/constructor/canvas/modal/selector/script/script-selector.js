@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { useVariable } from '../hooks/add-variable-hook';
+import { useVariable } from '../../variable/selectors/add-variable-hook';
 import ScriptDropdown from './script-dropdown'
 
 

@@ -12,6 +12,9 @@ import java.util.Collection;
 @Getter
 @AllArgsConstructor
 public class ScenarioVariablesDto {
+    //входящие в блок сценария переменные
     Collection<VariableDto> inputVariables;
+
+    //текущие переменные блока сценария
     Collection<CurrentVariableDto> currentVariables;
 }

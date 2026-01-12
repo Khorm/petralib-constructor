@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import TypeSelector from '../type/type-selector';
+import TypeSelector from '../variable/type/type-selector';
 import ScenarioVariable from '../scenario-var-class'
 
 import { useSelector, useDispatch } from 'react-redux';

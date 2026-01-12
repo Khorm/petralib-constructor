@@ -65,7 +65,7 @@ public class TypeRestController {
     }
 
     @GetMapping("fields/{typeId}")
-    public ResponseEntity<?> getTypeValues(@PathVariable Long typeId){
+    public ResponseEntity<Collection<CTypeFieldDto>> getTypeValues(@PathVariable Long typeId){
         Collection<CTypeFieldDto> CTypeFieldDtos = typeVariableMapper.map(typeService.getTypeVariables(typeId));
         return ResponseEntity.ok(CTypeFieldDtos);
     }

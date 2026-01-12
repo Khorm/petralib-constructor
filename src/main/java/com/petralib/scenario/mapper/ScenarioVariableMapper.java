@@ -1,8 +1,8 @@
 package com.petralib.scenario.mapper;
 
+import com.petralib.ctype.dto.CTypeFieldDto;
 import com.petralib.ctype.dto.CTypeShortDto;
 import com.petralib.scenario.dto.ScenarioVariableDto;
-import com.petralib.scenario.dto.TypeInheritanceDto;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 import com.petralib.scenario.entity.TypeDependenceEntity;
 import com.petralib.scenario.enums.ScenarioVariableType;
@@ -37,23 +37,36 @@ public interface ScenarioVariableMapper {
 
 
     @Named("typeVars")
-    default List<TypeInheritanceDto> typeVars(Collection<TypeDependenceEntity> list) {
-        List<TypeInheritanceDto> ret = new ArrayList<>();
+    default List<CTypeFieldDto> typeVars(Collection<TypeDependenceEntity> list) {
+        List<CTypeFieldDto> ret = new ArrayList<>();
 
         List<TypeDependenceEntity> sortedVariables = list.stream()
                 .sorted(Comparator.comparingInt(TypeDependenceEntity::getCount)).toList();
 
         for (TypeDependenceEntity type : sortedVariables) {
-            ret.add(new TypeInheritanceDto(
-                    type.getId(),
-                    type.getCurrentField().getOwner().getId(),
-                    type.getCurrentField().getId(),
-                    type.getCurrentField().getName(),
-                    new CTypeShortDto(type.getCurrentField().getFieldType().getId(),
-                            type.getCurrentField().getFieldType().getName(),
-                            type.getCurrentField().getDescription())
+            ret.add(
+                    new CTypeFieldDto(
+                            type.getCurrentField().getId(),
+                            type.getCurrentField().getOwner().getId(),
+                            type.getCurrentField().getName(),
+                            type.getCurrentField().getDescription(),
+                            type.getCurrentField().getMultiplicity().name(),
+                            new CTypeShortDto(type.getCurrentField().getFieldType().getId(),
+                                    type.getCurrentField().getFieldType().getName(),
+                                    type.getCurrentField().getDescription())
+                    )
+//                    new TypeInheritanceDto(
+//                            type.getId(),
+//                            type.getCurrentField().getOwner().getId(),
+//                            type.getCurrentField().getId(),
+//                            type.getCurrentField().getName(),
+//                            new CTypeShortDto(type.getCurrentField().getFieldType().getId(),
+//                                    type.getCurrentField().getFieldType().getName(),
+//                                    type.getCurrentField().getDescription())
+//
+//                    )
 
-            ));
+            );
         }
         return ret;
     }

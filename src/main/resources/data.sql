@@ -123,7 +123,7 @@ create table if not exists scenario_variables (
     producer_script text,
     type_var varchar(255) not null check (type_var in ('SIMPLE','SOURCE','SCRIPT')),
     local_id bigint not null,
-    parent_id bigint not null,
+    parent_id bigint,
     primary key (scenario_variable_id),
     FOREIGN KEY (consumer_variable_id) REFERENCES variables(variable_id) ON DELETE CASCADE,
     FOREIGN KEY (producer_variable_id) REFERENCES variables(variable_id) ON DELETE CASCADE,

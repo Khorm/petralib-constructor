@@ -14,7 +14,12 @@ import java.util.Collection;
 @NoArgsConstructor
 @Getter
 public class CurrentVariableDto {
+    //переменная блока
     VariableDto variable;
+
+    //максимальный локальный id
     Long maxLocalId;
+
+    //все переменные сценария связанные с этой переменной блока
     Collection<ScenarioVariableDto> scenarioVariables;
 }

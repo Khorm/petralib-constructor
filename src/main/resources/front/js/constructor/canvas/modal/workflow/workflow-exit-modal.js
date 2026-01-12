@@ -9,9 +9,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { set, clear } from '../scenario-variable-slice';
-import  idGenerator  from '../selector/hooks/id-generator-hook'
+import  idGenerator  from '../variable/selectors/id-generator-hook'
 
-import ScenarioVariable from '../scenario-variable';
+import ScenarioVariable from '../variable/scenario-variable';
 
 const style = {
   position: 'absolute',

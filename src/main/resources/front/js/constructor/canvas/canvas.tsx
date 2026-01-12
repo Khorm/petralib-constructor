@@ -23,7 +23,7 @@ export default function Canvas() {
     const addingBlock = useSelector((state) => state.canvasFunctions.addBlock);
     const engine = useMemo(() => {
         const engine = createEngine({ registerDefaultDeleteItemsAction: false });
-        engine.setModel(new DiagramModel()); // ������������� ������
+        engine.setModel(new DiagramModel()); 
         engine.maxNumberPointsPerLink = 0;
         return engine;
     }, []);
@@ -313,13 +313,16 @@ export default function Canvas() {
     function choose(e) {
         if (!e.isSelected) return;
         chosenBlock.current = e.entity.options;
+        console.log("CHOOSEN ", e.entity.options)
     }
 
 
     function openMod() {
-        // save(() => {
-            
-        // })
+        if (chosenBlock.current.block.id === undefined){
+            alert("Block not saved");
+            return;
+        }
+
         if (chosenBlock.current === undefined) return;
         if (!openModal) {
             setOpenModal(true);

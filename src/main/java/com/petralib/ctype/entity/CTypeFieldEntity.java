@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 /**
- *
+ * Сущность поля типа
  */
 @Entity
 @Table(name = "ctype_fields")

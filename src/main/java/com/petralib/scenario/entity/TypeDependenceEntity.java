@@ -1,6 +1,5 @@
 package com.petralib.scenario.entity;
 
-import com.petralib.ctype.entity.CTypeEntity;
 import com.petralib.ctype.entity.CTypeFieldEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,6 +24,7 @@ public class TypeDependenceEntity {
 
     @ManyToOne
     @JoinColumn(name = "scenario_variable", updatable = false, nullable = false)
+    @Setter
     ScenarioVariableEntity scenarioVariable;
 
     @ManyToOne
@@ -36,7 +36,4 @@ public class TypeDependenceEntity {
     @Column(name = "dep_count", updatable = false, nullable = false)
     Integer count;
 
-    public void setScenarioVariable(ScenarioVariableEntity scenarioVariable) {
-        this.scenarioVariable = scenarioVariable;
-    }
 }

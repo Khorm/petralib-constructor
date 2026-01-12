@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface ScenarioVariableRepo extends JpaRepository<ScenarioVariableEntity, Long> {
 
@@ -21,4 +22,7 @@ public interface ScenarioVariableRepo extends JpaRepository<ScenarioVariableEnti
     @Modifying
     @Query("DELETE FROM ScenarioVariableEntity sve WHERE sve.producerVariable.id = :variableId OR sve.consumerVariable.id = :variableId")
     void deleteByVariable(@Param("variableId") Long variableId);
+
+    @Query("FROM ScenarioVariableEntity WHERE localId = :localId")
+    Optional<ScenarioVariableEntity> findByLocalId(Long localId);
 }
