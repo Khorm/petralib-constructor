@@ -86,16 +86,16 @@ public class ScenarioVariableEntity {
     @Column(name = "local_id", nullable = false)
     Long localId;
 
-//    @Column(name = "parent_id", nullable = false)
-//    Long parentId;
+    @Column(name = "parent_id", nullable = true)
+    Long parentId;
 
     /**
      * Родительская переменная в дереве переменных сценария
      */
-    @ManyToOne
-    @JoinColumn(name = "parent_id", referencedColumnName = "local_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    ScenarioVariableEntity parent;
+//    @ManyToOne
+//    @JoinColumn(name = "parent_id", referencedColumnName = "local_id")
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    ScenarioVariableEntity parent;
 
     public String getExtractionString() {
         return typeDependence.stream().sorted(Comparator.comparingInt(TypeDependenceEntity::getCount))

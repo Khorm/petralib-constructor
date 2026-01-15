@@ -36,9 +36,9 @@ public abstract class ValueBuilder {
         model.setId(currentScenarioVariable.getConsumerVariable().getId());
         model.setName(currentScenarioVariable.getConsumerVariable().getName());
         model.setMultiplicity(currentScenarioVariable.getConsumerVariable().getMultiplicity().name());
-        ScenarioVariableEntity parent = getCurrentScenarioVariable().getParent();
+        Long parent = getCurrentScenarioVariable().getParentId();
         if (parent != null) {
-            model.setParents(List.of(parent.getId()));
+            model.setParents(List.of(parent));
         }
         model.setLoaderType(LoaderType.fromScenarioVariableType(currentScenarioVariable.getType()).name());
         model.setExtractionString(currentScenarioVariable.getExtractionString());
@@ -47,10 +47,10 @@ public abstract class ValueBuilder {
 
         Collection<ScenarioVariableEntity> children = scenarioBlock.getVariables().stream()
                 .filter(scenarioVariableEntity -> {
-                    if (scenarioVariableEntity.getParent() == null) {
+                    if (scenarioVariableEntity.getParentId() == null) {
                         return false;
                     }
-                    return scenarioVariableEntity.getParent().getId().equals(currentScenarioVariable.getLocalId());
+                    return scenarioVariableEntity.getParentId().equals(currentScenarioVariable.getLocalId());
                 }).toList();
 
         Collection<ValueModel> childrenModels = children.stream().flatMap(entity -> {

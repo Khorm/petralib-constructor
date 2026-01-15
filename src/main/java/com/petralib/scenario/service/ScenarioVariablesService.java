@@ -96,8 +96,8 @@ public class ScenarioVariablesService {
         Collection<ScenarioVariableEntity> newScenarioVars = new ArrayList<>();
 
         // Карта: localId → ScenarioVariableEntity (для быстрого поиска родителей)
-        Map<Long, ScenarioVariableEntity> localIdToEntity = existingVariables.stream()
-                .collect(Collectors.toMap(ScenarioVariableEntity::getLocalId, Function.identity()));
+//        Map<Long, ScenarioVariableEntity> localIdToEntity = existingVariables.stream()
+//                .collect(Collectors.toMap(ScenarioVariableEntity::getLocalId, Function.identity()));
 
         // Проходим по DTO и создаём сущности, восстанавливая иерархию
         for (ScenarioVariableDto dto : dtos) {
@@ -108,15 +108,15 @@ public class ScenarioVariablesService {
             }
 
             // Рекурсивно создаём родителя, если нужно
-            ScenarioVariableEntity parentEntity = null;
-            if (dto.getParentId() != null && dto.getParentId() != 0) {
-                parentEntity = getOrCreateParent(dto.getParentId(), dtos, newScenarioVars, localIdToEntity, scenarioBlockId);
-            }
+//            ScenarioVariableEntity parentEntity = null;
+//            if (dto.getParentId() != null && dto.getParentId() != 0) {
+//                parentEntity = getOrCreateParent(dto.getParentId(), dtos, newScenarioVars, localIdToEntity, scenarioBlockId);
+//            }
 
             // Создаём текущую сущность
-            ScenarioVariableEntity entity = ScenarioVariableFactory.createVar(dto, scenarioBlockId, parentEntity);
+            ScenarioVariableEntity entity = ScenarioVariableFactory.createVar(dto, scenarioBlockId, dto.getParentId());
             newScenarioVars.add(entity);
-            localIdToEntity.put(entity.getLocalId(), entity); // Добавляем в карту для последующих детей
+//            localIdToEntity.put(entity.getLocalId(), entity); // Добавляем в карту для последующих детей
 
             // Настраиваем зависимости типов
             Collection<TypeDependenceEntity> typeDependenceEntities = typeDependencyService.createTypeDependency(dto.getTypeInheritance(), entity);
@@ -129,7 +129,7 @@ public class ScenarioVariablesService {
 //                removeScenarioVars.add(entity);
 //            }
 //        }
-        // Удаление удалённых переменных
+        // Удаление переменных
         Collection<ScenarioVariableEntity> toRemove = existingVariables.stream()
                 .filter(e -> !dtoVariableIds.contains(e.getId()))
                 .collect(Collectors.toList());
@@ -213,13 +213,13 @@ public class ScenarioVariablesService {
                 .orElseThrow(() -> new IllegalArgumentException("Parent ScenarioVariableDto not found for localId=" + parentId));
 
         // Рекурсивно создаём родителя родителя
-        ScenarioVariableEntity grandParent = null;
-        if (parentDto.getParentId() != null && parentDto.getParentId() != 0) {
-            grandParent = getOrCreateParent(parentDto.getParentId(), dtos, newScenarioVars, localIdToEntity, scenarioBlockId);
-        }
+//        ScenarioVariableEntity grandParent = null;
+//        if (parentDto.getParentId() != null && parentDto.getParentId() != 0) {
+//            grandParent = getOrCreateParent(parentDto.getParentId(), dtos, newScenarioVars, localIdToEntity, scenarioBlockId);
+//        }
 
         // Создаём родителя
-        ScenarioVariableEntity parentEntity = ScenarioVariableFactory.createVar(parentDto, scenarioBlockId, grandParent);
+        ScenarioVariableEntity parentEntity = ScenarioVariableFactory.createVar(parentDto, scenarioBlockId, parentDto.getParentId());
         newScenarioVars.add(parentEntity);
         localIdToEntity.put(parentEntity.getLocalId(), parentEntity);
 
