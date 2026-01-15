@@ -1,0 +1,1 @@
+export type ValueType = 'SIMPLE' | 'SCRIPT' | 'SOURCE';
