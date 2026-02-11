@@ -10,10 +10,7 @@ import Popper from '@mui/material/Popper';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './script-dropdown.sass';
 
-//owner {ownerVarTypeId, currentTarget} - ������ �������� ���������
-// varTypeId - ���� ���� ��� ������� ���� �������� ����������
-//currentTarget - ������ � �������� ���� ��������� ��������
-//currentVar - ������� ����������� � ������ ������ ������ (����� ���� undefined)
+
 export default function ScriptDropdown({ owner, setScript, save }) {
 
     const [anchorEl, setAnchorEl] = React.useState(null);

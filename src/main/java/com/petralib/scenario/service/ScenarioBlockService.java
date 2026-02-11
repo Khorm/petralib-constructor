@@ -46,14 +46,14 @@ public class ScenarioBlockService {
         List<ScenarioBlockEntity> entities = scenarioBlockMapper.mapDto(dto.getScenarioBlocks());
         entities.forEach(entity -> entity.setParentWorkflow(blockRepository.getReferenceById(workflowId)));
         Set<Long> existingIds = entities.stream().flatMap((Function<ScenarioBlockEntity, Stream<Long>>) scenarioBlockEntity -> {
-            if (scenarioBlockEntity.getId() == null){
+            if (scenarioBlockEntity.getId() == null) {
                 return Stream.empty();
-            }else {
+            } else {
                 return Stream.of(scenarioBlockEntity.getId());
             }
         }).collect(Collectors.toSet());
-        for (ScenarioBlockEntity scenarioBlockEntity : scenarioBlockRepo.findScenarioBlocksByWorkflow(workflowId)){
-            if (!existingIds.contains(scenarioBlockEntity.getId())){
+        for (ScenarioBlockEntity scenarioBlockEntity : scenarioBlockRepo.findScenarioBlocksByWorkflow(workflowId)) {
+            if (!existingIds.contains(scenarioBlockEntity.getId())) {
                 scenarioBlockRepo.deleteById(scenarioBlockEntity.getId());
             }
         }
@@ -80,7 +80,20 @@ public class ScenarioBlockService {
         end.setPointType(BeginEndType.END);
         end.setWorkflow(workflow);
 
+        //сценанрий блок является конечным у воркфлоу если у него парент является воркфлоу и сам блок является воркфлоу
+        ScenarioBlockEntity scenarioBlockEntity = new ScenarioBlockEntity();
+        scenarioBlockEntity.setParentWorkflow(workflow);
+        scenarioBlockEntity.setBlock(workflow);
+        scenarioBlockEntity.setX(0L);
+        scenarioBlockEntity.setY(0L);
+        scenarioBlockRepo.save(scenarioBlockEntity);
+
         beginEndRepo.save(start);
         beginEndRepo.save(end);
+    }
+
+    @Transactional(readOnly = true)
+    public ScenarioBlockEntity getExitWorkflowScenarioBlock(Long workflowId){
+        return scenarioBlockRepo.findScenarioBlockForWorkflowExit(workflowId).get();
     }
 }

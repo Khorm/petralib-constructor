@@ -12,7 +12,7 @@ interface VariablesListProps {
   addOutVariable: () => void;
   removeVariable: (index: number) => void;
   editVariable: (variable: VariableData, index: number) => void;
-  listOwner: 'SOURCE' | 'ACTION' | 'WORKFLOW'
+  listOwner: 'SOURCE' | 'ACTION' | 'WORKFLOW' | 'TYPE'
 }
 
 export default function VariablesList({
@@ -35,6 +35,7 @@ export default function VariablesList({
   useEffect(() => {
     axios
       .get<CTypeShortDto[]>('/api/v1/type', {
+        // @ts-ignore
         params: { projectId: getProjectId() },
       })
       .then((response) => {
@@ -58,11 +59,23 @@ export default function VariablesList({
       </Typography>
 
       <Grid container spacing={3}>
+
         {/* Колонка IN */}
         <Grid item xs={6}>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             Входные (IN)
           </Typography>
+          {/* Контейнер с прокруткой */}
+          <Box
+            sx={{
+              maxHeight: '400px', // Ограничение высоты
+              overflowY: 'auto',  // Вертикальная прокрутка
+              border: '1px solid #e0e0e0',
+              borderRadius: 1,
+              p: 1,
+              bgcolor: '#f9f9f9',
+            }}
+          >
           {inVariables.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
               Нет входных переменных
@@ -83,16 +96,29 @@ export default function VariablesList({
               );
             })
           )}
+          </Box>
           <Button size="small" variant="outlined" color="primary" onClick={addInVariable} sx={{ mt: 1 }}>
             Добавить IN
           </Button>
         </Grid>
 
         {/* Колонка OUT */}
+        {listOwner !== 'TYPE' &&
         <Grid item xs={6}>
           <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
             Выходные (OUT)
           </Typography>
+          {/* Контейнер с прокруткой */}
+            <Box
+              sx={{
+                maxHeight: '400px',
+                overflowY: 'auto',
+                border: '1px solid #e0e0e0',
+                borderRadius: 1,
+                p: 1,
+                bgcolor: '#fff8e1',
+              }}
+            >
           {outVariables.length === 0 ? (
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
               Нет выходной переменной
@@ -112,6 +138,7 @@ export default function VariablesList({
               );
             })
           )}
+          </Box>
 
           {listOwner === 'SOURCE' &&
             <Button
@@ -126,7 +153,7 @@ export default function VariablesList({
             </Button>
           }
 
-          {listOwner !== 'SOURCE' &&
+          {listOwner !== 'SOURCE' && 
             <Button
               size="small"
               variant="outlined"
@@ -138,81 +165,9 @@ export default function VariablesList({
             </Button>
           }
         </Grid>
+        }
+
       </Grid>
     </Box>
   );
 }
-// import React, { useState, useEffect ,forwardRef } from 'react';
-// import axios from 'axios';
-
-// import IconButton from '@mui/material/IconButton';
-// import AddIcon from '@mui/icons-material/Add';
-
-
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import './variable.sass';
-
-// import Variable from './variable';
-
-
-
-// const VariableList = forwardRef(({incomeVariables, setVariables, pinAccepted = true}, ref) => {
-
-//     const [types, setTypes] = React.useState([]);
-
-//     useEffect(() => {
-//         axios.get('/api/v1/type',{ params :{
-//                 projectId: getProjectId()
-//             }}
-//             ).then((response) => {
-//                  setTypes(response.data)
-//              }).catch((error) => {
-//                 alert(error)
-//              })
-//         }, [])
-
-
-
-
-//     function addNewVariable(){
-//         let newVars = [...incomeVariables];
-//         let newVar = {variable: {name: 'newVar ' + incomeVariables.length}};
-//         newVars.push(newVar);
-//         ref.current.push(newVar);
-//         setVariables(newVars);
-//         console.log("ADD VAR",ref)
-//     }
-
-//     function removeVariable(index){
-//         let newVars = [];
-//         console.log("REMOVE",index)
-//         for (let i = 0; i<incomeVariables.length; i++){
-//             console.log("check ",ref.current[i])
-//             if (i !== index){
-//                 newVars.push(ref.current[i].variable.getVariable())
-//             }
-//         }
-//         ref.current = newVars;
-//         console.log("END ",ref.current)
-//         setVariables(newVars);
-//     }
-
-
-//     return(
-//         <div className='variable-list-div'>
-
-//             <IconButton aria-label="add" onClick={addNewVariable}>
-//                 <AddIcon />
-//             </IconButton>
-
-//                 {incomeVariables.map((variable, index) => {
-//                     return(
-//                         <Variable key={index} index={index} variable = {variable} 
-//                         types = {types} removeVar={removeVariable} ref={ref.current[index]} pinAccepted={pinAccepted}/>
-//                     )
-//                 })}
-//         </div>
-//     )
-// });
-
-// export default VariableList;

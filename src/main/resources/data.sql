@@ -76,8 +76,10 @@ create table if not exists variables (
     multiplicity varchar(255) check (multiplicity in ('SINGLE','COLLECTION')) not null,
     var_pin_type varchar(255) check (var_pin_type in ('IN','OUT')) not null,
     variable_name varchar(255) not null,
+    scenario_block_id bigint,
     primary key (variable_id),
     FOREIGN KEY (block_id) REFERENCES blocks(block_id) ON DELETE CASCADE,
+    FOREIGN KEY (scenario_block_id) REFERENCES scenario_blocks(scenario_block_id) ON DELETE CASCADE,
     FOREIGN KEY (var_type_id) REFERENCES ctypes(type_id) ON DELETE SET NULL
 );
 CREATE INDEX if not exists idx_variables_fk_block_id ON variables (block_id);
@@ -91,12 +93,14 @@ create table if not exists scenario_blocks (
     previous_scenario_block bigint unique,
     x bigint,
     y bigint,
+    var_version BIGINT NOT NULL DEFAULT 0,
     primary key (scenario_block_id),
     FOREIGN KEY (block_id) REFERENCES blocks(block_id) ON DELETE CASCADE,
     FOREIGN KEY (next_scenario_block) REFERENCES scenario_blocks(scenario_block_id) ON DELETE SET NULL,
     FOREIGN KEY (parent_workflow_id) REFERENCES blocks(block_id) ON DELETE CASCADE
 );
 CREATE INDEX if not exists idx_scenario_blocks_fk_parent_workflow_id ON scenario_blocks (parent_workflow_id);
+CREATE INDEX if not exists idx_scenario_version ON scenario_blocks(var_version);
 
 
 create table if not exists start_stop_points (
@@ -128,7 +132,8 @@ create table if not exists scenario_variables (
     FOREIGN KEY (consumer_variable_id) REFERENCES variables(variable_id) ON DELETE CASCADE,
     FOREIGN KEY (producer_variable_id) REFERENCES variables(variable_id) ON DELETE CASCADE,
     FOREIGN KEY (scenario_block_id) REFERENCES scenario_blocks(scenario_block_id) ON DELETE CASCADE,
-    FOREIGN KEY (producer_source_id) REFERENCES blocks(block_id) ON DELETE CASCADE
+    FOREIGN KEY (producer_source_id) REFERENCES blocks(block_id) ON DELETE CASCADE,
+    FOREIGN KEY (owner_variable) REFERENCES variables(variable_id) ON DELETE CASCADE
 );
 CREATE INDEX if not exists idx_scenario_variables_fk_scenario_block_id ON scenario_variables (scenario_block_id);
 

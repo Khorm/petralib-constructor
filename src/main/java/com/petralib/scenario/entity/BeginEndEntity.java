@@ -34,4 +34,6 @@ public class BeginEndEntity {
     @JoinColumn(name = "connected_scenario_block")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     ScenarioBlockEntity connectedBlock;
+
+
 }

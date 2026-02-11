@@ -1,6 +1,7 @@
 package com.petralib.scenario.dto;
 
 import com.petralib.block.dto.VariableDto;
+import com.petralib.scenario.enums.CurrentVariableType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,4 +23,7 @@ public class CurrentVariableDto {
 
     //все переменные сценария связанные с этой переменной блока
     Collection<ScenarioVariableDto> scenarioVariables;
+
+    CurrentVariableType variableType;
+
 }

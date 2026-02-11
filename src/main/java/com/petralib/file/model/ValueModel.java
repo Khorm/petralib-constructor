@@ -41,6 +41,7 @@ public class ValueModel {
 
     /**
      * Список ID родительских значений в иерархии.
+     * Связано с {@link #children}, позволяет построить иерархию полей.
      * Позволяет восстановить путь к полю, например:
      * <pre>
      * parents: [100, 101] → 100.name = "user", 101.name = "address" → полный путь: user.address.{this.name}
@@ -60,9 +61,7 @@ public class ValueModel {
     private String loaderType;
 
     /**
-     * Дочерние значения — вложенные поля (например, поля объекта или JSON).
-     * Используется для представления структурированных типов.
-     * Позволяет строить древовидные структуры данных.
+     * Переменные, зависящие от текущей переменной.
      */
     private Collection<ValueModel> children;
 
@@ -109,6 +108,8 @@ public class ValueModel {
      * Используется, когда {@link #loaderType} = {@code SOURCE_LOADER}.
      */
     private String sourceName;
+
+    private String sourceServicePath;
     /**
      * Список входных переменных источника.
      * Используется, если источник требует параметров (например, API с фильтрами).

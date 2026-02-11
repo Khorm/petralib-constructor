@@ -53,6 +53,7 @@ export default function EntityList({getUrl, createModal, chooseFunc, addFunc}) {
 
     function handleOpen(e, entity){
         e.stopPropagation();
+        console.log("handleOpen",entity);
         setOptEntity(entity);
         setOpenModal(true);
     }

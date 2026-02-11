@@ -82,6 +82,7 @@ public class BlockRestController {
     }
 
 
+
     private ResponseEntity<?> saveBlock(Long projectId, BlockDto dto, BlockType type, Errors errors) {
         // Валидация стандартных ошибок @Valid
         if (errors.hasErrors()) {

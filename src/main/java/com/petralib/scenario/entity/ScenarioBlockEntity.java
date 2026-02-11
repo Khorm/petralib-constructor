@@ -50,9 +50,16 @@ public class ScenarioBlockEntity {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "scenarioBlock")
     Collection<ScenarioVariableEntity> variables = new ArrayList<>();
 
+    @Column(name = "var_version", nullable = false)
+    Long varVersion = 0L;
+
 
     public ScenarioBlockEntity(Long scenarioBlockId) {
         this.id = scenarioBlockId;
+    }
+
+    public boolean isWorkflowEnd() {
+        return block.getId().equals(parentWorkflow.getId());
     }
 
 }

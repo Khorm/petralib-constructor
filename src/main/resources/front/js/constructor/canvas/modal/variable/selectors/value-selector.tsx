@@ -7,11 +7,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import SourceSelector from './source/source-selector';
 import ValueTypeConstructor from '../value-type-constructor';
 import SimpleSelector from './simple/simple-selector';
-import ScriptSelector from '../../selector/script/script-selector';
 import { useVariable } from './add-variable-hook';
 import { ValueType } from '../value-type';
 import { ScenarioVariableDto, VariableDto } from '../../scenario-block-modal';
 import idGenerator from './id-generator-hook';
+import ScriptSelector from './script/script-selector';
 
 interface ValueSelectorProps {
    consumerVariable: VariableDto;
@@ -25,44 +25,8 @@ export default function ValueSelector({ consumerVariable, blockVariable, accepte
     ValueSelectorProps
 ) {
 
-    // const scenarioVariablesList = useSelector(
-    //     (state: any) => state.scenarioVariables.list
-    // ) as ScenarioVariableDto[];
     const dispatch = useDispatch();
-    const { updateSimpleScenarioVariable, updateSourceScenarioVar } = useVariable();
-    // const [localId, setLocalId] = useState(defaultLocalId);
-
-    // useEffect(() => {
-    //     console.log("SET DEFAULT ID : ", defaultLocalId);
-    //     setLocalId(defaultLocalId);
-    // }, []);
-
-    // useEffect(() => {
-    //     updateValue();
-    // }, [localId]);
-
-    // useEffect(() => {
-    //     updateValue();
-    // }, [scenarioVariablesList]);
-
-    // function updateValue() {
-    //     console.log("UPDATE SCENARIO VARIABLES : ", scenarioVariablesList, localId, blockVariable.id);
-    //     let find = false;
-    //     for (let i = 0; i < scenarioVariablesList.length; i++) {
-    //         if (scenarioVariablesList[i].blockVariableId ===  blockVariable.id && scenarioVariablesList[i].localId === localId) {
-    //             if (curScenarioVariable === undefined) {
-    //                 setCurScenarioVariable(scenarioVariablesList[i]);
-    //             }
-    //             find = true;
-    //             break;
-    //         }
-    //     }
-    //     if (!find) {
-    //         setCurScenarioVariable(undefined);
-    //         setLocalId(undefined);
-    //     }
-
-    // }
+    const { updateSimpleScenarioVariable, updateSourceScenarioVar, updateScriptScenarioVariable } = useVariable();
 
 
     function create(createdType: ValueType) {
@@ -75,12 +39,10 @@ export default function ValueSelector({ consumerVariable, blockVariable, accepte
             case 'SOURCE':
                 scenarioVar = updateSourceScenarioVar(consumerVariable.id, undefined,  blockVariable.id, localId, parentId);
                 break;
-            // case 'SCRIPT':
-            //     localId = updateScriptScenarioVariable(consumerVariable.id, undefined,  blockVariable.id, undefined, parentId);
-            //     break;
+            case 'SCRIPT':
+                scenarioVar = updateScriptScenarioVariable(consumerVariable.id, undefined,  blockVariable.id, undefined, parentId);
+                break;
         }
-        // console.log("SET LOCAL ID : ", scenarioVariablesList, localId, blockVariableId);
-        // setLocalId(localId);
         dispatch(add(scenarioVar));
     }
 
@@ -97,15 +59,16 @@ export default function ValueSelector({ consumerVariable, blockVariable, accepte
                 <SourceSelector blockVariable={blockVariable} consumerVariable={consumerVariable} acceptedVariables={acceptedVariables}
             localId={scenarioVar.localId} parentId={parentId} scenarioVariable={scenarioVar} />
             }
+            {scenarioVar?.type === 'SCRIPT' &&
+                <ScriptSelector blockVariable={blockVariable} consumerVariable={consumerVariable}
+            localId={scenarioVar.localId} parentId={parentId} scenarioVariable={scenarioVar}  />
+            }
 
         </div>
     )
 
 
-            // {curScenarioVariable?.type === 'SCRIPT' &&
-            //     <ScriptSelector blockVariableId={blockVariable.id} consumerVariable={consumerVariable} scenarioScript={curScenarioVariable.script}
-            //         localId={localId} parentId={parentId} />
-            // }
+
 
 }
 

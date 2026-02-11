@@ -18,6 +18,7 @@ final class SourceValueBuilder extends ValueBuilder {
     void extendedBuild(ValueModel model) {
         model.setSourceName(getCurrentScenarioVariable().getProducerSource().getName());
         model.setSourceId(getCurrentScenarioVariable().getProducerSource().getId());
+        model.setSourceServicePath(getCurrentScenarioVariable().getProducerSource().getService().getPath());
         model.setSourceVersion("0");
         model.setSourceInputVariableModels(getCurrentScenarioVariable()
                 .getProducerSource().getInVariables().stream().map(sourceVariableEntity -> {

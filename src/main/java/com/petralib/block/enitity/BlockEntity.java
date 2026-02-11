@@ -11,9 +11,13 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,15 +53,41 @@ public class BlockEntity {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "block", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @ToString.Exclude
     Collection<VariableEntity> variables = new ArrayList<>();
+
+
     public BlockEntity(Long id) {
         this.id = id;
     }
 
     public Collection<VariableEntity> getOutVariables(){
-        return variables.stream().filter(entity -> entity.getPinType() == PinType.OUT).collect(Collectors.toList());
+        return variables.stream().filter(entity -> entity.getPinType() == PinType.OUT && entity.getScenarioBlock() == null ).collect(Collectors.toList());
     }
 
     public Collection<VariableEntity> getInVariables(){
-        return variables.stream().filter(entity -> entity.getPinType() == PinType.IN).collect(Collectors.toList());
+        return variables.stream().filter(entity -> entity.getPinType() == PinType.IN && entity.getScenarioBlock() == null ).collect(Collectors.toList());
+    }
+
+    public Collection<VariableEntity> getLocalVariables(Long scenarioVariableId){
+        return variables.stream().filter(entity -> entity.getScenarioBlock() != null && scenarioVariableId.equals(entity.getScenarioBlock().getId()))
+                .collect(Collectors.toList());
+    }
+
+    public void setLocalVariables(Collection<VariableEntity> newLocalVariables){
+        variables.removeIf(variableEntity -> {
+            boolean find = false;
+            for (VariableEntity newLocalVariable : newLocalVariables) {
+                if (newLocalVariable.getName().equals(variableEntity.getName()) && variableEntity.getScenarioBlock() != null
+                        && variableEntity.getScenarioBlock().getId().equals(newLocalVariable.getScenarioBlock().getId())) {
+                    find = true;
+                    break;
+                }
+            }
+            return find;
+        });
+        variables.addAll(newLocalVariables);
+    }
+
+    public void deleteLocalVariable(Long variableId) {
+        variables.removeIf(variableEntity -> variableEntity.getScenarioBlock() != null && variableEntity.getId().equals(variableId));
     }
 }

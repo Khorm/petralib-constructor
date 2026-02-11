@@ -19,7 +19,9 @@ public final class BuilderConstructor {
 
         Collection<ValueModel> ret = new ArrayList<>();
         AtomicInteger counter = new AtomicInteger(0);
-        for (VariableEntity variable : scenarioBlock.getBlock().getInVariables()) {
+        Collection<VariableEntity> variables = scenarioBlock.getBlock().getInVariables();
+        variables.addAll(scenarioBlock.getBlock().getLocalVariables(scenarioBlock.getId()));
+        for (VariableEntity variable : variables) {
             Optional<ValueBuilder> builder = createBuilder(scenarioBlock, variable.getId(), counter);
             if (builder.isEmpty()) {
                 continue;
@@ -38,6 +40,7 @@ public final class BuilderConstructor {
             return Optional.empty();
         }
         ScenarioVariableEntity scenarioVariable = scenarioVariableOpt.get();
+        counter.incrementAndGet();
         switch (scenarioVariable.getType()) {
             case SCRIPT -> {
                 return Optional.of(new ScriptValueBuilder(scenarioBlock, scenarioVariable, counter));

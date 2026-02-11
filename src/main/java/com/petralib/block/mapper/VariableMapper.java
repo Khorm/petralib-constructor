@@ -1,6 +1,7 @@
 package com.petralib.block.mapper;
 
 import com.petralib.block.dto.VariableDto;
+import com.petralib.block.enitity.BlockEntity;
 import com.petralib.block.enitity.VariableEntity;
 import com.petralib.block.enums.PinType;
 import com.petralib.ctype.dto.CTypeShortDto;
@@ -18,17 +19,20 @@ import java.util.Collection;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         uses = ShortTypeMapper.class)
 public interface VariableMapper {
-//    CTypeFieldDto entityToDto(CTypeFieldEntity entity);
 
     @Mapping(target = "varType", source = "variableType", qualifiedByName = "varTypeToType")
     @Mapping(target = "multiplicity", source = "multiplicity", qualifiedByName = "strMultiplicityToEnum")
     @Mapping(target = "pinType", source = "pinType", qualifiedByName = "strPinTypeToEnum")
+//    @Mapping(target = "block", source = "blockId", qualifiedByName = "blockIdToEntity")
     VariableEntity dtoToEntity(VariableDto dto);
 
     @Mapping(source = "varType", target = "variableType")
+//    @Mapping(source = "block.id", target = "blockId")
     VariableDto blockEntityToDto(VariableEntity entity);
 
     Collection<VariableDto> map(Collection<VariableEntity> entities);
+
+    Collection<VariableEntity> mapDto(Collection<VariableDto> entities);
 
 
     @Named("varTypeToType")
@@ -48,4 +52,14 @@ public interface VariableMapper {
     default PinType strPinTypeToEnum(String val) {
         return PinType.valueOf(val);
     }
+
+//    @Named("blockIdToEntity")
+//    default BlockEntity blockIdToEntity(Long id) {
+//        if (id == null) return null;
+//        else {
+//            BlockEntity entity = new BlockEntity();
+//            entity.setId(id);
+//            return entity;
+//        }
+//    }
 }

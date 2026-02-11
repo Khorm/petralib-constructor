@@ -56,7 +56,6 @@ public abstract class ValueBuilder {
         Collection<ValueModel> childrenModels = children.stream().flatMap(entity -> {
             Optional<ValueBuilder> b = BuilderConstructor.createBuilder(scenarioBlock, entity.getConsumerVariable().getId(), counter);
             if (b.isPresent()) {
-                counter.incrementAndGet();
                 return Stream.of(b.get().build());
             }
             return Stream.empty();

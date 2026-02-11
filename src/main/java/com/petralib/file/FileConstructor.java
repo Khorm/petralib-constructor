@@ -26,11 +26,12 @@ public class FileConstructor {
     ScenarioBlockRepo scenarioBlockRepo;
 
     public ConstructorModel create(Long serviceId) {
-        return ConstructorModel.builder()
+        ConstructorModel constructorModel = ConstructorModel.builder()
                 .sources(sources(serviceId))
                 .consumers(consumers(serviceId))
                 .producers(producers(serviceId))
                 .build();
+        return constructorModel;
     }
 
 
@@ -76,7 +77,7 @@ public class FileConstructor {
                         consumers.add(new RemoteConsumerModel(
                                 child.getBlock().getId(),
                                 "0",
-                                child.getBlock().getService().getName(),
+                                child.getBlock().getService().getPath(),
                                 scenarioBlockEntity.getBlock().getId(),
                                 "0",
                                 valueParser

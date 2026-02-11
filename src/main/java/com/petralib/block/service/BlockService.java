@@ -1,5 +1,7 @@
 package com.petralib.block.service;
 
+import com.petralib.block.dto.VariableDto;
+import com.petralib.block.mapper.VariableMapper;
 import com.petralib.block.repo.BlockRepository;
 import com.petralib.block.enums.BlockType;
 import com.petralib.block.dto.BlockDto;
@@ -29,6 +31,7 @@ public class BlockService {
     BlockRepository blockRepository;
     ProjectRepository projectRepository;
     BlockMapper blockMapper;
+    VariableMapper variableMapper;
     ScenarioBlockService scenarioBlockService;
     ScenarioVariableRepo scenarioVariableRepo;
 

@@ -31,6 +31,14 @@ interface VariableFuncs {
     parentId: number 
   ) => ScenarioVariableDto;
 
+   updateScriptScenarioVariable : (
+    consumerVariableId: number,
+    script: string,
+    blockVariableId: number,
+    localId: number,
+    parentId: number 
+  )=> ScenarioVariableDto; 
+
   // remove : (localId: number, blockVariableId: number) => void 
 }
 
@@ -302,6 +310,7 @@ export const useVariable = () : VariableFuncs => {
     // add,
     updateScenarioVarTypeInheritance,
     updateSourceScenarioVar,
+    updateScriptScenarioVariable,
     // updateSourceScenarioVar,
     // updateScriptScenarioVariable,
     // getScenarioVariable,

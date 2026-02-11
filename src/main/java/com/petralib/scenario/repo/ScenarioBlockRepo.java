@@ -1,7 +1,10 @@
 package com.petralib.scenario.repo;
 
 import com.petralib.scenario.entity.ScenarioBlockEntity;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -25,4 +28,12 @@ public interface ScenarioBlockRepo extends JpaRepository<ScenarioBlockEntity, Lo
 
     @Query("FROM ScenarioBlockEntity sbe WHERE sbe.block.id = :workflowId AND sbe.parentWorkflow.id = :workflowId")
     Optional<ScenarioBlockEntity> findScenarioBlockForWorkflowExit(@Param("workflowId") Long workflowId);
+
+    @Query("FROM ScenarioBlockEntity sbe WHERE sbe.id = :id AND sbe.varVersion = :varVersion")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<ScenarioBlockEntity> findBlockByIdAndVersionForUpdate(@Param("id") Long id, @Param("varVersion") Long version);
+
+    @Modifying
+    @Query("UPDATE ScenarioBlockEntity sbe SET sbe.varVersion = sbe.varVersion + 1 WHERE sbe.id IN :id AND sbe.varVersion = :varVersion")
+    int updateVarVersion(@Param("id") Long id, @Param("varVersion") Long varVersion);
 }

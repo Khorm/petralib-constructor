@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import TypeSelector, { CTypeFieldDto, CTypeShortDto } from '../../type/type-selector';
+import TypeSelector, { CTypeFieldDto } from '../../type/type-selector';
 import ValueSelector from '../value-selector';
 import { useVariable } from '../add-variable-hook';
 import { VariableDto, ScenarioVariableDto } from '../../../scenario-block-modal';
@@ -164,7 +164,7 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
                 })}
                 </div>
             }
-            <button onClick={() => remove(scenarioVariable)}>X</button>
+            <button onClick={() => dispatch(remove(scenarioVariable))}>X</button>
         </div>
     )
 

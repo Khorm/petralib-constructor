@@ -1,6 +1,7 @@
 package com.petralib.ctype;
 
 import com.petralib.ctype.dto.CTypeFieldDto;
+import com.petralib.ctype.dto.CTypeShortDto;
 import com.petralib.ctype.dto.TypeFullDto;
 import com.petralib.ctype.dto.TypePage;
 import com.petralib.ctype.entity.CTypeEntity;
@@ -29,19 +30,19 @@ public class TypeRestController {
     TypeVariableMapper typeVariableMapper;
 
     @GetMapping("page")
-    public ResponseEntity<?> getTypesPage(@RequestParam Long projectId, @RequestParam Integer pageNumber,
+    public ResponseEntity<TypePage> getTypesPage(@RequestParam Long projectId, @RequestParam Integer pageNumber,
                                           @RequestParam String name, @RequestParam Integer pageElementsCount) {
         TypePage typePage = typeService.getTypesPage(pageElementsCount, pageNumber, projectId, name);
         return ResponseEntity.ok(typePage);
     }
 
     @GetMapping
-    public ResponseEntity<?> getTypes(@RequestParam Long projectId){
+    public ResponseEntity<Collection<CTypeShortDto>> getTypes(@RequestParam Long projectId){
         return ResponseEntity.ok(typeService.getAllTypes(projectId));
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody TypeFullDto dto, @RequestParam(required = false) Long projectId, Errors errors){
+    public ResponseEntity<?> save(@Valid @RequestBody TypeFullDto dto, @RequestParam Long projectId, Errors errors){
         if (projectId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Project ID is required");
         }

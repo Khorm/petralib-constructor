@@ -17,4 +17,6 @@ public class ScenarioVariablesDto {
 
     //текущие переменные блока сценария
     Collection<CurrentVariableDto> currentVariables;
+
+    Long version;
 }

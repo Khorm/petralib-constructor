@@ -11,7 +11,6 @@ import { CanvasWidget } from '@projectstorm/react-canvas-core';
 import { useSelector, useDispatch } from 'react-redux';
 
 import ScenarioBlockModal from './modal/scenario-block-modal';
-import WorkflowExitModal from './modal/workflow/workflow-exit-modal';
 import CustomDeleteItemsAction from './CustomDeleteItemsAction'
 
 
@@ -32,6 +31,7 @@ export default function Canvas() {
     const chosenBlock = useRef();
 
     const [openModal, setOpenModal] = useState(false);
+    const [exitBlock, setExitBlock] = useState(undefined);
 
 
     useEffect(() => {
@@ -51,6 +51,7 @@ export default function Canvas() {
             //     save();
             // }
             prevWorkflowRef.current = workflow;
+            getExitScenarioBlock(workflow);
 
             axios.get('/api/v1/scenario', {
                 params: {
@@ -243,6 +244,7 @@ export default function Canvas() {
                     y: nodes[i].position.y,
                     pointType: beginEndBlock.pointType,
                     connectedBlockId: beginEndBlock.connectedBlockId
+                    
                 })
             }
         }
@@ -318,12 +320,15 @@ export default function Canvas() {
 
 
     function openMod() {
-        if (chosenBlock.current.block.id === undefined){
-            alert("Block not saved");
+
+        if (chosenBlock.current === undefined) return; 
+        if (chosenBlock.current.block !== undefined && 
+            chosenBlock.current.block?.id === undefined ){
+            alert("Block not found");
             return;
         }
 
-        if (chosenBlock.current === undefined) return;
+        
         if (!openModal) {
             setOpenModal(true);
         } else {
@@ -357,6 +362,17 @@ export default function Canvas() {
         engine.repaintCanvas();
     }
 
+    const getExitScenarioBlock = (workflowId: number) => {
+        axios.get('/api/v1/scenario/' + workflowId + '/exit',{ params: {
+            projectId: getProjectId()
+        }}).then((response) => {
+            setExitBlock(response.data);
+        }).catch((error) => {
+            console.error(error);
+            alert(error.message)
+       })
+    }
+
 
     return (
         <>
@@ -366,13 +382,14 @@ export default function Canvas() {
                 <button style={{ width: '100%', height: '33%' }} onClick={deleteBlock} >delete</button>
             </div>
             <CanvasWidget className="diagram-container" engine={engine} />
-            {openModal && chosenBlock.current.block &&
-                <ScenarioBlockModal scenarioBlock={chosenBlock.current.block} workflow={prevWorkflowRef.current}
+            {openModal && chosenBlock.current?.block &&
+                <ScenarioBlockModal scenarioBlock={chosenBlock.current.block} 
+                workflow={prevWorkflowRef.current}
                     open={openModal} handleClose={openMod} />
             }
 
-            {openModal && chosenBlock.current.beginEndBlock &&
-                <WorkflowExitModal workflow={prevWorkflowRef.current}
+            {openModal && chosenBlock.current?.beginEndBlock &&
+                <ScenarioBlockModal workflow={prevWorkflowRef.current} scenarioBlock={exitBlock}
                     open={openModal} handleClose={openMod} />
             }
         </>

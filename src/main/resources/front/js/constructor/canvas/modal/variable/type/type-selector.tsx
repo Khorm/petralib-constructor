@@ -5,11 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './type-selector.sass';
 
 import TypeDropdown, { DropdownInfo } from './type-dropdown';
+import { CTypeShortDto } from '../../../../right_panel/modal/variable/variable';
 
-export interface CTypeShortDto {
-  id: number;
-  name: string;
-}
 
 /**
  * Интерфейс поля типа (например, поля объекта).

@@ -3,12 +3,15 @@ package com.petralib.block.enitity;
 import com.petralib.block.enums.PinType;
 import com.petralib.ctype.entity.CTypeEntity;
 import com.petralib.ctype.enums.Multiplicity;
+import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Collection;
 
@@ -44,6 +47,14 @@ public class VariableEntity {
     @JoinColumn(name = "block_id", updatable = false)
     @ToString.Exclude
     BlockEntity block;
+
+    @ManyToOne
+    @JoinColumn(name = "scenario_block_id", updatable = false)
+    @ToString.Exclude
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    ScenarioBlockEntity scenarioBlock;
+
+
 
 //    @OneToMany(mappedBy = "ownerVariable", fetch = FetchType.LAZY)
 //    @ToString.Exclude
