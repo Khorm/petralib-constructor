@@ -15,14 +15,8 @@ public interface ScenarioVariableRepo extends JpaRepository<ScenarioVariableEnti
     @Query("FROM ScenarioVariableEntity WHERE scenarioBlock.id = :scenarioBlockId")
     Collection<ScenarioVariableEntity> findVariables(@Param("scenarioBlockId") Long scenarioBlockId);
 
-//    @Query("FROM ScenarioVariableEntity WHERE consumerVariable.id == :consumerVariableId AND scenarioBlock.parentWorkflow.id = :workflowId")
-//    ScenarioBlockEntity findScenarioVariableByVariableAndWorkflow(@Param("consumerVariableId") Long consumerVariable,
-//                                                                  @Param("workflowId") Long workflowId);
-
     @Modifying
     @Query("DELETE FROM ScenarioVariableEntity sve WHERE sve.producerVariable.id = :variableId OR sve.consumerVariable.id = :variableId")
     void deleteByVariable(@Param("variableId") Long variableId);
 
-    @Query("FROM ScenarioVariableEntity WHERE localId = :localId")
-    Optional<ScenarioVariableEntity> findByLocalId(Long localId);
 }

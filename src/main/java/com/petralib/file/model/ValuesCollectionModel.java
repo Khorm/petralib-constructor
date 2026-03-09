@@ -9,6 +9,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Deprecated
 public class ValuesCollectionModel {
     private Collection<ValueModel> values;
     private Integer valueCount;

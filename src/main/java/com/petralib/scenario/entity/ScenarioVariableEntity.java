@@ -2,14 +2,15 @@ package com.petralib.scenario.entity;
 
 import com.petralib.block.enitity.BlockEntity;
 import com.petralib.block.enitity.VariableEntity;
+import com.petralib.scenario.enums.FunctionVariableType;
 import com.petralib.scenario.enums.ScenarioVariableType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class ScenarioVariableEntity {
     Collection<TypeDependenceEntity> typeDependence;
 
     /**
-     *Переменная, которая является источником данных для этой связи
+     * Переменная, которая является источником данных для этой связи
      */
     @ManyToOne
     @JoinColumn(name = "producer_variable_id", updatable = false)
@@ -76,32 +77,67 @@ public class ScenarioVariableEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     BlockEntity producerSource;
 
-//    @OneToOne(mappedBy = "scenarioVariable", cascade = CascadeType.PERSIST)
+    //    @OneToOne(mappedBy = "scenarioVariable", cascade = CascadeType.PERSIST)
     @Column(name = "producer_script")
     String producerScript;
 
+    @Column(name = "function_variable_type")
+    @Enumerated(EnumType.STRING)
+    FunctionVariableType functionVariableType;
     /**
      * ID локальной переменной в сценарии
      */
-    @Column(name = "local_id", nullable = false)
-    Long localId;
+//    @Column(name = "local_id", nullable = false)
+//    Long localId;
+//
+//    @Column(name = "parent_id", nullable = true)
+//    Collection<ScenarioVariableEntity> parentIds;
 
-    @Column(name = "parent_id", nullable = true)
-    Long parentId;
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(
+//            name = "scenario_variable_mapping",
+//            joinColumns = {
+//                    @JoinColumn(name = "child_id", referencedColumnName = "scenario_variable_id"),
+//                    @JoinColumn(name = "child_local_id", referencedColumnName = "local_id")
+//            },
+//            inverseJoinColumns = {
+//                    @JoinColumn(name = "parent_id", referencedColumnName = "scenario_variable_id"),
+//                    @JoinColumn(name = "parent_local_id", referencedColumnName = "local_id")
+//            }
+//
+//    )
+//    Collection<ScenarioVariableEntity> parents = new ArrayList<>();
 
     /**
-     * Родительская переменная в дереве переменных сценария
+     * Дочерние переменные — те, кто зависят от этой переменной
+     * Обратная сторона связи (инверсия parents)
      */
+//    @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
 //    @ManyToOne
-//    @JoinColumn(name = "parent_id", referencedColumnName = "local_id")
+//    @JoinTable(
+//            name = "scenario_variable_mapping",
+//            joinColumns = {
+//                    @JoinColumn(name = "parent_id", referencedColumnName = "scenario_variable_id"),
+//                    @JoinColumn(name = "parent_local_id", referencedColumnName = "local_id")
+//            },
+//            inverseJoinColumns = {
+//                    @JoinColumn(name = "child_id", referencedColumnName = "scenario_variable_id"),
+//                    @JoinColumn(name = "child_local_id", referencedColumnName = "local_id")
+//            }
+//    )
 //    @OnDelete(action = OnDeleteAction.CASCADE)
-//    ScenarioVariableEntity parent;
+
+//    Long child;
+//
+//    @OneToMany(mappedBy = "child", fetch = FetchType.LAZY)
+//    Collection<ScenarioVariableEntity> parents = new ArrayList<>();
 
     public String getExtractionString() {
         return typeDependence.stream().sorted(Comparator.comparingInt(TypeDependenceEntity::getCount))
                 .map(typeDependenceEntity -> typeDependenceEntity.getCurrentField().getName())
                 .collect(Collectors.joining("."));
     }
+
 
 
 }

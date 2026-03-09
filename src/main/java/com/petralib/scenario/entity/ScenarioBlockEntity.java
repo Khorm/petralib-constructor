@@ -1,6 +1,7 @@
 package com.petralib.scenario.entity;
 
 import com.petralib.block.enitity.BlockEntity;
+import com.petralib.block.enitity.VariableEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,6 +61,13 @@ public class ScenarioBlockEntity {
 
     public boolean isWorkflowEnd() {
         return block.getId().equals(parentWorkflow.getId());
+    }
+
+    public Collection<VariableEntity> getContextVariables(){
+        Collection<VariableEntity> contextVars = block.getInVariables();
+        contextVars.addAll(previousScenarioBlock.block.getOutVariables());
+        contextVars.addAll(block.getLocalVariables(id));
+        return contextVars;
     }
 
 }

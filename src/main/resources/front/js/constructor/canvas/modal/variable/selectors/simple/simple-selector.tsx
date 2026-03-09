@@ -9,23 +9,23 @@ import { useVariable } from '../add-variable-hook';
 import { ScenarioVariableDto, VariableDto } from '../../../scenario-block-modal';
 
 import './simple-variable.sass';
-import idGenerator from '../id-generator-hook';
+import { VarFunctionType } from '../../enum/variable-function-type';
+
 
 
 interface SimpleSelectorProps {
    consumerVariable: VariableDto;
    blockVariable: VariableDto;
    acceptedVariables: VariableDto[],
-   parentId: number;   
+   functionType: VarFunctionType  
 }
 
-export default function SimpleSelector({ blockVariable, consumerVariable, acceptedVariables,  parentId }
+export default function SimpleSelector({ blockVariable, consumerVariable, acceptedVariables, functionType }
     : SimpleSelectorProps
 ) {
 
     const dispatch = useDispatch();
-    const { updateSimpleScenarioVariable, } = useVariable();
-
+    const { updateSimpleScenarioVariable, updateScenarioVarTypeInheritance} = useVariable();
 
     const [producerVariable, setProducerVariable] = React.useState<VariableDto>(undefined);
     const [scenarioVariable, setScenarioVariable] = React.useState<ScenarioVariableDto>(undefined);
@@ -52,25 +52,26 @@ export default function SimpleSelector({ blockVariable, consumerVariable, accept
 
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const producerVariableId = +e.target.value;
-        let curLocalId = scenarioVariable?.localId;
-        if (curLocalId === undefined) {
-            curLocalId = idGenerator.generateId(blockVariable.id);
-        }
-        const newScenarioVar : ScenarioVariableDto = updateSimpleScenarioVariable(consumerVariable.id, producerVariableId, blockVariable.id, parentId, curLocalId);
-        console.log('ADD SIMPLE VAR', newScenarioVar);
+        
+        const newScenarioVar : ScenarioVariableDto = updateSimpleScenarioVariable(consumerVariable.id,
+             producerVariableId, blockVariable.id, functionType);
+        
         dispatch(add(newScenarioVar));
     }
+
 
     function setTypeCollection(typeInheritance: CTypeFieldDto[]) {         
         
         if (!scenarioVariable){
             return
         }
-        console.log("scenarioVarriable : ", scenarioVariable, scenarioVariable.localId)
-        // const newScenarioVar : ScenarioVariableDto = updateScenarioVarTypeInheritance(localId, typeCollection, blockVariable.id)
-        const updatedVar = { ...scenarioVariable, typeInheritance };
-        dispatch(add(updatedVar));
+        
+        const newScenarioVar : ScenarioVariableDto = updateScenarioVarTypeInheritance(functionType,
+             typeInheritance, blockVariable.id)
+        console.log('newScenarioVar', newScenarioVar);
+        dispatch(add(newScenarioVar));
     }
+
 
     function inputVariablesWithoutSelf() : VariableDto[] {
         return acceptedVariables.filter(curVar => curVar.id !== consumerVariable.id && curVar.id !== blockVariable.id);

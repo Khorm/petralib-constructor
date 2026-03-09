@@ -9,7 +9,8 @@ import Popper from '@mui/material/Popper';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './dropdown.sass';
-import { CTypeFieldDto, CTypeShortDto } from './type-selector';
+import { CTypeFieldDto } from './type-selector';
+import { VarFunctionType } from '../enum/variable-function-type';
 
 
 export interface DropdownInfo{    
@@ -33,6 +34,8 @@ interface TypeDropdownProps {
    * @param remove - Флаг, указывающий на удаление.
    */
   chooseTypeFunc: (field: CTypeFieldDto | undefined, remove?: boolean) => void;
+
+  
 }
 
 

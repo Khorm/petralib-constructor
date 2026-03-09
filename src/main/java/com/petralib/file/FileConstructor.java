@@ -50,7 +50,9 @@ public class FileConstructor {
     }
 
     private Collection<LocalConsumerModel> consumers(Long serviceId) {
-        return blockRepository.findBlocksByServiceAndType(serviceId, BlockType.ACTION).stream()
+        Collection<BlockEntity> consumers = blockRepository.findBlocksByServiceAndType(serviceId, BlockType.ACTION);
+        consumers.addAll(blockRepository.findBlocksByServiceAndType(serviceId, BlockType.WORKFLOW));
+        return consumers.stream()
                 .map(blockEntity -> new LocalConsumerModel(
                         blockEntity.getId(),
                         "0",
@@ -73,7 +75,7 @@ public class FileConstructor {
                     Collection<ScenarioBlockEntity> workflowChildrenBlocks = scenarioBlockRepo.findScenarioBlocksByWorkflow(scenarioBlockEntity.getBlock().getId());
                     Collection<RemoteConsumerModel> consumers = new ArrayList<>();
                     for (ScenarioBlockEntity child : workflowChildrenBlocks) {
-                        ValuesCollectionModel valueParser = BuilderConstructor.loaderModelMap(child);
+                        Collection<ValueModel> valueParser = BuilderConstructor.loaderModelMap(child);
                         consumers.add(new RemoteConsumerModel(
                                 child.getBlock().getId(),
                                 "0",
@@ -84,7 +86,7 @@ public class FileConstructor {
                         ));
                     }
 
-                    ValuesCollectionModel lastWorkflowBlockValueParser = null;
+                    Collection<ValueModel> lastWorkflowBlockValueParser = null;
                     Optional<ScenarioBlockEntity> scenarioBlockEntityOpt = scenarioBlockRepo.findScenarioBlockForWorkflowExit(scenarioBlockEntity.getBlock().getId());
                     if (scenarioBlockEntityOpt.isPresent()) {
                         ScenarioBlockEntity exit = scenarioBlockEntityOpt.get();

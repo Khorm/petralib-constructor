@@ -16,7 +16,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TypeDependenceEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "type_dep_id")
@@ -25,6 +24,7 @@ public class TypeDependenceEntity {
     @ManyToOne
     @JoinColumn(name = "scenario_variable", updatable = false, nullable = false)
     @Setter
+    @OnDelete(action = OnDeleteAction.CASCADE)
     ScenarioVariableEntity scenarioVariable;
 
     @ManyToOne

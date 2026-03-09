@@ -10,6 +10,6 @@ public class SourceInputVariableModel {
     private String sourceValueName;
     private String sourceValueMultiplicity;
 
-    private Long currentBlockVariable;
+    private Long producerVariable;
     private String extractionString;
 }

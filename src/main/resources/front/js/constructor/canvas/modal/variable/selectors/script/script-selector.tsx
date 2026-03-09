@@ -6,17 +6,18 @@ import { ScenarioVariableDto, VariableDto } from '../../../scenario-block-modal'
 import { useVariable } from '../add-variable-hook';
 import { useDispatch } from 'react-redux';
 import { add, remove } from '../../../scenario-variable-slice';
+import { VarFunctionType } from '../../enum/variable-function-type';
 
 
 interface ScriptSelectorProps {
    consumerVariable: VariableDto;
-   blockVariable: VariableDto;
-   parentId: number;
-   scenarioVariable: ScenarioVariableDto;   
-   localId?: number;
+   blockVariable: VariableDto;  
+   scenarioVariable: ScenarioVariableDto; 
+   functionType: VarFunctionType  
+   
 }
 
-export default function ScriptSelector({blockVariable, consumerVariable, scenarioVariable, localId, parentId }: ScriptSelectorProps) {
+export default function ScriptSelector({blockVariable, consumerVariable, scenarioVariable, functionType }: ScriptSelectorProps) {
 
     const {  updateScriptScenarioVariable } = useVariable();
     const [open, setOpen] = React.useState<boolean>(undefined);
@@ -24,7 +25,7 @@ export default function ScriptSelector({blockVariable, consumerVariable, scenari
     const dispatch = useDispatch();
 
     function handleSave() {   
-        updateScriptScenarioVariable(consumerVariable.id, script, blockVariable.id, localId, parentId);
+        updateScriptScenarioVariable(consumerVariable.id, script, blockVariable.id, functionType);
         handleOpen();
     }
 

@@ -5,19 +5,9 @@ import lombok.Data;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-/**
- * Модель представления значения в конструкторе сценариев.
- * Используется для описания структуры данных, источников, преобразований и иерархии полей
- * при построении графов обработки (например, в workflow, mapping, scripting).
- *
- * <p>Поддерживает:
- * <ul>
- *   <li>Иерархию вложенных полей (через {@link #children} и {@link #parents})</li>
- *   <li>Разные способы получения значения: копирование, скрипт, наследование</li>
- *   <li>Связь с источниками данных (источник, версия, входные параметры)</li>
- * </ul>
- */
+
 @Data
 public class ValueModel {
 
@@ -39,15 +29,6 @@ public class ValueModel {
      */
     private String multiplicity;
 
-    /**
-     * Список ID родительских значений в иерархии.
-     * Связано с {@link #children}, позволяет построить иерархию полей.
-     * Позволяет восстановить путь к полю, например:
-     * <pre>
-     * parents: [100, 101] → 100.name = "user", 101.name = "address" → полный путь: user.address.{this.name}
-     * </pre>
-     */
-    private List<Long> parents;
 
     /**
      * Стратегия получения значения. Возможные значения:
@@ -60,10 +41,6 @@ public class ValueModel {
      */
     private String loaderType;
 
-    /**
-     * Переменные, зависящие от текущей переменной.
-     */
-    private Collection<ValueModel> children;
 
     /**
      * Строка для извлечения значения из сложного источника.
@@ -73,6 +50,7 @@ public class ValueModel {
      * </ul>
      */
     private String extractionString;
+
 
     /**
      * ID входного значения, от которого зависит это значение.
@@ -118,5 +96,14 @@ public class ValueModel {
      */
     private Collection<SourceInputVariableModel> sourceInputVariableModels;
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ValueModel that)) return false;
+        return Objects.equals(getId(), that.getId());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
 }

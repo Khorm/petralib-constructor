@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import TypeSelector, { CTypeFieldDto } from '../../type/type-selector';
-import ValueSelector from '../value-selector';
+import ValueSelector from '../base/value-selector';
 import { useVariable } from '../add-variable-hook';
 import { VariableDto, ScenarioVariableDto } from '../../../scenario-block-modal';
 import SimpleSelector from '../simple/simple-selector';
@@ -16,14 +16,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import Divider from '@mui/material/Divider';
 
 import './source-selector-type.sass'
+import { VarFunctionType } from '../../enum/variable-function-type';
 
 interface SourceSelectorProps {
    consumerVariable: VariableDto;
    blockVariable: VariableDto;
-   acceptedVariables: VariableDto[],
-   parentId: number;
-   scenarioVariable: ScenarioVariableDto;
-   localId?: number;
+   acceptedVariables: VariableDto[],   
+   scenarioVariable: ScenarioVariableDto,
+   functionType: VarFunctionType,
+   
 }
 
 interface Source {
@@ -34,7 +35,7 @@ interface Source {
 }
 
 
-export default function SourceSelector({blockVariable, consumerVariable, acceptedVariables, scenarioVariable, localId, parentId }
+export default function SourceSelector({blockVariable, consumerVariable, acceptedVariables, scenarioVariable, functionType }
     :SourceSelectorProps
 ) {
 
@@ -44,7 +45,7 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
     const [selectedSource, setSelectedSource] = React.useState<Source>(undefined);
     const [loadedSources, setLoadedSources] = React.useState<Source[]>([]);
 
-    const scenarioVariables = useSelector((state: any) => state.scenarioVariables.list);
+    // const scenarioVariables = useSelector((state: any) => state.scenarioVariables.list);
 
     useEffect(() => {
        
@@ -70,18 +71,20 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
         console.log("SET SOURCE : " , source);     
         setSelectedSource(source);
 
-        const newScenarioVar : ScenarioVariableDto = updateSourceScenarioVar(consumerVariable.id, source.id, blockVariable.id, localId, parentId);
+        const newScenarioVar : ScenarioVariableDto = updateSourceScenarioVar(consumerVariable.id, source.id, blockVariable.id,
+             functionType);
         dispatch(add(newScenarioVar));
     }
 
 
     function setTypeCollection(typeCollection: CTypeFieldDto[]) {
-        const newScenarioVar : ScenarioVariableDto = updateScenarioVarTypeInheritance(localId, typeCollection, blockVariable.id)
+        const newScenarioVar : ScenarioVariableDto = updateScenarioVarTypeInheritance(functionType, typeCollection, blockVariable.id)
         dispatch(add(newScenarioVar));
     }
 
 
     function getProducerSourceOutVariable(){
+        console.log("SOURCE OUT VARS ", selectedSource)
         return selectedSource?.variables.find(sourceVar => sourceVar.pinType === 'OUT')   
         
     }
@@ -156,7 +159,7 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
                         <div className='source-variable' key={index}> 
                             {getSourceVariableName(sourceVar)}
                             <SimpleSelector consumerVariable={sourceVar} blockVariable={blockVariable}
-                            acceptedVariables={acceptedVariables} parentId={localId}  />
+                            acceptedVariables={acceptedVariables}  functionType='PARAMETER' />
                         </div>
                         <Divider />
                         </div>
@@ -166,9 +169,6 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
             }
             <button onClick={() => dispatch(remove(scenarioVariable))}>X</button>
         </div>
-    )
-
-    // <ValueSelector consumerVariable={sourceVar} blockVariableId={blockVariableId} inputVariables={inputVariables} 
-    //                         parentId={localId} defaultLocalId={findDefaultLocalId(blockVariableId, localId, sourceVar.id)}/>
+    )    
 
 }

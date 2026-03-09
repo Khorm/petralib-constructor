@@ -72,6 +72,8 @@ public class BlockEntity {
                 .collect(Collectors.toList());
     }
 
+
+
     public void setLocalVariables(Collection<VariableEntity> newLocalVariables){
         variables.removeIf(variableEntity -> {
             boolean find = false;

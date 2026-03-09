@@ -10,12 +10,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { set, clear } from './scenario-variable-slice';
 
-import idGenerator from './variable/selectors/id-generator-hook';
 
 import ScenarioVariable from './variable/scenario-variable';
-import { ValueType } from './variable/value-type';
+import { ValueType } from './variable/enum/value-type';
 import { CTypeFieldDto } from './variable/type/type-selector';
 import TempVariableInput from './local/local-secetor';
+import { VarFunctionType } from './variable/enum/variable-function-type';
 
 /**
  * Интерфейс переменной, получаемой с бэкенда.
@@ -39,7 +39,7 @@ export interface CTypeShortDto{
  */
 interface CurrentVariableDto {
   variable: VariableDto;
-  maxLocalId: number;
+  // maxLocalId: number;
   scenarioVariables: ScenarioVariableDto[];
   variableType: 'LOCAL' | 'GLOBAL'
 }
@@ -54,8 +54,7 @@ export interface ScenarioVariableDto {
   producerId: number;
   script : string;
   typeInheritance: CTypeFieldDto[];
-  localId: number;
-  parentId: number;
+  functionType: VarFunctionType;
   blockVariableId: number;   
 }
 
@@ -182,7 +181,7 @@ export default function ScenarioBlockModal({
         }
         
         scenarioValues.push(...element.scenarioVariables);          
-        idGenerator.setId(element.variable.id, element.maxLocalId);
+        // idGenerator.setId(element.variable.id, element.maxLocalId);
       });
 
       
@@ -262,7 +261,7 @@ export default function ScenarioBlockModal({
     const v = scenarioVariables.find(
       (sv: ScenarioVariableDto) =>
         sv.blockVariableId === variableId 
-          && (sv.parentId === null || sv.parentId === undefined || sv.parentId === 0)
+          && sv.functionType === 'CONSUMER'
     );
     console.log('search ', v, scenarioVariables, variableId);
     return v;
@@ -343,7 +342,8 @@ export default function ScenarioBlockModal({
             currentVariable={currentVariable}
             acceptedVariables={getAllVariables()}
             scenarioVariable={findDefaultScenarioVariable(currentVariable.id)}
-            isLocalVariable = {false}                     
+            isLocalVariable = {false}
+            functionType={'CONSUMER'}                     
           />
         ))}
         {localVariables.map((localVariable, index) => (
@@ -353,7 +353,8 @@ export default function ScenarioBlockModal({
               acceptedVariables={getAllVariables()}
               scenarioVariable={findDefaultScenarioVariable(localVariable.id)}
               isLocalVariable = {true}
-              removeLocalVariable={removeLocalVariable}                     
+              removeLocalVariable={removeLocalVariable}
+              functionType={'CONSUMER'}                     
             />
         ))}
         <Button variant="outlined" onClick={save} sx={{ mt: 2 }}>

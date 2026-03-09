@@ -99,7 +99,7 @@ public class ScenarioVariablesService {
             }
 
             // Создаём текущую сущность
-            ScenarioVariableEntity entity = ScenarioVariableFactory.createVar(dto, scenarioBlockId, dto.getParentId());
+            ScenarioVariableEntity entity = ScenarioVariableFactory.createVar(scenarioBlockId, dto);
             newScenarioVars.add(entity);
 
             // Настраиваем зависимости типов
@@ -113,8 +113,10 @@ public class ScenarioVariablesService {
                 .filter(e -> !dtoVariableIds.contains(e.getId()))
                 .collect(Collectors.toList());
 
+
         scenarioVariableRepo.saveAll(newScenarioVars);
         scenarioVariableRepo.deleteAll(toRemove);
+
 
         if (scenarioBlockRepo.updateVarVersion(scenarioBlockId, scenarioVarVersion) == 0) {
             throw new IllegalStateException("Variable version could not be updated");
@@ -174,12 +176,8 @@ public class ScenarioVariablesService {
         Collection<CurrentVariableDto> currentVariableDtos = new ArrayList<>();
         for (VariableEntity blockVariable : currentVariables) {
             Collection<ScenarioVariableDto> scenarioVariableDtos = new ArrayList<>();
-            Long maxLocalId = 0L;
             for (ScenarioVariableEntity scenarioVariable : scenarioVariableEntities) {
                 if (scenarioVariable.getOwnerVariable().getId().equals(blockVariable.getId())) {
-                    if (maxLocalId < scenarioVariable.getLocalId()) {
-                        maxLocalId = scenarioVariable.getLocalId();
-                    }
                     scenarioVariableDtos.add(scenarioVariableMapper.entityToDto(scenarioVariable));
                 }
             }
@@ -189,7 +187,7 @@ public class ScenarioVariablesService {
             }else {
                 currentVariableType = CurrentVariableType.GLOBAL;
             }
-            currentVariableDtos.add(new CurrentVariableDto(variableMapper.blockEntityToDto(blockVariable), maxLocalId, scenarioVariableDtos, currentVariableType));
+            currentVariableDtos.add(new CurrentVariableDto(variableMapper.blockEntityToDto(blockVariable), scenarioVariableDtos, currentVariableType));
         }
         return currentVariableDtos;
     }

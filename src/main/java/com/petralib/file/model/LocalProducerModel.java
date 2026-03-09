@@ -22,7 +22,7 @@ public class LocalProducerModel {
      * Потребители внутри workflow
      */
     private Collection<RemoteConsumerModel> consumers;
-    private ValuesCollectionModel exitValues;
+    private Collection<ValueModel> exitValues;
 
 
 }

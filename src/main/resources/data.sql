@@ -126,8 +126,7 @@ create table if not exists scenario_variables (
     producer_source_id bigint,
     producer_script text,
     type_var varchar(255) not null check (type_var in ('SIMPLE','SOURCE','SCRIPT')),
-    local_id bigint not null,
-    parent_id bigint,
+    function_variable_type varchar(255) not null check (function_variable_type in ('CONSUMER','FUNCTION','PARAMETER')),
     primary key (scenario_variable_id),
     FOREIGN KEY (consumer_variable_id) REFERENCES variables(variable_id) ON DELETE CASCADE,
     FOREIGN KEY (producer_variable_id) REFERENCES variables(variable_id) ON DELETE CASCADE,
@@ -136,6 +135,17 @@ create table if not exists scenario_variables (
     FOREIGN KEY (owner_variable) REFERENCES variables(variable_id) ON DELETE CASCADE
 );
 CREATE INDEX if not exists idx_scenario_variables_fk_scenario_block_id ON scenario_variables (scenario_block_id);
+
+
+--create table if not exists scenario_variable_parents (
+--    parent_local_id bigint not null,
+--    parent_id bigint not null,
+--    child_id bigint not null,
+--    child_local_id bigint not null,
+--    FOREIGN KEY (child_id, child_local_id) REFERENCES scenario_variables(scenario_variable_id, local_id) ON DELETE CASCADE,
+--    FOREIGN KEY (parent_id, parent_local_id) REFERENCES scenario_variables(scenario_variable_id, local_id) ON DELETE CASCADE,
+--    primary key (parent_id, parent_local_id, child_id, child_local_id)
+--);
 
 
 create table if not exists type_dependencies (

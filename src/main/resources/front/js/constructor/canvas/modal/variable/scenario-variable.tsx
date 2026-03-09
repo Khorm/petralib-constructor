@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import ValueTypeConstructor from './value-type-constructor';
+import ValueTypeConstructor from './selectors/base/value-type-constructor';
 
 import { useVariable } from './selectors/add-variable-hook';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { VariableDto,ScenarioVariableDto } from '../scenario-block-modal';
 
-import {ValueType} from './value-type';
-import ValueSelector from './selectors/value-selector';
+import {ValueType} from './enum/value-type';
+import ValueSelector from './selectors/base/value-selector';
 
 import './sass/scenario-variable.sass';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { VarFunctionType } from './enum/variable-function-type';
 
 interface ScenarioVariableProps {
    currentVariable: VariableDto;
    acceptedVariables: VariableDto[];
    scenarioVariable?: ScenarioVariableDto;
    isLocalVariable: boolean;
+   functionType: VarFunctionType;
    removeLocalVariable?: (localVariableId : number) => void;
 }
 
@@ -30,7 +32,7 @@ interface ScenarioVariableProps {
  * scenarioVariable - переменная сценария относящаяся к этой переменной блока
  */
 export default function ScenarioVariable({currentVariable, acceptedVariables,
-     scenarioVariable, isLocalVariable, removeLocalVariable }
+     scenarioVariable, isLocalVariable,functionType, removeLocalVariable }
     :ScenarioVariableProps){
 
     const [open, setOpen] = React.useState<boolean>(false);
@@ -81,6 +83,7 @@ export default function ScenarioVariable({currentVariable, acceptedVariables,
                      acceptedVariables={acceptedVariables}
                      parentId={0} 
                      scenarioVar={scenarioVariable}
+                     functionType={functionType}
                 />
                 </div>
             }           

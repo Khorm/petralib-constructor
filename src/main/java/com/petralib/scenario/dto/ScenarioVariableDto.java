@@ -6,8 +6,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.sql.ast.tree.expression.Collation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -20,7 +22,8 @@ public class ScenarioVariableDto {
     Long producerId;
     List<CTypeFieldDto> typeInheritance = new ArrayList<>();
     String script;
-    Long localId;
-    Long parentId;
+//    Long localId;
+//    Long childId;
+//    Collection<Long> parents = new ArrayList<>();
     Long blockVariableId;
 }

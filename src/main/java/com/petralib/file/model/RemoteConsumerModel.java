@@ -55,6 +55,6 @@ public class RemoteConsumerModel {
      * Содержит структуру входных данных (поля, типы, скрипты, источники).
      * Используется при построении графа передачи данных.
      */
-    private ValuesCollectionModel blockValues;
+    private Collection<ValueModel> values;
 
 }
