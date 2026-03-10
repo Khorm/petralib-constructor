@@ -259,23 +259,24 @@ export default function ScenarioBlockModal({
    */
   const findDefaultScenarioVariable = (variableId: number): ScenarioVariableDto | undefined => {    
     const v = scenarioVariables.find(
-      (sv: ScenarioVariableDto) =>
-        sv.blockVariableId === variableId 
-          && sv.functionType === 'CONSUMER'
+      (sv: ScenarioVariableDto) => sv.consumerVariableId === variableId
     );
     console.log('search ', v, scenarioVariables, variableId);
     return v;
   };
+
 
   const close = () => {    
     dispatch(clear(undefined));
     handleClose();
   }
 
+
   const getAllVariables = () : VariableDto[] => {
     const allVariables = [...blockVariables, ...localVariables, ...inputVariables];
     return allVariables;
   }
+
 
   const saveLocalVariables = (variables: VariableDto[]) => {
 
@@ -301,6 +302,7 @@ export default function ScenarioBlockModal({
       });
   }
 
+
   const removeLocalVariable = (localVariableId: number) => {
     axios
       .delete('/api/v1/scenario/' + scenarioBlock.id + '/variables/local/' + localVariableId, {
@@ -319,6 +321,7 @@ export default function ScenarioBlockModal({
         );
       });
   }
+  
 
   const reload = () => {
         setBlockVersion(undefined);

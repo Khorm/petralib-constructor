@@ -25,6 +25,7 @@ public interface ScenarioVariableMapper {
     @Mapping(target = "script", source = "producerScript")
     @Mapping(target = "producerId", expression = "java(getProducer(entity))")
     @Mapping(target = "blockVariableId", source = "ownerVariable.id")
+    @Mapping(target = "functionType", expression = "java(entity.getFunctionVariableType().name())")
     ScenarioVariableDto entityToDto(ScenarioVariableEntity entity);
 
 

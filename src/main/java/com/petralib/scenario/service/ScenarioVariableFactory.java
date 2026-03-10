@@ -5,6 +5,7 @@ import com.petralib.block.enitity.VariableEntity;
 import com.petralib.scenario.dto.ScenarioVariableDto;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
+import com.petralib.scenario.enums.FunctionVariableType;
 import com.petralib.scenario.enums.ScenarioVariableType;
 
 public final class ScenarioVariableFactory {
@@ -50,8 +51,7 @@ public final class ScenarioVariableFactory {
         entity.setId(dto.getScenarioVariableId());
         entity.setConsumerVariable(new VariableEntity(dto.getConsumerVariableId()));
         entity.setScenarioBlock(scenarioBlockEntity);
-//        entity.setLocalId(dto.getLocalId());
-//        entity.setChild(child);
+        entity.setFunctionVariableType(FunctionVariableType.valueOf(dto.getFunctionType()));
         entity.setOwnerVariable(new VariableEntity(dto.getBlockVariableId()));
         return entity;
     }

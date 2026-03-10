@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -63,9 +62,14 @@ public class ScenarioBlockEntity {
         return block.getId().equals(parentWorkflow.getId());
     }
 
-    public Collection<VariableEntity> getContextVariables(){
+    public Collection<VariableEntity> getContextVariables() {
         Collection<VariableEntity> contextVars = block.getInVariables();
-        contextVars.addAll(previousScenarioBlock.block.getOutVariables());
+        if (null != previousScenarioBlock) {
+            contextVars.addAll(previousScenarioBlock.block.getOutVariables());
+        } else {
+            contextVars.addAll(parentWorkflow.getInVariables());
+        }
+
         contextVars.addAll(block.getLocalVariables(id));
         return contextVars;
     }

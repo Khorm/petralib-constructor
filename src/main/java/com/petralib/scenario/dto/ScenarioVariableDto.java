@@ -18,12 +18,10 @@ import java.util.List;
 public class ScenarioVariableDto {
     Long scenarioVariableId;
     String type;
+    String functionType;
     Long consumerVariableId;
     Long producerId;
     List<CTypeFieldDto> typeInheritance = new ArrayList<>();
     String script;
-//    Long localId;
-//    Long childId;
-//    Collection<Long> parents = new ArrayList<>();
     Long blockVariableId;
 }
