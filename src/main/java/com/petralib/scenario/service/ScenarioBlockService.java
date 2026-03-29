@@ -2,6 +2,7 @@ package com.petralib.scenario.service;
 
 import com.petralib.block.enitity.BlockEntity;
 import com.petralib.block.repo.BlockRepository;
+import com.petralib.scenario.dto.BeginEndDto;
 import com.petralib.scenario.dto.ScenarioDto;
 import com.petralib.scenario.entity.BeginEndEntity;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -57,9 +59,54 @@ public class ScenarioBlockService {
                 scenarioBlockRepo.deleteById(scenarioBlockEntity.getId());
             }
         }
+
+        for (ScenarioBlockEntity scenarioBlockEntity : entities) {
+            if (scenarioBlockEntity.getId() == null &&
+                    (scenarioBlockEntity.getPreviousScenarioBlock() != null ||
+                            scenarioBlockEntity.getNextScenarioBlock() != null)) {
+                ScenarioBlockEntity newEntity = scenarioBlockRepo.save(scenarioBlockEntity);
+                if (scenarioBlockEntity.getPreviousScenarioBlock() != null) {
+                    for (ScenarioBlockEntity inner : entities) {
+                        if (inner.getId().equals(newEntity.getPreviousScenarioBlock().getId())) {
+                            inner.setNextScenarioBlock(newEntity);
+                        }
+                    }
+                }
+
+                if (scenarioBlockEntity.getNextScenarioBlock() != null) {
+                    for (ScenarioBlockEntity inner : entities) {
+                        if (inner.getId().equals(newEntity.getNextScenarioBlock().getId())) {
+                            inner.setPreviousScenarioBlock(newEntity);
+                        }
+                    }
+                }
+            }
+        }
         scenarioBlockRepo.saveAll(entities);
 
-        List<BeginEndEntity> beginEndEntities = beginEndMapper.mapDto(dto.getBeginEndDtoList());
+//        List<BeginEndEntity> beginEndEntities = beginEndMapper.mapDto(dto.getBeginEndDtoList());
+
+        List<BeginEndEntity> beginEndEntities = beginEndRepo.getStartEndByWorkflow(workflowId);
+        for (BeginEndEntity be : beginEndEntities) {
+            for (BeginEndDto beDto : dto.getBeginEndDtoList()) {
+                if (be.getId().equals(beDto.getId())) {
+                    be.setX(beDto.getX());
+                    be.setY(beDto.getY());
+                    if (beDto.getConnectedBlock().getPreviousBlock() != null) {
+                        be.getConnectedBlock().setPreviousScenarioBlock(
+                                scenarioBlockRepo.getReferenceById(beDto.getConnectedBlock().getPreviousBlock())
+                        );
+                    }
+                    if (beDto.getConnectedBlock().getNextBlock() != null) {
+                        be.getConnectedBlock().setNextScenarioBlock(
+                                scenarioBlockRepo.getReferenceById(beDto.getConnectedBlock().getNextBlock())
+                        );
+                    }
+
+                }
+            }
+        }
+
         beginEndRepo.saveAll(beginEndEntities);
     }
 
@@ -86,14 +133,39 @@ public class ScenarioBlockService {
         scenarioBlockEntity.setBlock(workflow);
         scenarioBlockEntity.setX(0L);
         scenarioBlockEntity.setY(0L);
+        start.setConnectedBlock(scenarioBlockEntity);
+
+        //сценанрий блок является конечным у воркфлоу если у него парент является воркфлоу и сам блок является воркфлоу
+        ScenarioBlockEntity scenarioBlockEntityEnd = new ScenarioBlockEntity();
+        scenarioBlockEntityEnd.setParentWorkflow(workflow);
+        scenarioBlockEntityEnd.setBlock(workflow);
+        scenarioBlockEntityEnd.setX(200L);
+        scenarioBlockEntityEnd.setY(0L);
+        end.setConnectedBlock(scenarioBlockEntityEnd);
+
         scenarioBlockRepo.save(scenarioBlockEntity);
 
         beginEndRepo.save(start);
         beginEndRepo.save(end);
     }
 
-    @Transactional(readOnly = true)
-    public ScenarioBlockEntity getExitWorkflowScenarioBlock(Long workflowId){
-        return scenarioBlockRepo.findScenarioBlockForWorkflowExit(workflowId).get();
+    @Transactional
+    public ScenarioBlockEntity getExitWorkflowScenarioBlock(Long workflowId) {
+        Optional<ScenarioBlockEntity> exitScenarioOpt = scenarioBlockRepo.findScenarioBlockForWorkflowExit(workflowId);
+//        if (exitScenarioOpt.isPresent()){
+        return exitScenarioOpt.orElseThrow();
+//        }else {
+//            ScenarioBlockEntity exitEntity = new ScenarioBlockEntity();
+//
+//            BlockEntity block = new BlockEntity();
+//            block.setId(workflowId);
+//
+//            exitEntity.setBlock(block);
+//            exitEntity.setParentWorkflow(block);
+//
+//            BeginEndEntity end = beginEndRepo.getEndByWorkflow(workflowId);
+//            end.setConnectedBlock(exitEntity);
+//            return exitEntity;
+//        }
     }
 }

@@ -208,12 +208,18 @@ export default function TypeSelector({
     let resultName: string = '';
     if (type.multiplicity === 'COLLECTION') {
       resultName += 'Collection<';
+    }else{
+      resultName += '('
     }
+
     resultName += type.fieldType.name;
     if (type.multiplicity === 'COLLECTION') {
       resultName += '>';
+    }else{
+      resultName += ')'
     }
-    resultName += ' : ' + type.name;
+
+    resultName += type.name;
     return resultName;
   }
 

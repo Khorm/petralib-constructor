@@ -8,12 +8,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -31,14 +26,14 @@ public abstract class ValueBuilder {
     }
 
     public ValueModel build() {
-        ValueModel model = getValueModel();
+        ValueModel model = createValueModel();
 
         extendedBuild(model);
 
         return model;
     }
 
-    private ValueModel getValueModel() {
+    private ValueModel createValueModel() {
         ValueModel model = new ValueModel();
         model.setId(currentScenarioVariable.getConsumerVariable().getId());
         model.setName(currentScenarioVariable.getConsumerVariable().getName());

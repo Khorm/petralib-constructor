@@ -44,12 +44,12 @@ export default function ScenarioVariable({currentVariable, acceptedVariables,
   const createVarName = (): JSX.Element => {
     const typeName = currentVariable.multiplicity === 'COLLECTION'
       ? `Collection<${currentVariable.variableType.name}>`
-      : currentVariable.variableType.name;
+      : `(${currentVariable.variableType.name})`;
 
     return (
       <div className="var-header" onClick={switchOpen}>
         <h4 className="var-type-text">{scenarioVariable?.type || '—'}</h4>
-        <h4 className="var-name">{typeName} : {currentVariable.name}</h4>
+        <h4 className="var-name">{typeName + currentVariable.name}</h4>
         {isLocalVariable && removeLocalVariable && (
           <IconButton
             size="small"

@@ -107,12 +107,16 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
         if (selectedSource !== undefined){
             if(outVar.multiplicity === 'COLLECTION'){
                 sourceName = 'Collection <';
+            }else{
+                sourceName = '(';
             }
             sourceName+= outVar.variableType.name;
             if(outVar.multiplicity === 'COLLECTION'){
                 sourceName+= '>';
+            } else{
+                sourceName+= ')';
             }
-            sourceName+= ' : ' + selectedSource.name;
+            sourceName+= selectedSource.name;
             return sourceName;
         }        
     }
@@ -121,12 +125,16 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
         let sourceVarName = '';
         if (sourceVar.multiplicity === 'COLLECTION'){
             sourceVarName += 'Collection <';
+        }else{
+            sourceVarName += '(';
         }
         sourceVarName += sourceVar.variableType.name;
         if (sourceVar.multiplicity === 'COLLECTION'){
             sourceVarName += '>';
+        }else{
+            sourceVarName += ')';
         }
-        sourceVarName += ' : ' + sourceVar.name;
+        sourceVarName += sourceVar.name;
         return sourceVarName;
     }
 
@@ -152,12 +160,14 @@ export default function SourceSelector({blockVariable, consumerVariable, accepte
                     typeArray={scenarioVariable.typeInheritance} setNewTypesArray={setTypeCollection} />
             }
             {selectedSource !== undefined && 
-                <div className='source-variables'>                    
+                <div className='source-variables'>
+                <h3> Source variables </h3>                    
                 {getProducerSourceInVariables().map((sourceVar, index)=> {
                     return(
                         <div>
                         <div className='source-variable' key={index}> 
                             {getSourceVariableName(sourceVar)}
+                            <h4> = </h4>
                             <SimpleSelector consumerVariable={sourceVar} blockVariable={blockVariable}
                             acceptedVariables={acceptedVariables}  functionType='PARAMETER' />
                         </div>

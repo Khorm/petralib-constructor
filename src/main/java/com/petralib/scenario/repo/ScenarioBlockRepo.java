@@ -26,7 +26,8 @@ public interface ScenarioBlockRepo extends JpaRepository<ScenarioBlockEntity, Lo
 //    @Query("DELETE FROM ScenarioBlockEntity sbe WHERE sbe.id NOT IN :ids AND sbe.parentWorkflow.id = :workflowId")
 //    void deleteNotInListIds(@Param("ids") List<Long> ids, @Param("workflowId") Long workflowId);
 
-    @Query("FROM ScenarioBlockEntity sbe WHERE sbe.block.id = :workflowId AND sbe.parentWorkflow.id = :workflowId")
+    @Query("FROM ScenarioBlockEntity sbe WHERE sbe.block.id = :workflowId AND sbe.parentWorkflow.id = :workflowId " +
+            "AND sbe.beginEnd.pointType = 'END'")
     Optional<ScenarioBlockEntity> findScenarioBlockForWorkflowExit(@Param("workflowId") Long workflowId);
 
     @Query("FROM ScenarioBlockEntity sbe WHERE sbe.id = :id AND sbe.varVersion = :varVersion")

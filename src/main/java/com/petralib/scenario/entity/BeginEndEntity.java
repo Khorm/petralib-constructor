@@ -30,7 +30,7 @@ public class BeginEndEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     BlockEntity workflow;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "connected_scenario_block")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     ScenarioBlockEntity connectedBlock;

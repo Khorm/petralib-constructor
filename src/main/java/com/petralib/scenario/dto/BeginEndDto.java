@@ -11,5 +11,5 @@ public class BeginEndDto {
     Long x;
     Long y;
     String pointType;
-    Long connectedBlockId;
+    ScenarioBlockDto connectedBlock;
 }

@@ -6,6 +6,9 @@ import com.petralib.file.model.SourceInputVariableModel;
 import com.petralib.file.model.ValueModel;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
+import com.petralib.scenario.repo.BeginEndRepo;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +16,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 final class ScriptValueBuilder extends ValueBuilder {
+
 
     public ScriptValueBuilder(ScenarioBlockEntity scenarioBlock, ScenarioVariableEntity scenarioVariable,
                               List<Long> parentIds) {
@@ -26,7 +31,6 @@ final class ScriptValueBuilder extends ValueBuilder {
         model.setScript(getCurrentScenarioVariable().getProducerScript());
 
         Collection<VariableEntity> contextVars = getScenarioBlock().getContextVariables();
-
 
         model.setSourceInputVariableModels(contextVars.stream()
                 .flatMap((Function<VariableEntity, Stream<Long>>) entity -> {

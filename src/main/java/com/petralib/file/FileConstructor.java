@@ -12,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,41 +67,93 @@ public class FileConstructor {
     }
 
     private Collection<LocalProducerModel> producers(Long serviceId) {
-        return scenarioBlockRepo.findScenarioBlocksByService(serviceId)
+        Collection<ScenarioBlockEntity> workflowScenarios = scenarioBlockRepo.findScenarioBlocksByService(serviceId)
                 .stream()
                 .filter(scenarioBlockEntity -> scenarioBlockEntity.getBlock().getType() == BlockType.WORKFLOW)
-                .map(scenarioBlockEntity -> {
-
-                    Collection<ScenarioBlockEntity> workflowChildrenBlocks = scenarioBlockRepo.findScenarioBlocksByWorkflow(scenarioBlockEntity.getBlock().getId());
-                    Collection<RemoteConsumerModel> consumers = new ArrayList<>();
-                    for (ScenarioBlockEntity child : workflowChildrenBlocks) {
-                        Collection<ValueModel> valueParser = BuilderConstructor.loaderModelMap(child);
-                        consumers.add(new RemoteConsumerModel(
-                                child.getBlock().getId(),
-                                "0",
-                                child.getBlock().getService().getPath(),
-                                scenarioBlockEntity.getBlock().getId(),
-                                "0",
-                                valueParser
-                        ));
-                    }
-
-                    Collection<ValueModel> lastWorkflowBlockValueParser = null;
-                    Optional<ScenarioBlockEntity> scenarioBlockEntityOpt = scenarioBlockRepo.findScenarioBlockForWorkflowExit(scenarioBlockEntity.getBlock().getId());
-                    if (scenarioBlockEntityOpt.isPresent()) {
-                        ScenarioBlockEntity exit = scenarioBlockEntityOpt.get();
-                        lastWorkflowBlockValueParser = BuilderConstructor.loaderModelMap(exit);
-                    }
-                    return new LocalProducerModel(
-                            scenarioBlockEntity.getBlock().getId(),
-                            "0",
-                            scenarioBlockEntity.getBlock().getName(),
-                            consumers,
-                            lastWorkflowBlockValueParser
-                    );
-                })
                 .toList();
+
+        Map<Long, Collection<ScenarioBlockEntity>> workflowEntities = new HashMap<>();
+        for (ScenarioBlockEntity scen : workflowScenarios) {
+            if (!workflowEntities.containsKey(scen.getBlock().getId())) {
+                workflowEntities.put(scen.getBlock().getId(), new ArrayList<>());
+            }
+            workflowEntities.get(scen.getBlock().getId()).add(scen);
+        }
+
+        Collection<LocalProducerModel> localProducersModels = new ArrayList<>();
+        workflowEntities.forEach((workflowId, scenarioBlockEntities) -> {
+            Collection<ScenarioBlockEntity> workflowChildrenBlocks = scenarioBlockRepo.findScenarioBlocksByWorkflow(workflowId);
+            Collection<RemoteConsumerModel> consumers = new ArrayList<>();
+            for (ScenarioBlockEntity child : workflowChildrenBlocks) {
+                Collection<ValueModel> valueParser = BuilderConstructor.loaderModelMap(child);
+                consumers.add(new RemoteConsumerModel(
+                        child.getBlock().getId(),
+                        "0",
+                        child.getBlock().getService().getPath(),
+                        workflowId,
+                        "0",
+                        valueParser
+                ));
+            }
+
+            ScenarioBlockEntity exit = null;
+            for (ScenarioBlockEntity enterExit : scenarioBlockEntities) {
+                if (enterExit.getPreviousScenarioBlock() != null) {
+                    exit = enterExit;
+                }
+            }
+            Collection<ValueModel> valueParser = BuilderConstructor.loaderModelMap(exit);
+            LocalProducerModel localProducerModel = new LocalProducerModel(
+                    workflowId,
+                    "0",
+                    exit.getBlock().getName(),
+                    consumers,
+                    valueParser
+            );
+            localProducersModels.add(localProducerModel);
+        });
+        return localProducersModels;
+
+
+//            Map<Long, Collection<ScenarioBlockEntity>> workflowEntities = scenarioBlockRepo.findScenarioBlocksByService(serviceId)
+//                    .stream()
+//                    .filter(scenarioBlockEntity -> scenarioBlockEntity.getBlock().getType() == BlockType.WORKFLOW)
+//                    .collect(Collectors.toMap(new Function<ScenarioBlockEntity, Long>() {
+//                    }))
+
+
+//                    .map(scenarioBlockEntity -> {
+//
+//                        Collection<ScenarioBlockEntity> workflowChildrenBlocks = scenarioBlockRepo.findScenarioBlocksByWorkflow(scenarioBlockEntity.getBlock().getId());
+//                        Collection<RemoteConsumerModel> consumers = new ArrayList<>();
+//                        for (ScenarioBlockEntity child : workflowChildrenBlocks) {
+//                            Collection<ValueModel> valueParser = BuilderConstructor.loaderModelMap(child);
+//                            consumers.add(new RemoteConsumerModel(
+//                                    child.getBlock().getId(),
+//                                    "0",
+//                                    child.getBlock().getService().getPath(),
+//                                    scenarioBlockEntity.getBlock().getId(),
+//                                    "0",
+//                                    valueParser
+//                            ));
+//                        }
+//
+//                        Collection<ValueModel> lastWorkflowBlockValueParser = null;
+//                        Optional<ScenarioBlockEntity> scenarioBlockEntityOpt = scenarioBlockRepo.findScenarioBlockForWorkflowExit(scenarioBlockEntity.getBlock().getId());
+//                        if (scenarioBlockEntityOpt.isPresent()) {
+//                            ScenarioBlockEntity exit = scenarioBlockEntityOpt.get();
+//                            lastWorkflowBlockValueParser = BuilderConstructor.loaderModelMap(exit);
+//                        }
+//                        return new LocalProducerModel(
+//                                scenarioBlockEntity.getBlock().getId(),
+//                                "0",
+//                                scenarioBlockEntity.getBlock().getName(),
+//                                consumers,
+//                                lastWorkflowBlockValueParser
+//                        );
+//                    })
+//                    .toList();
+        }
+
+
     }
-
-
-}

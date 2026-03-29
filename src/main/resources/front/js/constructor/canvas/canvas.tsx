@@ -51,7 +51,7 @@ export default function Canvas() {
             //     save();
             // }
             prevWorkflowRef.current = workflow;
-            getExitScenarioBlock(workflow);
+            
 
             axios.get('/api/v1/scenario', {
                 params: {
@@ -96,14 +96,14 @@ export default function Canvas() {
                     });
 
                     blocks.forEach((block) => {
-                        if (block.nextBlock === null) {
+                        if (block.nextBlock == null || dict[block.nextBlock] == null) {
                             return;
                         }
                         let link = new DefaultLinkModel();
 
                         link.setSourcePort(dict[block.id].getPort("Out"));
                         link.setTargetPort(dict[block.nextBlock].getPort("In"));
-                        link.sourceNode = dict[block.id];
+                        link.sourceNode = dict[block.id];                        
                         link.targetNode = dict[block.nextBlock];
                         link.registerListener({
                             entityRemoved: removeLink,
@@ -128,26 +128,32 @@ export default function Canvas() {
 
                         if (beginEndBlock.pointType === 'START') {
                             const portOut = node.addOutPort('Out');
+                            
 
-                            if (beginEndBlock.connectedBlockId === null) return;
+                            if (beginEndBlock.connectedBlock.nextBlock == null) return;
+
+                            let nextBlock = dict[beginEndBlock.connectedBlock.nextBlock];                            
                             link.setSourcePort(portOut);
-                            link.setTargetPort(dict[beginEndBlock.connectedBlockId].getPort("In"));
+                            link.setTargetPort(nextBlock.getPort("In"));
                             link.sourceNode = beginEndBlock.id;
-                            link.targetNode = dict[beginEndBlock.connectedBlockId];
+                            link.targetNode = nextBlock;
                             engine.getModel().addLink(link);
 
                         } else {
                             const portIn = node.addInPort("In");
-                            console.log('EXIT ', node);
+                            
                             node.registerListener({
                                 selectionChanged: (e) => choose(e)
                             });
+                            getExitScenarioBlock(workflow);
+                            console.log('EXIT ', beginEndBlock);
+                            if (beginEndBlock.connectedBlock.previousBlock == null) return;
 
-                            if (beginEndBlock.connectedBlockId === null) return;
+                            let prevBlock = dict[beginEndBlock.connectedBlock.previousBlock];
                             link.setTargetPort(portIn);
-                            link.setSourcePort(dict[beginEndBlock.connectedBlockId].getPort("Out"));
+                            link.setSourcePort(prevBlock.getPort("Out"));
                             link.sourceNode = beginEndBlock.id;
-                            link.targetNode = dict[beginEndBlock.connectedBlockId];
+                            link.targetNode = prevBlock;
                             engine.getModel().addLink(link);
                         }
                     })
@@ -159,7 +165,7 @@ export default function Canvas() {
     }
 
     function removeLink(entity) {
-
+        console.log('removeLink');
         if (entity.sourceNode === undefined || entity.targetNode === undefined) return;
         let sourceBlock = entity.sourceNode.options.block;
         let targetBlock = entity.targetNode.options.block;
@@ -168,8 +174,8 @@ export default function Canvas() {
 
         if (sourceBlock) sourceBlock.nextBlock = null;
         if (targetBlock) targetBlock.previousBlock = null;
-        if (beginEndSourceBlock) beginEndSourceBlock.connectedBlockId = null;
-        if (beginEndTargetBlock) beginEndTargetBlock.connectedBlockId = null;
+        if (beginEndSourceBlock) beginEndSourceBlock.connectedBlock.previousBlock = null;
+        if (beginEndTargetBlock) beginEndTargetBlock.connectedBlock.nextBlock = null;
 
     }
 
@@ -204,9 +210,11 @@ export default function Canvas() {
 
 
         if (sourceBeginEndBlock !== undefined && sourceBeginEndBlock.pointType === 'START') {
-            sourceBeginEndBlock.connectedBlockId = targetBlock.id;
+            sourceBeginEndBlock.connectedBlock.nextBlock = targetBlock.id;
+            targetBlock.previousBlock = sourceBeginEndBlock.connectedBlock.id;
         } else if (targetBeginEndBlock !== undefined && targetBeginEndBlock.pointType === 'END') {
-            targetBeginEndBlock.connectedBlockId = sourceBlock.id;
+            targetBeginEndBlock.connectedBlock.previousBlock = sourceBlock.id;
+            sourceBlock.nextBlock = targetBeginEndBlock.connectedBlock.id;
         } else {
             targetBlock.previousBlock = sourceBlock.id;
             sourceBlock.nextBlock = targetBlock.id;
@@ -243,7 +251,7 @@ export default function Canvas() {
                     x: nodes[i].position.x,
                     y: nodes[i].position.y,
                     pointType: beginEndBlock.pointType,
-                    connectedBlockId: beginEndBlock.connectedBlockId
+                    connectedBlock: beginEndBlock.connectedBlock
                     
                 })
             }
@@ -338,6 +346,7 @@ export default function Canvas() {
     }
 
     function deleteBlock() {
+        
         const nodes = engine.getModel().getNodes();
         _forEach(nodes, (node) => {
             // console.log('DELET : ', node.options,  chosenBlock.current)
@@ -361,6 +370,7 @@ export default function Canvas() {
         chosenBlock.current = undefined;
         engine.repaintCanvas();
     }
+
 
     const getExitScenarioBlock = (workflowId: number) => {
         axios.get('/api/v1/scenario/' + workflowId + '/exit',{ params: {

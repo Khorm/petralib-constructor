@@ -132,7 +132,7 @@ export default function TypeDropdown({ owner, chooseTypeFunc }: TypeDropdownProp
           ) : (
             dropdownTypesVar.map((field, index) => (
               <div key={index} className="dropdown-item" onClick={() => select(field)}>
-                <h3>{field.name}</h3>
+                <h3>{'(' +field.fieldType.name + ')' + field.name}</h3>
               </div>
             ))
           )}

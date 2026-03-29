@@ -6,12 +6,16 @@ import com.petralib.file.model.ValueModel;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 import com.petralib.scenario.enums.FunctionVariableType;
+import com.petralib.scenario.repo.BeginEndRepo;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.*;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public final class BuilderConstructor {
-    BuilderConstructor() {
-    }
 
     public static Collection<ValueModel> loaderModelMap(ScenarioBlockEntity scenarioBlock) {
 
@@ -20,7 +24,7 @@ public final class BuilderConstructor {
         Collection<VariableEntity> variables = scenarioBlock.getContextVariables();
 
         for (VariableEntity variable : variables) {
-            Optional<ValueBuilder> builder = createBuilder(scenarioBlock, variable.getId(), ret);
+            Optional<ValueBuilder> builder = createBuilder(scenarioBlock, variable.getId());
             if (builder.isEmpty()) {
                 continue;
             }
@@ -31,9 +35,9 @@ public final class BuilderConstructor {
 
 
     static Optional<ValueBuilder> createBuilder(ScenarioBlockEntity scenarioBlock,
-                                                Long variableId, Set<ValueModel> ret) {
+                                                Long variableId) {
         Optional<ScenarioVariableEntity> scenarioContextVariableOpt = scenarioBlock.getVariables().stream()
-                .filter(entity -> entity.getConsumerVariable().getId().equals(variableId)).findFirst();
+                .filter(variable -> variable.getConsumerVariable().getId().equals(variableId)).findFirst();
         if (scenarioContextVariableOpt.isEmpty()) {
             return Optional.empty();
         }

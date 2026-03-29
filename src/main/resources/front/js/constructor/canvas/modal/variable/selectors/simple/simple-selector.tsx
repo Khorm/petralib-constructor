@@ -36,10 +36,10 @@ export default function SimpleSelector({ blockVariable, consumerVariable, accept
         
         const newScenVar : ScenarioVariableDto = scenarioVariables.find((scenVar: ScenarioVariableDto) =>
              scenVar.consumerVariableId === consumerVariable.id && blockVariable.id === scenVar.blockVariableId);
-        console.log("FIND : ", newScenVar, scenarioVariables, )
+        // console.log("FIND : ", newScenVar, scenarioVariables, )
 
         // if (newScenVar?.producerId){
-            console.log('set producer ', newScenVar?.producerId)
+            // console.log('set producer ', newScenVar?.producerId)
             setProducerVariable(
                 acceptedVariables.find(curVar => curVar.id === newScenVar?.producerId)
             );
@@ -68,7 +68,7 @@ export default function SimpleSelector({ blockVariable, consumerVariable, accept
         
         const newScenarioVar : ScenarioVariableDto = updateScenarioVarTypeInheritance(functionType,
              typeInheritance, blockVariable.id)
-        console.log('newScenarioVar', newScenarioVar);
+        // console.log('newScenarioVar', newScenarioVar);
         dispatch(add(newScenarioVar));
     }
 
@@ -90,18 +90,24 @@ export default function SimpleSelector({ blockVariable, consumerVariable, accept
     //     return inputVariables.find(curVar => curVar.id === selectedProducerId);       
     // }
 
-    function getProducerVariableName() : string {
-        const curInputVariable = producerVariable;
+    function getVariableName(curInputVariable :VariableDto) : string {
+        // const curInputVariable = producerVariable;
         if (!curInputVariable) return '';
         let resultName : string = '';
         if (curInputVariable.multiplicity === 'COLLECTION') {
             resultName += 'Collection<';
+        }else{
+            resultName += '(';
         }
+
         resultName += curInputVariable.variableType.name;
+        
         if (curInputVariable.multiplicity === 'COLLECTION') {
             resultName += '>';
+        }else{
+            resultName += ')';
         }
-        resultName += ' : ' +  curInputVariable.name;
+        resultName += curInputVariable.name;
         return resultName;
     }
 
@@ -110,25 +116,18 @@ export default function SimpleSelector({ blockVariable, consumerVariable, accept
         dispatch(remove(scenarioVariable))
     }
 
-    // const getScenarioVarForSourceVar = (sourceVar : VariableDto) : ScenarioVariableDto  => {
-    //     return scenarioVariables.find((scenarioVar: ScenarioVariableDto) => {
-    //         if (scenarioVar.consumerVariableId === sourceVar.id && scenarioVar.blockVariableId === blockVariable.id) {
-    //             return scenarioVar;
-    //         }
-    //     });             
-    // }
 
     return (
         <div className='container'>
             {producerVariable !== undefined &&
-                <h4>{getProducerVariableName()} </h4>
+                <h4>{getVariableName(producerVariable)} </h4>
             }
             {!producerVariable &&
                 <select defaultValue={getDefaultVariable()} onChange={handleChange}>
                     <option disabled hidden value='none'> -- select a variable -- </option>
                     {inputVariablesWithoutSelf().map((curVariable, index) => {
                         return (
-                            <option key={index} value={curVariable.id}>{curVariable.name}</option>
+                            <option key={index} value={curVariable.id}>{getVariableName(curVariable)}</option>
                         )
                     })}
                 </select>
