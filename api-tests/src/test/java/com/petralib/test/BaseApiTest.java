@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -13,12 +13,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Базовый класс для API тестов.
- * Предоставляет методы для получения JWT токена и выполнения авторизованных запросов.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -31,30 +28,13 @@ public abstract class BaseApiTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    /**
-     * Тестовые учетные данные
-     */
     protected static final String TEST_EMAIL = "r0meo1.ru@gmail.com";
     protected static final String TEST_PASSWORD = "8K3uLnPVGTtcm5a";
 
-    /**
-     * Получает JWT токен через API login.
-     *
-     * @return JWT токен
-     * @throws Exception если не удалось получить токен
-     */
     protected String getJwtToken() throws Exception {
         return getJwtToken(TEST_EMAIL, TEST_PASSWORD);
     }
 
-    /**
-     * Получает JWT токен через API login с указанными учетными данными.
-     *
-     * @param email    email пользователя
-     * @param password пароль пользователя
-     * @return JWT токен
-     * @throws Exception если не удалось получить токен
-     */
     protected String getJwtToken(String email, String password) throws Exception {
         Map<String, String> loginRequest = Map.of(
                 "email", email,
@@ -73,17 +53,4 @@ public abstract class BaseApiTest {
         Map<String, Object> responseMap = objectMapper.readValue(responseContent, Map.class);
         return (String) responseMap.get("token");
     }
-
-    /**
-     * Выполняет авторизованный запрос с JWT токеном.
-     *
-     * @param token JWT токен
-     * @return результат запроса
-     */
-    protected String performAuthorizedRequest(String method, String url, String token, String body) throws Exception {
-        // Этот метод можно расширить для разных типов запросов
-        // Пока используется напрямую mockMvc в тестах
-        return null;
-    }
 }
-

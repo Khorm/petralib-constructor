@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.petralib'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation project(':')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.11'
+    testImplementation 'org.springframework.security:spring-security-test:6.3.0'
+    testImplementation 'com.h2database:h2:2.2.224'
+}
+
+test {
+    useJUnitPlatform()
+}

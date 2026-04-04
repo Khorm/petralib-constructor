@@ -29,5 +29,4 @@ logging:
         SQL: DEBUG
 
 server:
-  port: 0  # Random port for tests
-
+  port: 0

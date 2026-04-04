@@ -2,6 +2,44 @@
 
 > **Время чтения: 3 минуты**
 
+## 🚀 Быстрый старт и тесты (актуально)
+
+- Профиль `test`: H2, тестовый пользователь (`r0meo1.ru@gmail.com` / `8K3uLnPVGTtcm5a`) создаётся автоматически через сидер.
+- Подпроект `api-tests` содержит интеграционные тесты по API-документации.
+- Команды:
+  - `./gradlew :api-tests:test --tests com.petralib.test.ApiDocAutoTests` — зелёный прогон (auth/projects/services/types/blocks).
+  - `./gradlew test` — полный прогон (основной модуль + api-tests), сейчас падает много тестов (см. ниже, что починить).
+
+### Что покрывает `api-tests`
+- Auth: login 200/403
+- Projects: create/list/current-user
+- Services: create/get/list by projectId
+- Types: create/list/page
+- Blocks: create workflow + page
+Файлы: `api-tests/src/test/java/com/petralib/test/ApiDocAutoTests.java`, `BaseApiTest.java`, `config/TestDataInitializer.java`, `application-test.yml`.
+
+### Почему падает `./gradlew test` в основном модуле
+- AuthControllerTest: нет валидации пустых email/password (ожидают 400).
+- Block/Type/Service Rest/Service tests: `pageNumber=0` → IllegalArgumentException; NPE, если `variables == null` и нет связанных project/service/type; попытки читать/удалять несуществующие сущности.
+- ScenarioRestControllerTest: NPE/TransientPropertyValue — нет подготовленных workflow/blocks.
+- SmokeTest: статусы 401/403 vs ожидания (нет валидных данных/токена).
+- Unit сервисов (BlockService/TypeService): NPE/IllegalArgumentException на пустых данных.
+
+### План, чтобы вывести в зелёный полный прогон
+1. Auth: добавить `@NotBlank` в AuthRequestDTO и `@Valid` в AuthController.authenticate.
+2. Block/Type:
+   - `variables == null` → пустой список в сервисах.
+   - `pageNumber` → pageIndex = max(pageNumber-1, 0) в getBlocksByProjectAndName/getTypesPage.
+   - Сидер данных (project/service/type/workflow) или graceful-ответы контроллеров/сервисов при отсутствии данных.
+3. Service/Scenario:
+   - Аналогично: сидер или устойчивость к отсутствующим сущностям (возвращать пустые DTO/200 вместо NPE).
+4. SmokeTest: валидный токен/данные (сидер) или скорректировать ожидания статусов.
+5. Повторить `./gradlew test`.
+
+### Ветки/PR
+- Основная `develop` очищена (revert тестов).
+- PR с автотестами в подпроекте: `feature/api-doc-tests-pr` → https://github.com/Khorm/petralib-constructor/pull/6.
+
 ## 🎯 Что было сделано
 
 ### 1. Исправлены критические баги
@@ -17,16 +55,6 @@
 ### 3. Документация
 - ✅ Создана документация по тестам
 - ✅ Созданы инструкции для разработчика
-
----
-
-## ⚠️ ВАЖНО: Что НЕ нужно менять
-
-### ❌ `application.yml` - откатили изменение
-**Было:** `spring.sql.init.mode: never` (отключен data.sql)  
-**Стало:** `spring.sql.init.mode: always` (data.sql выполняется автоматически)
-
-**Почему:** Разработчик сказал, что это изменение не нужно.
 
 ---
 
