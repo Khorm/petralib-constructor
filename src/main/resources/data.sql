@@ -67,6 +67,22 @@ create table if not exists blocks (
 );
 CREATE INDEX if not exists idx_blocks_name_gin ON blocks USING gin (block_name gin_trgm_ops);
 
+create table if not exists scenario_blocks (
+    scenario_block_id bigserial not null,
+    block_id bigint not null,
+    next_scenario_block bigint unique,
+    parent_workflow_id bigint not null,
+    previous_scenario_block bigint unique,
+    x bigint,
+    y bigint,
+    var_version BIGINT NOT NULL DEFAULT 0,
+    primary key (scenario_block_id),
+    FOREIGN KEY (block_id) REFERENCES blocks(block_id) ON DELETE CASCADE,
+    FOREIGN KEY (next_scenario_block) REFERENCES scenario_blocks(scenario_block_id) ON DELETE SET NULL,
+    FOREIGN KEY (parent_workflow_id) REFERENCES blocks(block_id) ON DELETE CASCADE
+);
+CREATE INDEX if not exists idx_scenario_blocks_fk_parent_workflow_id ON scenario_blocks (parent_workflow_id);
+CREATE INDEX if not exists idx_scenario_version ON scenario_blocks(var_version);
 
 create table if not exists variables (
     variable_id bigserial not null,
@@ -85,22 +101,7 @@ create table if not exists variables (
 CREATE INDEX if not exists idx_variables_fk_block_id ON variables (block_id);
 
 
-create table if not exists scenario_blocks (
-    scenario_block_id bigserial not null,
-    block_id bigint not null,
-    next_scenario_block bigint unique,
-    parent_workflow_id bigint not null,
-    previous_scenario_block bigint unique,
-    x bigint,
-    y bigint,
-    var_version BIGINT NOT NULL DEFAULT 0,
-    primary key (scenario_block_id),
-    FOREIGN KEY (block_id) REFERENCES blocks(block_id) ON DELETE CASCADE,
-    FOREIGN KEY (next_scenario_block) REFERENCES scenario_blocks(scenario_block_id) ON DELETE SET NULL,
-    FOREIGN KEY (parent_workflow_id) REFERENCES blocks(block_id) ON DELETE CASCADE
-);
-CREATE INDEX if not exists idx_scenario_blocks_fk_parent_workflow_id ON scenario_blocks (parent_workflow_id);
-CREATE INDEX if not exists idx_scenario_version ON scenario_blocks(var_version);
+
 
 
 create table if not exists start_stop_points (

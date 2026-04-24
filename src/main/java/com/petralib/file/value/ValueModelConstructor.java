@@ -1,12 +1,10 @@
 package com.petralib.file.value;
 
 import com.petralib.block.enitity.VariableEntity;
-import com.petralib.block.enums.PinType;
 import com.petralib.file.model.ValueModel;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 import com.petralib.scenario.enums.FunctionVariableType;
-import com.petralib.scenario.repo.BeginEndRepo;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -15,7 +13,7 @@ import java.util.*;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public final class BuilderConstructor {
+public final class ValueModelConstructor {
 
     public static Collection<ValueModel> loaderModelMap(ScenarioBlockEntity scenarioBlock) {
 

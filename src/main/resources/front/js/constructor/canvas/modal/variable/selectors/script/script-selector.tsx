@@ -13,11 +13,11 @@ interface ScriptSelectorProps {
    consumerVariable: VariableDto;
    blockVariable: VariableDto;  
    scenarioVariable: ScenarioVariableDto; 
-   functionType: VarFunctionType  
-   
+   functionType: VarFunctionType;  
+   availableVariables: VariableDto[];
 }
 
-export default function ScriptSelector({blockVariable, consumerVariable, scenarioVariable, functionType }: ScriptSelectorProps) {
+export default function ScriptSelector({blockVariable, consumerVariable, scenarioVariable, functionType, availableVariables }: ScriptSelectorProps) {
 
     const {  updateScriptScenarioVariable } = useVariable();
     const [open, setOpen] = React.useState<boolean>(undefined);
@@ -25,8 +25,9 @@ export default function ScriptSelector({blockVariable, consumerVariable, scenari
     const dispatch = useDispatch();
 
     function handleSave() {   
-        updateScriptScenarioVariable(consumerVariable.id, script, blockVariable.id, functionType);
+        const newScenarioVar : ScenarioVariableDto = updateScriptScenarioVariable(consumerVariable.id, script, blockVariable.id, functionType);
         handleOpen();
+        dispatch(add(newScenarioVar));
     }
 
     function handleOpen () {
@@ -35,6 +36,17 @@ export default function ScriptSelector({blockVariable, consumerVariable, scenari
 
     function editScript(e : any){
         setScript(e.target.value);
+    }
+
+    const createVarName = (variable : VariableDto) => {
+        let varName = '(';
+        if (variable.multiplicity === 'COLLECTION'){
+            varName += '[' + variable.variableType.name + ']';
+        } else {
+            varName += variable.variableType.name;
+        }
+        varName += ') ' + variable.name;
+        return varName;
     }
 
 
@@ -47,6 +59,13 @@ export default function ScriptSelector({blockVariable, consumerVariable, scenari
             {open &&
                 <div>
                     <button onClick={handleSave}>Save script...</button>
+                    {availableVariables
+                    .filter(curVar => curVar.id !== consumerVariable.id && curVar.id !== blockVariable.id)
+                    .map((variable,index) => {
+                        return (
+                            <h3 key = {index}>{createVarName(variable)}</h3>
+                        )
+                    })}
                     <textarea value={script} style={{resize: 'both'}} name="script" onChange={editScript}></textarea>
                 </div>
             }     

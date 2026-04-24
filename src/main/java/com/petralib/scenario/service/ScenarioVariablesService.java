@@ -7,7 +7,6 @@ import com.petralib.block.repo.BlockRepository;
 import com.petralib.scenario.dto.CurrentVariableDto;
 import com.petralib.scenario.dto.ScenarioVariableDto;
 import com.petralib.scenario.dto.ScenarioVariablesDto;
-import com.petralib.scenario.entity.BeginEndEntity;
 import com.petralib.scenario.entity.ScenarioBlockEntity;
 import com.petralib.scenario.entity.ScenarioVariableEntity;
 import com.petralib.scenario.entity.TypeDependenceEntity;
@@ -54,7 +53,7 @@ public class ScenarioVariablesService {
             inVariables = scenarioBlockEntity.getBlock().getOutVariables();
         }
 
-        Collection<VariableEntity> localVariables = scenarioBlockEntity.getBlock().getLocalVariables(scenarioBlockId);
+        Collection<VariableEntity> localVariables = scenarioBlockEntity.getBlock().getTimedVariables(scenarioBlockId);
 
         // Создаем DTO для текущих переменных
         Collection<VariableEntity> allVariables = new ArrayList<>(inVariables.size() + localVariables.size());
@@ -141,7 +140,7 @@ public class ScenarioVariablesService {
         }
         scenarioBlockEntity.getBlock().setLocalVariables(localVariables);
         blockRepo.save(scenarioBlockEntity.getBlock());
-        return scenarioBlockEntity.getBlock().getLocalVariables(scenarioBlockId);
+        return scenarioBlockEntity.getBlock().getTimedVariables(scenarioBlockId);
     }
 
 

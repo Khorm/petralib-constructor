@@ -1,5 +1,6 @@
 package com.petralib.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -66,6 +67,7 @@ public class ServiceRestController {
         String jsonData;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // Красивый JSON
             jsonData = objectMapper.writeValueAsString(constructorModel);
         } catch (JsonProcessingException e) {

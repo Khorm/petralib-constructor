@@ -9,16 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Entity
@@ -67,12 +60,15 @@ public class BlockEntity {
         return variables.stream().filter(entity -> entity.getPinType() == PinType.IN && entity.getScenarioBlock() == null ).collect(Collectors.toList());
     }
 
-    public Collection<VariableEntity> getLocalVariables(Long scenarioVariableId){
+    public Collection<VariableEntity> getTimedVariables(Long scenarioVariableId){
         return variables.stream().filter(entity -> entity.getScenarioBlock() != null && scenarioVariableId.equals(entity.getScenarioBlock().getId()))
                 .collect(Collectors.toList());
     }
 
-
+    public Collection<VariableEntity> getAllTimedVariables(){
+        return variables.stream().filter(entity -> entity.getScenarioBlock() != null )
+                .collect(Collectors.toList());
+    }
 
     public void setLocalVariables(Collection<VariableEntity> newLocalVariables){
         variables.removeIf(variableEntity -> {

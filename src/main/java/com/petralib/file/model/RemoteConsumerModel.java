@@ -50,11 +50,22 @@ public class RemoteConsumerModel {
      */
     private String workflowVersion;
 
+    private String consumerName;
+
     /**
-     * Модель значений, которые потребляются из удалённого источника.
-     * Содержит структуру входных данных (поля, типы, скрипты, источники).
-     * Используется при построении графа передачи данных.
+     * Коллекция загружаемых переменных
      */
-    private Collection<ValueModel> values;
+    private Collection<ValueModel> loadedValues;
+
+    /**
+     * Коллекция всех переменных включая загружаемые
+     */
+    private Collection<ValueDto> contextValues;
+
+    /**
+     * Идентификаторы следующих элементов
+     */
+    private Long nextBlockId;
+    private Long previousBlockId;
 
 }

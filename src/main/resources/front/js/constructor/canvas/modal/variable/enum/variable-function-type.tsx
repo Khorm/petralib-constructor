@@ -1,0 +1,1 @@
+export type VarFunctionType = 'CONSUMER' | 'FUNCTION' | 'PARAMETER'

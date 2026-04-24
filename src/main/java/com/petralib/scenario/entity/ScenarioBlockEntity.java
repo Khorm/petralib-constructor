@@ -76,7 +76,7 @@ public class ScenarioBlockEntity {
 
     public Collection<VariableEntity> getContextVariables() {
         Collection<VariableEntity> contextVars = block.getInVariables();
-        contextVars.addAll(block.getLocalVariables(id));
+        contextVars.addAll(block.getTimedVariables(id));
         contextVars.addAll(getPreviousVariables());
         return contextVars;
     }

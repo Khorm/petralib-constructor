@@ -22,7 +22,18 @@ public class LocalProducerModel {
      * Потребители внутри workflow
      */
     private Collection<RemoteConsumerModel> consumers;
+
+
+    /**
+     * Выходные загружаемые переменные workflow
+     */
     private Collection<ValueModel> exitValues;
+
+
+    /**
+     * Коллекция всех переменных включая выходные загружаемые
+     */
+    private Collection<ValueDto> contextValues;
 
 
 }
