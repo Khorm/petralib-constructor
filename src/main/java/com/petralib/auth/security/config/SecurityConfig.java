@@ -1,12 +1,15 @@
 package com.petralib.auth.security.config;
 
+import com.petralib.auth.security.ConstructorUserDetailsService;
 import com.petralib.auth.security.jwt.JwtConfigure;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,6 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // проверка прав на уровне методов
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
 
@@ -30,21 +34,48 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(configure -> configure.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.authorizeHttpRequests((authorizeHttpRequests) -> {
-                    authorizeHttpRequests
-                            .requestMatchers(HttpMethod.GET, "/").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/error").permitAll()
-                            .requestMatchers("/api/v1/auth/login").permitAll()
-                            .requestMatchers("/login/**").permitAll()
-                            .requestMatchers("/*.css").permitAll()
-                            .requestMatchers("/*.ico").permitAll()
-                            .requestMatchers("/*.js").permitAll()
-                            // Все API endpoints требуют аутентификации
-                            .requestMatchers("/api/v1/**").authenticated()
-                            // Все остальные запросы требуют аутентификации
-                            .anyRequest().authenticated();
+        http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                // Публичные эндпоинты
+                .requestMatchers(HttpMethod.GET, "/").permitAll()
+                .requestMatchers(HttpMethod.GET, "/error").permitAll()
+                .requestMatchers("/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/auth/register").permitAll() // если есть регистрация
+                .requestMatchers("/login/**").permitAll()
+                .requestMatchers("/*.css").permitAll()
+                .requestMatchers("/*.ico").permitAll()
+                .requestMatchers("/*.js").permitAll()
 
-                }
+                // ===== ЗАЩИТА ПО РОЛЯМ (Role enum) =====
+                // ADMIN только для админ-панели
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                // Только владелец может создавать пользователей (POST /api/users)
+                .requestMatchers("/api/users/**").hasRole("ADMIN")
+
+                // MANAGER+ для создания/изменения проектов
+                .requestMatchers(HttpMethod.POST, "/api/v1/projects/**").hasAnyRole("MANAGER", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/projects/**").hasAnyRole("MANAGER", "ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/projects/**").hasAnyRole("MANAGER", "ADMIN")
+
+                // USER+ для чтения проектов (все вошедшие, кроме NONE)
+                .requestMatchers(HttpMethod.GET, "/api/v1/projects/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+
+                // ===== ТОНКАЯ ЗАЩИТА ПО ДЕЙСТВИЯМ (UserAction enum) =====
+                // Полное удаление (только DELETE право)
+                .requestMatchers("/api/v1/projects/*/permanent-delete").hasAuthority("DELETE")
+
+                // Редактирование настроек (только EDIT право)
+                .requestMatchers("/api/v1/projects/*/settings").hasAuthority("EDIT")
+
+                // Экспорт данных (только READ право)
+                .requestMatchers("/api/v1/projects/*/export").hasAuthority("READ")
+
+                // Запись воркфлоу (только WRITE право)
+                .requestMatchers("/api/v1/projects/*/workflows").hasAuthority("WRITE")
+
+                // Все остальные API endpoints требуют аутентификации
+                .requestMatchers("/api/v1/**").authenticated()
+                // Все остальные запросы требуют аутентификации
+                .anyRequest().authenticated()
         );
         jwtConfigure.configure(http);
         http.formLogin(form -> form
@@ -54,7 +85,6 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -66,11 +96,21 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .build();
     }
-
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
 //        registry.addInterceptor(new SecurityRedirectInterceptor());
 //    }
 
 
+    //Чтобы Spring точно знал, что нужно использовать именно наш сервис и наш способ кодирования паролей
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(
+            ConstructorUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService); // Связываем сервис с БД
+        authProvider.setPasswordEncoder(passwordEncoder);       // Связываем проверку пароля
+        return authProvider;
+    }
 }

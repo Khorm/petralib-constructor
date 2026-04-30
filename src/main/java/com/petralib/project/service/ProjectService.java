@@ -2,17 +2,18 @@ package com.petralib.project.service;
 
 import com.petralib.auth.UserAction;
 import com.petralib.auth.security.entity.ConstructorUserEntity;
-import com.petralib.auth.security.model.SecurityUser;
 import com.petralib.project.dto.ProjectDto;
 import com.petralib.project.entity.ProjectEntity;
 import com.petralib.project.repository.ProjectRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +31,11 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public ProjectEntity getProject(Long projectId){
+    public ProjectEntity getProject(Long projectId) {
         Optional<ProjectEntity> project = projectRepository.findById(projectId);
-        if (project.isPresent()){
+        if (project.isPresent()) {
             return project.get();
-        }else {
+        } else {
             throw new NullPointerException("Project not found");
         }
 
@@ -52,7 +53,7 @@ public class ProjectService {
 //    }
 
     @Transactional
-    public ProjectEntity save(ProjectDto projectDto, ConstructorUserEntity user){
+    public ProjectEntity save(ProjectDto projectDto, ConstructorUserEntity user) {
         ProjectEntity project = projectRepository.findById(projectDto.getId()).orElse(new ProjectEntity());
         project.setName(projectDto.getName());
         project.setDescription(projectDto.getDescription());
@@ -60,8 +61,16 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    //пример использования в сервисе где надо добавь
     @Transactional
-    public void delete(Long projectId){
+    public void delete(Long projectId) {
+        // Получаем текущего пользователя
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        ConstructorUserEntity currentUser = (ConstructorUserEntity) auth.getPrincipal();
+        if (!currentUser.getRole().isActionAccepted(UserAction.DELETE)) {
+            throw new AccessDeniedException("У вас нет прав на удаление");
+        }
+
         projectRepository.deleteById(projectId);
     }
 

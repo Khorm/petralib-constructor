@@ -7,13 +7,17 @@ public enum Role {
     NONE(),
     USER(UserAction.READ),
     MANAGER(UserAction.READ, UserAction.WRITE),
-    OWNER(UserAction.READ, UserAction.WRITE, UserAction.DELETE, UserAction.EDIT);
+    ADMIN(UserAction.READ, UserAction.WRITE, UserAction.DELETE, UserAction.EDIT);
 
     private final EnumSet<UserAction> userActions;
 
     Role(UserAction ... userActions) {
         this.userActions = EnumSet.noneOf(UserAction.class);
         Collections.addAll(this.userActions, userActions);
+    }
+
+    public EnumSet<UserAction> getUserActions() {
+        return EnumSet.copyOf(userActions);
     }
 
     public boolean isActionAccepted(UserAction userAction){

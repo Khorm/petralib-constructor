@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,9 @@ public class ProjectRestController {
     ProjectMapper projectMapper;
     UserMapper userMapper;
 
+    // тут разные примеры использования @PreAuthorize
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('MANAGER') or hasRole('ADMIN')")
     public List<ProjectDto> getProjects(Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
             throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException("Authentication required");
@@ -55,6 +58,7 @@ public class ProjectRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('WRITE')")
     public ResponseEntity<?> save(Authentication authentication, @Valid @RequestBody ProjectDto projectDto, Errors errors) {
         if (errors.hasErrors()) {
             Collection<String> validationErrors = errors.getAllErrors().stream()
@@ -75,6 +79,7 @@ public class ProjectRestController {
     }
 
     @DeleteMapping("{projectId}")
+    @PreAuthorize("hasAuthority('DELETE')")
     public ResponseEntity<?> delete(@PathVariable Long projectId) {
         projectService.delete(projectId);
         return ResponseEntity.ok(projectId);

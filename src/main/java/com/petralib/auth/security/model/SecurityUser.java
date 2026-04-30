@@ -6,9 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Data
 public class SecurityUser implements UserDetails {
@@ -31,6 +29,16 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        // 1. Добавляем роль с префиксом ROLE_ (для hasRole())
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+
+        // 2. Добавляем все UserAction как отдельные authorities (для hasAuthority())
+        user.getRole().getUserActions().forEach(action ->
+                authorities.add(new SimpleGrantedAuthority(action.name()))
+        );
+
         return authorities;
     }
 
