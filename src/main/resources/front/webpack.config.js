@@ -132,6 +132,32 @@ var projectsConfig = Object.assign({}, config, {
 });
 
 
+var adminConfig = Object.assign({}, config, {
+    name: "admin",
+    entry: {
+		projects_react:'./js/admin/admin.tsx',
+	},
+    output: {
+      path: path.resolve('../static/admin/'),
+      filename:  "admin.js",
+	  //clean: true,
+    },
+
+     plugins: [
+     //new CleanWebpackPlugin(),
+     new BundleTracker({
+        filename: 'webpack-admin.json',
+        path: path.resolve('../static/admin/')
+     }),
+	new MiniCssExtractPlugin({
+	      filename: 'admin.css',
+	      chunkFilename: '[id].css',
+	    }),
+    ],
+
+});
+
+
 //var blockConfig = Object.assign({}, config, {
 //    name: "block",
 //    entry: {
@@ -176,4 +202,4 @@ var projectsConfig = Object.assign({}, config, {
 
 
 
-module.exports = [loginConfig, projectsConfig, constructorConfig ];
+module.exports = [loginConfig, projectsConfig, constructorConfig, adminConfig ];

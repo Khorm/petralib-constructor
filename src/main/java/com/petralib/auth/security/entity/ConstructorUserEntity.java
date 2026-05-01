@@ -1,5 +1,6 @@
 package com.petralib.auth.security.entity;
 
+import com.petralib.admin.enums.Authority;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,6 +24,9 @@ public class ConstructorUserEntity {
 
     @Column(name = "user_password")
     String password;
+
+    @Enumerated(EnumType.STRING)
+    Authority authority;
 
 
 }

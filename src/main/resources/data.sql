@@ -5,6 +5,7 @@ create table if not exists constructor_users (
     email varchar(255) not null,
     user_name varchar(255),
     user_password varchar(255) not null,
+    authority varchar(16) not null,
     primary key (user_id)
 );
 

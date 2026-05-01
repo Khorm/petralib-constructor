@@ -24,7 +24,8 @@ public class SecurityUser implements UserDetails {
 //        this.id = constructorUserEntity.getId();
 //        this.username = constructorUserEntity.getEmail();
 //        this.password = constructorUserEntity.getPassword();
-        this.authorities = Collections.emptyList();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(constructorUserEntity.getAuthority().name());
+        this.authorities = Collections.singletonList(simpleGrantedAuthority);
         this.isActive = true;
         this.user = constructorUserEntity;
     }
