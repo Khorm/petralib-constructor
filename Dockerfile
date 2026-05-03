@@ -9,4 +9,4 @@ COPY --chown=appuser:appgroup build/libs/${JAR_FILE} /home/appuser/petralib.jar
 USER appuser
 WORKDIR /home/appuser
 
-ENTRYPOINT ["java", "-jar", "/petralib.jar" ]
+ENTRYPOINT ["java", "-jar", "/home/appuser/petralib.jar" ]
